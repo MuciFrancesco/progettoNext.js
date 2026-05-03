@@ -1,0 +1,289 @@
+'use client';
+
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import MuiButton from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import clsx from 'clsx';
+import type { Locale } from '@/lib/i18n/translation';
+import { createTranslator } from '@/lib/i18n/translator';
+import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
+import type { BackendOrder, OrderFilter } from '@/types/api/order';
+import type { FilterOption, OrderSortKey } from '@/features/admin/hooks/useAdminOrders';
+import OrdersTableHead from './OrdersTableHead';
+import OrdersTableBody from './OrdersTableBody';
+import styles from './OrdersTable.module.scss';
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3333';
+const PAGE_SIZE = 20;
+
+const LOCALE_MAP: Record<Locale, string> = {
+  it: 'it-IT',
+  en: 'en-GB',
+  fr: 'fr-FR',
+  es: 'es-ES',
+  de: 'de-DE',
+};
+
+interface OrdersTableProps {
+  readonly orders: BackendOrder[];
+  readonly total: number;
+  readonly totalRevenue: number;
+  readonly grandTotalRevenue: number;
+  readonly page: number;
+  readonly filter: OrderFilter;
+  readonly filterOptions: FilterOption[];
+  readonly selected: BackendOrder | null;
+  readonly isPending: boolean;
+  readonly locale: Locale;
+  readonly sortKey: OrderSortKey | null;
+  readonly sortDir: 'asc' | 'desc';
+  readonly setSelected: (order: BackendOrder | null) => void;
+  readonly handleFilterChange: (e: React.MouseEvent, value: OrderFilter | null) => void;
+  readonly handlePageChange: (e: React.MouseEvent | null, newPage: number) => void;
+  readonly handleSort: (key: OrderSortKey) => void;
+}
+
+export default function OrdersTable({
+  orders,
+  total,
+  totalRevenue,
+  grandTotalRevenue,
+  page,
+  filter,
+  filterOptions,
+  selected,
+  isPending,
+  locale,
+  sortKey,
+  sortDir,
+  setSelected,
+  handleFilterChange,
+  handlePageChange,
+  handleSort,
+}: OrdersTableProps) {
+  const t = createTranslator(locale);
+  const displayLocale = LOCALE_MAP[locale];
+
+  return (
+    <>
+      <Box>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          {t('ordersTableTitle')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {t('ordersTableSubtitle')}
+        </Typography>
+      </Box>
+
+      <ToggleButtonGroup
+        value={filter}
+        exclusive
+        onChange={handleFilterChange}
+        size="small"
+        className={styles.filterGroup}
+      >
+        {filterOptions.map((f) => (
+          <ToggleButton key={f.value} value={f.value} disabled={isPending}>
+            {f.label}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        className={clsx(styles.tableWrap, isPending && styles.pending)}
+      >
+        <Table size="small">
+          <OrdersTableHead
+            locale={locale}
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSort={handleSort}
+          />
+          <OrdersTableBody orders={orders} onRowClick={setSelected} locale={locale} />
+        </Table>
+
+        <TablePagination
+          component="div"
+          count={total}
+          page={page}
+          rowsPerPage={PAGE_SIZE}
+          rowsPerPageOptions={[PAGE_SIZE]}
+          onPageChange={handlePageChange}
+          labelDisplayedRows={({ from, to, count }) => {
+            const kount = count === -1 ? to + '+' : String(count);
+            return from + '\u2013' + to + ' / ' + kount;
+          }}
+          labelRowsPerPage=""
+        />
+      </TableContainer>
+
+      <Paper variant="outlined" className={styles.revenueCard}>
+        <Box className={styles.revenueIcon}>
+          <TrendingUpIcon fontSize="small" />
+        </Box>
+        <Box>
+          {filter === 'all' ? (
+            <>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                className={styles.revenueCaption}
+              >
+                {t('ordersTotalTitle')}
+              </Typography>
+              <Typography variant="h5" className={styles.revenueAmount}>
+                {(grandTotalRevenue / 100).toLocaleString(displayLocale, {
+                  style: 'currency',
+                  currency: 'EUR',
+                })}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('ordersTotalSubtitle')}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                className={styles.revenueCaption}
+              >
+                {t('ordersTotalTitle')}
+              </Typography>
+              <Typography variant="h5" className={styles.revenueAmount}>
+                {(totalRevenue / 100).toLocaleString(displayLocale, {
+                  style: 'currency',
+                  currency: 'EUR',
+                })}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('ordersTotalSubtitle')}
+              </Typography>
+              <Divider className={styles.revenueDivider} />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                className={styles.revenueCaption}
+              >
+                {t('ordersTotalGrandTitle')}
+              </Typography>
+              <Typography variant="h6" className={styles.revenueAmountSecondary}>
+                {(grandTotalRevenue / 100).toLocaleString(displayLocale, {
+                  style: 'currency',
+                  currency: 'EUR',
+                })}
+              </Typography>
+            </>
+          )}
+        </Box>
+      </Paper>
+
+      <Dialog open={Boolean(selected)} onClose={() => setSelected(null)} maxWidth="sm" fullWidth>
+        {selected && (
+          <>
+            <DialogTitle>{t('ordersTableDetailTitle')}</DialogTitle>
+            <DialogContent>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                {t('ordersTableDetailItemsTitle')}
+              </Typography>
+              <TableContainer component={Paper} variant="outlined" sx={{ mb: 2 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>{t('ordersTableColProduct')}</TableCell>
+                      <TableCell>{t('ordersTableColCategory')}</TableCell>
+                      <TableCell align="right">{t('ordersTableDetailPrice')}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{selected.product.name}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={t(categoryTranslationKey(selected.product.category))}
+                          size="small"
+                          variant="outlined"
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {(selected.totalPriceInCents / 100).toLocaleString(displayLocale, {
+                          style: 'currency',
+                          currency: 'EUR',
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <Box className={styles.dialogGrid}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('ordersTableDetailPrice')}
+                  </Typography>
+                  <Typography variant="body1" className={styles.dialogPrice}>
+                    {(selected.totalPriceInCents / 100).toLocaleString(displayLocale, {
+                      style: 'currency',
+                      currency: 'EUR',
+                    })}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('ordersTableDetailDate')}
+                  </Typography>
+                  <Typography variant="body1">
+                    {new Date(selected.createdAt).toLocaleDateString(displayLocale, {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('ordersTableColEmail')}
+                  </Typography>
+                  <Typography variant="body2">{selected.user.email}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('ordersTableColFirstName')} / {t('ordersTableColLastName')}
+                  </Typography>
+                  <Typography variant="body2">
+                    {[selected.user.firstname, selected.user.lastname].filter(Boolean).join(' ') ||
+                      '—'}
+                  </Typography>
+                </Box>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <MuiButton variant="outlined" onClick={() => setSelected(null)}>
+                {t('ordersTableDetailClose')}
+              </MuiButton>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+    </>
+  );
+}

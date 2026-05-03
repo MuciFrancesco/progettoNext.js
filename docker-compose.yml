@@ -1,0 +1,71 @@
+services:
+  dev-db:
+    image: postgres:16-alpine
+    container_name: progetto-nextjs-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: nest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile.dev
+    container_name: progetto-nextjs-backend
+    ports:
+      - '3333:3333'
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:123@dev-db:5432/nest
+    volumes:
+      - ./apps/backend/src:/app/apps/backend/src
+      - ./apps/backend/prisma:/app/apps/backend/prisma
+      - ./apps/backend/test:/app/apps/backend/test
+      - ./apps/backend/scripts:/app/apps/backend/scripts
+    depends_on:
+      dev-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile.dev
+    container_name: progetto-nextjs-frontend
+    ports:
+      - '3000:3000'
+    environment:
+      BACKEND_URL: http://backend:3333
+    volumes:
+      - ./apps/frontend/app:/app/apps/frontend/app
+      - ./apps/frontend/components:/app/apps/frontend/components
+      - ./apps/frontend/features:/app/apps/frontend/features
+      - ./apps/frontend/lib:/app/apps/frontend/lib
+      - ./apps/frontend/providers:/app/apps/frontend/providers
+      - ./apps/frontend/public:/app/apps/frontend/public
+      - ./apps/frontend/types:/app/apps/frontend/types
+      - ./apps/frontend/db:/app/apps/frontend/db
+      - ./apps/frontend/e2e:/app/apps/frontend/e2e
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:

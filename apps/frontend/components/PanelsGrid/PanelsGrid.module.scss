@@ -1,0 +1,122 @@
+// ── Grid container ─────────────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ── Card ───────────────────────────────────────────────────────────────────────
+.card {
+  border-radius: 0 !important;
+  background-color: var(--card) !important;
+  border-right: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  transition: background-color 200ms !important;
+
+  &:hover {
+    background-color: var(--secondary) !important;
+  }
+}
+
+.cardActive {
+  background-color: var(--primary) !important;
+
+  &:hover {
+    background-color: var(--primary) !important;
+    opacity: 0.9;
+  }
+}
+
+// ── CardActionArea ─────────────────────────────────────────────────────────────
+.action {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+// ── CardContent ────────────────────────────────────────────────────────────────
+.content {
+  flex: 1;
+  width: 100%;
+  padding: 24px 24px 16px !important;
+}
+
+// ── Header row (icon + title) ──────────────────────────────────────────────────
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+// ── Icon box ───────────────────────────────────────────────────────────────────
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  background-color: rgba(11, 60, 93, 0.08);
+}
+
+.iconBoxActive {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+// ── Title ──────────────────────────────────────────────────────────────────────
+.title {
+  font-weight: 700 !important;
+  color: var(--foreground) !important;
+}
+
+.titleActive {
+  color: var(--primary-foreground) !important;
+}
+
+// ── Description ────────────────────────────────────────────────────────────────
+.desc {
+  padding-left: 52px; // 40px icon + 12px gap
+  color: inherit !important;
+}
+
+.descActive {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+// ── Footer ─────────────────────────────────────────────────────────────────────
+.footer {
+  padding: 8px 24px 24px;
+  width: 100%;
+}
+
+.footerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.footerLinkActive {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.footerIcon {
+  font-size: 0.9rem !important;
+}

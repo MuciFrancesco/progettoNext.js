@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductCategory {
+  TECHNOLOGY
+  HOME
+  CLOTHING
+  SPORTS
+  BOOKS
+  FOOD
+  BEAUTY
+  TOYS
+  OTHER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  hash      String   
+  isAdmin   Boolean  @default(false) @map("is_admin")
+  canCreateCart Boolean @default(true) @map("can_create_cart")
+  canOrderProducts Boolean @default(true) @map("can_order_products")
+  preferredLocale String @default("it") @map("preferred_locale")
+  firstname String? @map("first_name")
+  secondname String? @map("second_name")
+  lastname  String? @map("last_name")
+  posts     Post[]
+  bookmarks Bookmark[]
+  orders    Order[]
+  refreshTokens RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  name        String
+  description String
+  category    ProductCategory @default(OTHER)
+  priceInCents       Int @default(0)
+  imagePath   String
+  imagePaths  String[] @default([])
+  stockQuantity Int @default(0) @map("stock_quantity")
+  isAvailableForPurchase Boolean @default(true)
+  orders Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  downloadVerifications DownloadVerification[]
+  @@index([title])
+  @@index([name])
+  @@index([imagePath])
+  @@index([category])
+  @@map("products")
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  userId      String 
+  productId   String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  totalPriceInCents Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("orders")
+}
+
+
+
+model DownloadVerification {
+  id             String   @id @default(uuid())
+  expirationDate DateTime
+  createdAt      DateTime @default(now())
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("download_verifications")
+}
+  
+
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("posts")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  title     String
+  description String?
+  link       String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bookmarks")
+}
+
+model LoginAttempt {
+  id        String   @id @default(uuid())
+  email     String
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@map("login_attempts")
+  @@index([email, createdAt])
+}
+
+model RefreshToken {
+  id          String    @id @default(uuid())
+  tokenHash   String    @unique @map("token_hash")
+  userId      String    @map("user_id")
+  family      String
+  expiresAt   DateTime  @map("expires_at")
+  isRevoked   Boolean   @default(false) @map("is_revoked")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([family])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id          String    @id @default(uuid())
+  tokenHash   String    @unique @map("token_hash")
+  userId      String    @map("user_id")
+  expiresAt   DateTime  @map("expires_at")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}

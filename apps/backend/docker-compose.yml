@@ -1,0 +1,15 @@
+services:
+  dev-db:
+    image: postgres:16-alpine
+    container_name: progetto-nextjs-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: nest
+    networks:
+      - app-network
+
+networks:
+  app-network:

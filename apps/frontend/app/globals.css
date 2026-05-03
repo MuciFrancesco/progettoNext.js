@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  /* Palette: #f4f7f9 bg, #0b3c5d navy, #328cc1 blue, #d9b310 gold */
+
+  --background: oklch(0.973 0.006 218); /* #f4f7f9 – blue-white */
+  --foreground: oklch(0.12 0.045 233); /* #0d1b2a – near-black navy */
+
+  --card: oklch(1 0 0); /* pure white */
+  --card-foreground: oklch(0.12 0.045 233);
+
+  /* Navy #0b3c5d – primary CTA, navbar */
+  --primary: oklch(0.275 0.088 231);
+  --primary-foreground: oklch(1 0 0);
+
+  /* Light blue tint – secondary surfaces */
+  --secondary: oklch(0.944 0.018 220); /* #e8f0f8 */
+  --secondary-foreground: oklch(0.275 0.088 231);
+
+  --muted: oklch(0.944 0.018 220);
+  --muted-foreground: oklch(0.52 0.065 224); /* #4a7a9b */
+
+  /* Gold #d9b310 – accent / highlight */
+  --accent: oklch(0.765 0.168 84);
+  --accent-foreground: oklch(0.275 0.088 231);
+
+  --destructive: oklch(0.577 0.245 27.325);
+
+  --border: oklch(0.855 0.028 218); /* #c1d5e8 – light blue-gray */
+  --input: oklch(0.855 0.028 218);
+  --ring: oklch(0.595 0.117 222); /* #328cc1 – focus ring */
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.09 0.04 233); /* #071525 – deep navy */
+  --foreground: oklch(0.955 0.016 220); /* #e8f2fb */
+
+  --card: oklch(0.155 0.055 234); /* #0d2137 */
+  --card-foreground: oklch(0.955 0.016 220);
+
+  /* Medium blue #328cc1 – primary in dark mode */
+  --primary: oklch(0.595 0.117 222);
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.205 0.065 232); /* #122e48 */
+  --secondary-foreground: oklch(0.92 0.022 214);
+
+  --muted: oklch(0.155 0.055 234);
+  --muted-foreground: oklch(0.695 0.058 220); /* #7aabcb */
+
+  /* Gold stays in dark mode too */
+  --accent: oklch(0.765 0.168 84);
+  --accent-foreground: oklch(0.09 0.04 233);
+
+  --destructive: oklch(0.704 0.191 22.216);
+
+  --border: oklch(0.245 0.068 232); /* #1a3a56 */
+  --input: oklch(0.205 0.065 232);
+  --ring: oklch(0.595 0.117 222);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  /* Lift effect – sottile ombra al hover su card/bottoni */
+  .hover-lift {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+
+  /* Accent gold utility */
+  .text-gold {
+    color: var(--accent);
+  }
+  .bg-gold {
+    background-color: var(--accent);
+  }
+  .border-gold {
+    border-color: var(--accent);
+  }
+}
