@@ -1,9 +1,20 @@
-import { cookies } from 'next/headers';
+import { cookies, headers as nextHeaders } from 'next/headers';
 
 const BACKEND_BASE_URL = process.env.BACKEND_URL ?? 'http://localhost:3333';
 
 const SAFE_ERROR_PATTERN = /^[\w\s.,!?:;'"()-]+$/;
 const MAX_ERROR_LENGTH = 200;
+
+export class BackendRequestError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly payload: unknown
+  ) {
+    super(message);
+    this.name = 'BackendRequestError';
+  }
+}
 
 function sanitizeErrorMessage(raw: string, fallback: string): string {
   if (!raw || raw.length > MAX_ERROR_LENGTH || !SAFE_ERROR_PATTERN.test(raw)) {
@@ -48,7 +59,7 @@ export async function backendRequest<T>(
   const payload = (await response.json().catch(() => null)) as unknown;
 
   if (!response.ok) {
-    throw new Error(getErrorMessage(payload, errorFallback));
+    throw new BackendRequestError(getErrorMessage(payload, errorFallback), response.status, payload);
   }
 
   return payload as T;
@@ -60,7 +71,8 @@ export async function authenticatedBackendRequest<T>(
   errorFallback = 'Request failed'
 ): Promise<T> {
   const cookieStore = await cookies();
-  const token = cookieStore.get('access_token')?.value;
+  const headersList = await nextHeaders();
+  const token = headersList.get('x-access-token') ?? cookieStore.get('access_token')?.value;
 
   if (!token) {
     throw new Error('Token unavailable');

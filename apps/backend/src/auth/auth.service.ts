@@ -59,10 +59,11 @@ export class AuthService {
     userId: string,
     email: string,
     preferredLocale: string,
-    isAdmin: boolean
+    isAdmin: boolean,
+    isEmployee = false
   ): Promise<string> {
     return this.jwt.signAsync(
-      { sub: userId, email, preferredLocale, isAdmin },
+      { sub: userId, email, preferredLocale, isAdmin, isEmployee },
       { secret: this.config.getOrThrow<string>('JWT_SECRET'), expiresIn: '15m' }
     );
   }
@@ -71,9 +72,10 @@ export class AuthService {
     userId: string,
     email: string,
     preferredLocale: string,
-    isAdmin: boolean
+    isAdmin: boolean,
+    isEmployee = false
   ): Promise<{ access_token: string; refresh_token: string }> {
-    const access_token = await this.createAccessToken(userId, email, preferredLocale, isAdmin);
+    const access_token = await this.createAccessToken(userId, email, preferredLocale, isAdmin, isEmployee);
 
     const raw = this.generateRawToken(this.REFRESH_TOKEN_BYTES);
     const tokenHash = this.sha256(raw);
@@ -100,11 +102,12 @@ export class AuthService {
           firstname: dto.firstName,
           lastname: dto.lastName,
           isAdmin: false,
+          isEmployee: false,
         },
-        select: { id: true, email: true, preferredLocale: true, isAdmin: true },
-      })) as { id: string; email: string; preferredLocale: string; isAdmin: boolean };
+        select: { id: true, email: true, preferredLocale: true, isAdmin: true, isEmployee: true },
+      })) as { id: string; email: string; preferredLocale: string; isAdmin: boolean; isEmployee: boolean };
 
-      return this.signTokens(user.id, user.email, user.preferredLocale, user.isAdmin);
+      return this.signTokens(user.id, user.email, user.preferredLocale, user.isAdmin, user.isEmployee);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Email giÃ  in uso');
@@ -118,23 +121,29 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     const email = profile.email.toLowerCase().trim();
 
-    let user: {
+    type OAuthUserRow = {
       id: string;
       email: string;
       preferredLocale: string;
       isAdmin: boolean;
+      isEmployee: boolean;
       firstname: string | null;
       lastname: string | null;
-    } | null = await this.db.user.findUnique({
+    };
+
+    const oauthSelect = {
+      id: true,
+      email: true,
+      preferredLocale: true,
+      isAdmin: true,
+      isEmployee: true,
+      firstname: true,
+      lastname: true,
+    } as const;
+
+    let user: OAuthUserRow | null = await this.db.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        preferredLocale: true,
-        isAdmin: true,
-        firstname: true,
-        lastname: true,
-      },
+      select: oauthSelect,
     });
 
     if (user === null) {
@@ -146,15 +155,9 @@ export class AuthService {
           firstname: profile.firstName,
           lastname: profile.lastName,
           isAdmin: false,
+          isEmployee: false,
         },
-        select: {
-          id: true,
-          email: true,
-          preferredLocale: true,
-          isAdmin: true,
-          firstname: true,
-          lastname: true,
-        },
+        select: oauthSelect,
       });
     } else {
       const shouldUpdateFirstName = !user.firstname && !!profile.firstName;
@@ -166,20 +169,13 @@ export class AuthService {
             firstname: shouldUpdateFirstName ? profile.firstName : user.firstname,
             lastname: shouldUpdateLastName ? profile.lastName : user.lastname,
           },
-          select: {
-            id: true,
-            email: true,
-            preferredLocale: true,
-            isAdmin: true,
-            firstname: true,
-            lastname: true,
-          },
+          select: oauthSelect,
         });
       }
     }
 
     if (user === null) throw new ForbiddenException('Impossibile autenticare utente OAuth');
-    return this.signTokens(user.id, user.email, user.preferredLocale, user.isAdmin);
+    return this.signTokens(user.id, user.email, user.preferredLocale, user.isAdmin, user.isEmployee);
   }
 
   async signin(dto: SigninDto): Promise<SigninResponseDto> {
@@ -192,13 +188,14 @@ export class AuthService {
 
     const user = (await this.db.user.findUnique({
       where: { email: dto.email },
-      select: { id: true, email: true, hash: true, preferredLocale: true, isAdmin: true },
+      select: { id: true, email: true, hash: true, preferredLocale: true, isAdmin: true, isEmployee: true },
     })) as {
       id: string;
       email: string;
       hash: string;
       preferredLocale: string;
       isAdmin: boolean;
+      isEmployee: boolean;
     } | null;
 
     if (!user) {
@@ -233,7 +230,13 @@ export class AuthService {
 
     await this.db.$executeRaw`DELETE FROM "login_attempts" WHERE email = ${dto.email}`;
 
-    const tokens = await this.signTokens(user.id, user.email, user.preferredLocale, user.isAdmin);
+    const tokens = await this.signTokens(
+      user.id,
+      user.email,
+      user.preferredLocale,
+      user.isAdmin,
+      user.isEmployee
+    );
     return { access_token: tokens.access_token, refresh_token: tokens.refresh_token };
   }
 
@@ -247,7 +250,7 @@ export class AuthService {
     const stored = await this.db.refreshToken.findUnique({
       where: { tokenHash: hash },
       include: {
-        user: { select: { id: true, email: true, preferredLocale: true, isAdmin: true } },
+        user: { select: { id: true, email: true, preferredLocale: true, isAdmin: true, isEmployee: true } },
       },
     });
 
@@ -276,7 +279,8 @@ export class AuthService {
           stored.user.id,
           stored.user.email,
           stored.user.preferredLocale,
-          stored.user.isAdmin
+          stored.user.isAdmin,
+          stored.user.isEmployee
         );
         return { access_token, refresh_token: raw };
       }
@@ -310,7 +314,8 @@ export class AuthService {
       stored.user.id,
       stored.user.email,
       stored.user.preferredLocale,
-      stored.user.isAdmin
+      stored.user.isAdmin,
+      stored.user.isEmployee
     );
     return { access_token, refresh_token: raw };
   }

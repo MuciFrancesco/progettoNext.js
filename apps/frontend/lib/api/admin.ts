@@ -30,6 +30,7 @@ export async function updateAdminUserRole(
   userId: string,
   input: {
     isAdmin?: boolean;
+    isEmployee?: boolean;
     canCreateCart?: boolean;
     canOrderProducts?: boolean;
   }

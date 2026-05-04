@@ -51,6 +51,7 @@ export default function RoleManagerTableBody({
         const hasChanges =
           draft !== undefined &&
           (draft.isAdmin !== !!user.isAdmin ||
+            draft.isEmployee !== !!user.isEmployee ||
             draft.canCreateCart !== (user.canCreateCart ?? true) ||
             draft.canOrderProducts !== (user.canOrderProducts ?? true));
 
@@ -69,7 +70,26 @@ export default function RoleManagerTableBody({
             <TableCell align="center" padding="checkbox">
               <Checkbox
                 checked={draft?.isAdmin ?? false}
-                onChange={(e) => updateDraft(user.id, { isAdmin: e.target.checked })}
+                onChange={(e) => {
+                  updateDraft(user.id, {
+                    isAdmin: e.target.checked,
+                    ...(e.target.checked ? { isEmployee: false } : {}),
+                  });
+                }}
+                size="small"
+                color="primary"
+                disabled={isSelf}
+              />
+            </TableCell>
+            <TableCell align="center" padding="checkbox">
+              <Checkbox
+                checked={draft?.isEmployee ?? false}
+                onChange={(e) => {
+                  updateDraft(user.id, {
+                    isEmployee: e.target.checked,
+                    ...(e.target.checked ? { isAdmin: false } : {}),
+                  });
+                }}
                 size="small"
                 color="primary"
                 disabled={isSelf}

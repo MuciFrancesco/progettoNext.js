@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'USER';
+export type UserRole = 'ADMIN' | 'EMPLOYEE' | 'USER';
 
 export interface CreateUserInput {
   email: string;
@@ -6,12 +6,14 @@ export interface CreateUserInput {
   firstName?: string;
   lastName?: string;
   isAdmin?: boolean;
+  isEmployee?: boolean;
 }
 
 export interface BackendUser {
   readonly id: string;
   readonly email: string;
   readonly isAdmin?: boolean;
+  readonly isEmployee?: boolean;
   readonly canCreateCart?: boolean;
   readonly canOrderProducts?: boolean;
   readonly firstname: string | null;

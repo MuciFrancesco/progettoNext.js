@@ -9,6 +9,7 @@ type JwtPayload = {
   email: string;
   preferredLocale?: string;
   isAdmin?: boolean;
+  isEmployee?: boolean;
 };
 
 @Injectable()
@@ -36,6 +37,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         lastname: true,
         preferredLocale: true,
         isAdmin: true,
+        isEmployee: true,
       },
     });
 

@@ -50,7 +50,9 @@ export class AdminService {
       name: true,
       description: true,
       imagePath: true,
+      imagePaths: true,
       category: true,
+      priceInCents: true,
       stockQuantity: true,
       isAvailableForPurchase: true,
       createdAt: true,
@@ -93,6 +95,7 @@ export class AdminService {
       secondname: true,
       lastname: true,
       isAdmin: true,
+      isEmployee: true,
       canCreateCart: true,
       canOrderProducts: true,
       createdAt: true,
@@ -116,13 +119,16 @@ export class AdminService {
   async createUser(dto: CreateUserDto) {
     const hash = await argon.hash(dto.password);
     try {
+      const isAdmin = dto.isAdmin ?? false;
+      const isEmployee = isAdmin ? false : (dto.isEmployee ?? false);
       return await this.prisma.user.create({
         data: {
           email: dto.email,
           hash,
           firstname: dto.firstName,
           lastname: dto.lastName,
-          isAdmin: dto.isAdmin ?? false,
+          isAdmin,
+          isEmployee,
         },
         select: {
           id: true,
@@ -131,6 +137,7 @@ export class AdminService {
           secondname: true,
           lastname: true,
           isAdmin: true,
+          isEmployee: true,
           canCreateCart: true,
           canOrderProducts: true,
           createdAt: true,
@@ -148,20 +155,35 @@ export class AdminService {
   async updateUserRole(userId: string, dto: UpdateUserRoleDto) {
     if (
       dto.isAdmin === undefined &&
+      dto.isEmployee === undefined &&
       dto.canCreateCart === undefined &&
       dto.canOrderProducts === undefined
     ) {
       throw new BadRequestException('Nessun campo ruolo da aggiornare');
     }
 
+    // isAdmin and isEmployee are mutually exclusive: promoting to admin clears employee flag.
+    const data: {
+      isAdmin?: boolean;
+      isEmployee?: boolean;
+      canCreateCart?: boolean;
+      canOrderProducts?: boolean;
+    } = {};
+    if (dto.isAdmin !== undefined) {
+      data.isAdmin = dto.isAdmin;
+      if (dto.isAdmin) data.isEmployee = false;
+    }
+    if (dto.isEmployee !== undefined && !data.isAdmin) {
+      data.isEmployee = dto.isEmployee;
+      if (dto.isEmployee) data.isAdmin = false;
+    }
+    if (dto.canCreateCart !== undefined) data.canCreateCart = dto.canCreateCart;
+    if (dto.canOrderProducts !== undefined) data.canOrderProducts = dto.canOrderProducts;
+
     try {
       return await this.prisma.user.update({
         where: { id: userId },
-        data: {
-          isAdmin: dto.isAdmin,
-          canCreateCart: dto.canCreateCart,
-          canOrderProducts: dto.canOrderProducts,
-        },
+        data,
         select: {
           id: true,
           email: true,
@@ -169,6 +191,7 @@ export class AdminService {
           secondname: true,
           lastname: true,
           isAdmin: true,
+          isEmployee: true,
           canCreateCart: true,
           canOrderProducts: true,
           createdAt: true,
@@ -220,7 +243,9 @@ export class AdminService {
       name: true,
       description: true,
       imagePath: true,
+      imagePaths: true,
       category: true,
+      priceInCents: true,
       stockQuantity: true,
       isAvailableForPurchase: true,
       createdAt: true,
@@ -282,7 +307,9 @@ export class AdminService {
           name: true,
           description: true,
           imagePath: true,
+          imagePaths: true,
           category: true,
+          priceInCents: true,
           stockQuantity: true,
           isAvailableForPurchase: true,
         },
@@ -390,6 +417,7 @@ export class AdminService {
         description: dto.description.trim(),
         imagePath: primaryImagePath,
         imagePaths: dto.imagePaths ?? (primaryImagePath ? [primaryImagePath] : []),
+        priceInCents: dto.priceInCents ?? 0,
         stockQuantity: dto.stockQuantity,
         isAvailableForPurchase: dto.stockQuantity > 0,
         category: dto.category,
@@ -402,6 +430,7 @@ export class AdminService {
         imagePath: true,
         imagePaths: true,
         category: true,
+        priceInCents: true,
         stockQuantity: true,
         isAvailableForPurchase: true,
         createdAt: true,
@@ -423,6 +452,8 @@ export class AdminService {
       dto.name === undefined &&
       dto.description === undefined &&
       dto.imagePath === undefined &&
+      dto.imagePaths === undefined &&
+      dto.priceInCents === undefined &&
       dto.stockQuantity === undefined &&
       dto.isAvailableForPurchase === undefined &&
       dto.category === undefined
@@ -436,6 +467,7 @@ export class AdminService {
       description?: string;
       imagePath?: string;
       imagePaths?: string[];
+      priceInCents?: number;
       stockQuantity?: number;
       isAvailableForPurchase?: boolean;
       category?: ProductCategory;
@@ -446,6 +478,7 @@ export class AdminService {
     if (dto.description !== undefined) data.description = dto.description.trim();
     if (dto.imagePath !== undefined) data.imagePath = dto.imagePath.trim();
     if (dto.imagePaths !== undefined) data.imagePaths = dto.imagePaths;
+    if (dto.priceInCents !== undefined) data.priceInCents = dto.priceInCents;
     if (dto.stockQuantity !== undefined) {
       data.stockQuantity = dto.stockQuantity;
       if (dto.isAvailableForPurchase === undefined) {
@@ -469,7 +502,9 @@ export class AdminService {
           name: true,
           description: true,
           imagePath: true,
+          imagePaths: true,
           category: true,
+          priceInCents: true,
           stockQuantity: true,
           isAvailableForPurchase: true,
           createdAt: true,

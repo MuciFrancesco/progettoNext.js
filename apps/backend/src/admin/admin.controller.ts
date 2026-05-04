@@ -36,6 +36,12 @@ export class AdminController {
     }
   }
 
+  private assertAdminOrEmployee(isAdmin: boolean, isEmployee: boolean) {
+    if (!isAdmin && !isEmployee) {
+      throw new ForbiddenException('Solo admin o employee');
+    }
+  }
+
   @Get('users')
   @HttpCode(HttpStatus.OK)
   listUsers(
@@ -87,13 +93,14 @@ export class AdminController {
   @HttpCode(HttpStatus.OK)
   listProducts(
     @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
     @Query('categories') categories?: string,
     @Query('title') title?: string,
     @Query('name') name?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string
   ) {
-    this.assertAdmin(isAdmin);
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.listProducts({
       categories: categories
         ? (categories.split(',').filter(Boolean) as import('@prisma/client').ProductCategory[])
@@ -107,22 +114,33 @@ export class AdminController {
 
   @Post('products')
   @HttpCode(HttpStatus.OK)
-  createProduct(@GetUser('isAdmin') isAdmin: boolean, @Body() dto: CreateProductDto) {
-    this.assertAdmin(isAdmin);
+  createProduct(
+    @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
+    @Body() dto: CreateProductDto
+  ) {
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.createProduct(dto);
   }
 
   @Get('products/bulk-status')
   @HttpCode(HttpStatus.OK)
-  getBulkStatus(@GetUser('isAdmin') isAdmin: boolean) {
-    this.assertAdmin(isAdmin);
+  getBulkStatus(
+    @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean
+  ) {
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.getBulkStatus();
   }
 
   @Patch('products/bulk')
   @HttpCode(HttpStatus.OK)
-  bulkUpdateProducts(@GetUser('isAdmin') isAdmin: boolean, @Body() dto: BulkUpdateProductDto) {
-    this.assertAdmin(isAdmin);
+  bulkUpdateProducts(
+    @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
+    @Body() dto: BulkUpdateProductDto
+  ) {
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.bulkUpdateProducts(dto);
   }
 
@@ -130,24 +148,33 @@ export class AdminController {
   @HttpCode(HttpStatus.OK)
   updateProduct(
     @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
     @Param('productId') productId: string,
     @Body() dto: UpdateProductDto
   ) {
-    this.assertAdmin(isAdmin);
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.updateProduct(productId, dto);
   }
 
   @Delete('products/bulk')
   @HttpCode(HttpStatus.OK)
-  bulkDeleteProducts(@GetUser('isAdmin') isAdmin: boolean, @Body() dto: BulkDeleteProductDto) {
-    this.assertAdmin(isAdmin);
+  bulkDeleteProducts(
+    @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
+    @Body() dto: BulkDeleteProductDto
+  ) {
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.bulkDeleteProducts(dto.ids);
   }
 
   @Delete('products/:productId')
   @HttpCode(HttpStatus.OK)
-  deleteProduct(@GetUser('isAdmin') isAdmin: boolean, @Param('productId') productId: string) {
-    this.assertAdmin(isAdmin);
+  deleteProduct(
+    @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
+    @Param('productId') productId: string
+  ) {
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.deleteProduct(productId);
   }
 

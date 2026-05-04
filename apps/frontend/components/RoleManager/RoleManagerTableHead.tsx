@@ -40,6 +40,7 @@ export default function RoleManagerTableHead({
         <TableCell>{label('name', t('roleTableUser'))}</TableCell>
         <TableCell>{label('email', t('roleTableEmail'))}</TableCell>
         <TableCell align="center">{label('isAdmin', t('roleTableAdmin'), 'center')}</TableCell>
+        <TableCell align="center">{label('isEmployee', t('roleTableEmployee'), 'center')}</TableCell>
         <TableCell align="center">
           {label('canCreateCart', t('roleTableCanCreateCart'), 'center')}
         </TableCell>

@@ -7,6 +7,10 @@ export class UpdateUserRoleDto {
 
   @IsBoolean()
   @IsOptional()
+  isEmployee?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
   canCreateCart?: boolean;
 
   @IsBoolean()

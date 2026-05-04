@@ -15,7 +15,7 @@ import {
   bulkDeleteAdminProducts,
   getAdminProductsBulkStatus,
 } from '@/lib/api/admin';
-import { requireAdminSession } from '@/lib/auth/session';
+import { requireAdminSession, requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import type {
   CreateProductInput,
   CreateProductResponse,
@@ -45,6 +45,7 @@ export async function createUserAction(input: CreateUserInput): Promise<BackendU
 export async function updateUserRoleAction(input: {
   userId: string;
   isAdmin: boolean;
+  isEmployee?: boolean;
   canCreateCart: boolean;
   canOrderProducts: boolean;
 }) {
@@ -52,6 +53,7 @@ export async function updateUserRoleAction(input: {
 
   return updateAdminUserRole(input.userId, {
     isAdmin: input.isAdmin,
+    isEmployee: input.isEmployee,
     canCreateCart: input.canCreateCart,
     canOrderProducts: input.canOrderProducts,
   });
@@ -69,7 +71,7 @@ export async function getAdminProductsAction(params?: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedProductsResponse> {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return listAdminProducts(params);
 }
 
@@ -77,38 +79,38 @@ export async function createProductAction(
   input: CreateProductInput,
   forceConfirm = false
 ): Promise<CreateProductResponse> {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return createAdminProduct(input, forceConfirm);
 }
 
 export async function updateProductAction(input: { productId: string } & UpdateProductInput) {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   const { productId, ...payload } = input;
   return updateAdminProduct(productId, payload);
 }
 
 export async function deleteProductAction(productId: string) {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return deleteAdminProduct(productId);
 }
 
 export async function bulkUpdateProductsAction(input: BulkUpdateProductInput) {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return bulkUpdateAdminProducts(input);
 }
 
 export async function bulkDeleteProductsAction(ids: string[]): Promise<{ count: number }> {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return bulkDeleteAdminProducts(ids);
 }
 
 export async function getAdminProductsBulkStatusAction(): Promise<{ isBusy: boolean }> {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   return getAdminProductsBulkStatus();
 }
 
 export async function uploadProductImageAction(formData: FormData) {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   const file = formData.get('file');
   if (!(file instanceof File)) {
     throw new TypeError('Nessun file fornito');

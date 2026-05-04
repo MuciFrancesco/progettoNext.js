@@ -23,11 +23,11 @@ type AuthActionResult = {
 };
 
 function pathByRole(role: UserRole): string {
-  if (role === 'ADMIN') {
+  if (role === 'ADMIN' || role === 'EMPLOYEE') {
     return '/dashboard';
   }
 
-  return '/user';
+  return '/';
 }
 
 export async function signinAction(input: SigninRequest): Promise<AuthActionResult> {
@@ -64,7 +64,9 @@ export async function signinAction(input: SigninRequest): Promise<AuthActionResu
 
     await saveSessionToken(access_token, signinResponse.refresh_token);
     const payload = decodeJwtPayload(access_token);
-    const role = payload ? resolveRole(payload.email, undefined, payload.isAdmin) : 'USER';
+    const role = payload
+      ? resolveRole(payload.email, undefined, payload.isAdmin, payload.isEmployee)
+      : 'USER';
 
     return {
       ok: true,
@@ -101,7 +103,9 @@ export async function signupAction(input: SignupRequest): Promise<AuthActionResu
 
     await saveSessionToken(access_token, refresh_token);
     const payload = decodeJwtPayload(access_token);
-    const role = payload ? resolveRole(payload.email, undefined, payload.isAdmin) : 'USER';
+    const role = payload
+      ? resolveRole(payload.email, undefined, payload.isAdmin, payload.isEmployee)
+      : 'USER';
 
     return {
       ok: true,

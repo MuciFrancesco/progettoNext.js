@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
-import { requireAdminSession } from '@/lib/auth/session';
+import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { AdminUpdateProductsTable } from '@/features/admin/components/AdminUpdateProductsTable';
 import { getAdminProductsAction } from '@/lib/actions/admin';
@@ -16,7 +16,7 @@ export default async function AdminUpdateProductPage({
 }: Readonly<{
   searchParams: Promise<{ q?: string; id?: string }>;
 }>) {
-  await requireAdminSession();
+  await requireAdminOrEmployeeSession();
   const t = await getTranslator();
   const locale = await getCurrentLocale();
   const params = await searchParams;

@@ -20,6 +20,7 @@ export interface BackendProduct {
   readonly imagePath: string;
   readonly imagePaths: readonly string[];
   readonly category: ProductCategory;
+  readonly priceInCents: number;
   readonly stockQuantity: number;
   readonly isAvailableForPurchase: boolean;
   readonly createdAt: string;
@@ -31,6 +32,7 @@ export interface CreateProductInput {
   readonly name: string;
   readonly description: string;
   readonly imagePaths: readonly string[];
+  readonly priceInCents?: number;
   readonly stockQuantity: number;
   readonly category: ProductCategory;
 }
@@ -41,6 +43,7 @@ export interface UpdateProductInput {
   readonly description?: string;
   readonly imagePath?: string;
   readonly imagePaths?: string[];
+  readonly priceInCents?: number;
   readonly stockQuantity?: number;
   readonly isAvailableForPurchase?: boolean;
   readonly category?: ProductCategory;

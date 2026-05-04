@@ -1,5 +1,8 @@
 import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader';
-import { getAdminLinks } from '@/components/DashboardHeader/helpers/dashboardLinks';
+import {
+  getAdminLinks,
+  getEmployeeLinks,
+} from '@/components/DashboardHeader/helpers/dashboardLinks';
 import { AppFooter } from '@/components/Footer/AppFooter';
 import SessionExpiryWatcher from '@/components/SessionExpiryWatcher/SessionExpiryWatcher';
 import LogoutButton from '@/components/DashboardHeader/LogoutButton';
@@ -7,6 +10,7 @@ import LocaleSwitcher from '@/components/LocaleSwitcher/LocaleSwitcher';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { getLanguageOptions } from '@/lib/i18n/translator';
 import { getAdminFooterSections, getSharedFooterSections } from '@/lib/footer/footerSections';
+import { getCurrentSession } from '@/lib/auth/session';
 import React from 'react';
 
 export const dynamic = 'force-dynamic';
@@ -14,22 +18,33 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardLayout({ children }: { children?: React.ReactNode }) {
   const locale = await getCurrentLocale();
   const t = await getTranslator();
+  const session = await getCurrentSession();
+  const role = session?.user.role ?? 'ADMIN';
 
-  const adminLinks = getAdminLinks({
-    overview: t('navOverview'),
-    role: t('navRole'),
-    addProduct: t('navAddProduct'),
-    updateProduct: t('navUpdateProduct'),
-    orders: t('navOrders'),
-  });
+  const navLinks =
+    role === 'EMPLOYEE'
+      ? getEmployeeLinks({
+          overview: t('navOverview'),
+          addProduct: t('navAddProduct'),
+          updateProduct: t('navUpdateProduct'),
+        })
+      : getAdminLinks({
+          overview: t('navOverview'),
+          role: t('navRole'),
+          addProduct: t('navAddProduct'),
+          updateProduct: t('navUpdateProduct'),
+          orders: t('navOrders'),
+        });
+
+  const badgeLabel = role === 'EMPLOYEE' ? t('employeeControlLabel') : t('adminControlLabel');
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-background to-muted/30">
       <SessionExpiryWatcher />
       <DashboardHeader
-        badgeLabel={t('adminControlLabel')}
+        badgeLabel={badgeLabel}
         navAriaLabel={t('adminDashboardNavAria')}
-        links={adminLinks}
+        links={navLinks}
         rightSlot={
           <>
             <div className="flex items-center gap-2">

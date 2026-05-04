@@ -7,6 +7,8 @@ export const AdminRoutes = {
 } as const;
 
 export const UserRoutes = {
+  HOME: '/',
   USER_AREA: '/user',
+  CART: '/cart',
   PURCHASE_HISTORY: '/user/orders',
 } as const;

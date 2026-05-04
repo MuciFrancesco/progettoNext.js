@@ -4,22 +4,13 @@ import { getMe } from '@/lib/api/auth';
 import { resolveRole } from '@/lib/auth/roles';
 import type { AuthSession } from '@/types/api/auth';
 import type { UserRole } from '@/types/api/user';
-import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
 const AUTH_COOKIE_NAME = 'access_token';
 const REFRESH_COOKIE_NAME = 'refresh_token';
 const SESSION_EXPIRED_COOKIE_NAME = 'session_expired';
 
-async function expireSession(cookieStore: ReadonlyRequestCookies): Promise<never> {
-  cookieStore.delete(AUTH_COOKIE_NAME);
-  cookieStore.set(SESSION_EXPIRED_COOKIE_NAME, '1', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 5,
-  });
-  redirect('/logout');
+function expireSession(): never {
+  redirect('/auth/logout');
 }
 
 export async function saveSessionToken(accessToken: string, refreshToken?: string): Promise<void> {
@@ -67,7 +58,7 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
 
   try {
     const me = await getMe(token);
-    const role = resolveRole(me.email, me.role, me.isAdmin);
+    const role = resolveRole(me.email, me.role, me.isAdmin, me.isEmployee);
 
     return {
       token,
@@ -75,6 +66,7 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
         id: me.id,
         email: me.email,
         isAdmin: me.isAdmin,
+        isEmployee: me.isEmployee,
         firstname: me.firstname,
         secondname: me.secondname ?? null,
         lastname: me.lastname,
@@ -89,10 +81,10 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
 }
 
 export function redirectByRole(role: UserRole): never {
-  if (role === 'ADMIN') {
+  if (role === 'ADMIN' || role === 'EMPLOYEE') {
     redirect('/dashboard');
   }
-  redirect('/user');
+  redirect('/');
 }
 
 export async function requireAdminSession(): Promise<AuthSession> {
@@ -103,7 +95,7 @@ export async function requireAdminSession(): Promise<AuthSession> {
 
   if (!session) {
     if (hadToken) {
-      await expireSession(cookieStore);
+      expireSession();
     }
     if (hadExpiredFlag) {
       notFound();
@@ -118,6 +110,29 @@ export async function requireAdminSession(): Promise<AuthSession> {
   return session;
 }
 
+export async function requireAdminOrEmployeeSession(): Promise<AuthSession> {
+  const cookieStore = await cookies();
+  const hadToken = !!cookieStore.get(AUTH_COOKIE_NAME)?.value;
+  const hadExpiredFlag = cookieStore.get(SESSION_EXPIRED_COOKIE_NAME)?.value === '1';
+  const session = await getCurrentSession();
+
+  if (!session) {
+    if (hadToken) {
+      expireSession();
+    }
+    if (hadExpiredFlag) {
+      notFound();
+    }
+    redirect('/login?mode=signin');
+  }
+
+  if (session.user.role !== 'ADMIN' && session.user.role !== 'EMPLOYEE') {
+    notFound();
+  }
+
+  return session;
+}
+
 export async function requireUserSession(): Promise<AuthSession> {
   const cookieStore = await cookies();
   const hadToken = !!cookieStore.get(AUTH_COOKIE_NAME)?.value;
@@ -125,7 +140,7 @@ export async function requireUserSession(): Promise<AuthSession> {
 
   if (!session) {
     if (hadToken) {
-      await expireSession(cookieStore);
+      expireSession();
     }
     redirect('/login?mode=signin');
   }

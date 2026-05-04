@@ -66,9 +66,9 @@ function validateMagicBytes(filePath: string, declaredMime: string): boolean {
 @UseGuards(JwtGuard)
 @Controller('admin')
 export class UploadController {
-  private assertAdmin(isAdmin: boolean) {
-    if (!isAdmin) {
-      throw new ForbiddenException('Solo admin');
+  private assertAdminOrEmployee(isAdmin: boolean, isEmployee: boolean) {
+    if (!isAdmin && !isEmployee) {
+      throw new ForbiddenException('Solo admin o employee');
     }
   }
 
@@ -105,9 +105,10 @@ export class UploadController {
   )
   uploadProductImage(
     @GetUser('isAdmin') isAdmin: boolean,
+    @GetUser('isEmployee') isEmployee: boolean,
     @UploadedFile() file: Express.Multer.File
   ) {
-    this.assertAdmin(isAdmin);
+    this.assertAdminOrEmployee(isAdmin, isEmployee);
 
     if (!file) {
       throw new BadRequestException('Nessun file caricato.');

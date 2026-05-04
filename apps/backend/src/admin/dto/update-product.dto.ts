@@ -41,6 +41,12 @@ export class UpdateProductDto {
   @IsInt()
   @Min(0)
   @IsOptional()
+  priceInCents?: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @IsOptional()
   stockQuantity?: number;
 
   @IsBoolean()

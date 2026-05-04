@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_PREFIXES = ['/dashboard', '/user', '/admin'];
+const PROTECTED_PREFIXES = ['/dashboard', '/user', '/admin', '/checkout', '/api/checkout'];
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:3333';
 
 /**
@@ -95,5 +95,13 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/user/:path*', '/admin/:path*'],
+  matcher: [
+    '/dashboard/:path*',
+    '/user/:path*',
+    '/admin/:path*',
+    '/checkout',
+    '/checkout/:path*',
+    '/api/checkout',
+    '/api/checkout/:path*',
+  ],
 };

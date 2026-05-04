@@ -23,8 +23,8 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { AdminRoutes } from '@/lib/routes';
+import { resolveProductImageSrc } from '@/lib/shop/format';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3333';
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -184,10 +184,10 @@ export default function AddProductForm({
                   >
                     <CardMedia component="div" sx={{ width: 88, height: 88, position: 'relative' }}>
                       <Image
-                        src={`${BACKEND_URL}${path}`}
+                        src={resolveProductImageSrc(path)}
                         alt={`${t('productImageRemoveAlt')} ${index + 1}`}
                         fill
-                        style={{ objectFit: 'cover' }}
+                        style={{ objectFit: 'contain' }}
                         unoptimized
                       />
                     </CardMedia>

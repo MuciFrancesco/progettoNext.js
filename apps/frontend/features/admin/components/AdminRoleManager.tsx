@@ -55,11 +55,13 @@ export function AdminRoleManager({
     formFirstName,
     formLastName,
     formIsAdmin,
+    formIsEmployee,
     setFormEmail,
     setFormPassword,
     setFormFirstName,
     setFormLastName,
     setFormIsAdmin,
+    setFormIsEmployee,
     handleAddUserSubmit,
     sortKey,
     sortDir,
@@ -127,6 +129,7 @@ export function AdminRoleManager({
           formFirstName={formFirstName}
           formLastName={formLastName}
           formIsAdmin={formIsAdmin}
+          formIsEmployee={formIsEmployee}
           isAddPending={isAddPending}
           addUserError={addUserError}
           addUserSuccess={addUserSuccess}
@@ -137,6 +140,7 @@ export function AdminRoleManager({
           onFirstNameChange={setFormFirstName}
           onLastNameChange={setFormLastName}
           onIsAdminChange={setFormIsAdmin}
+          onIsEmployeeChange={setFormIsEmployee}
         />
       </Suspense>
       <ToastNotification toast={toast} onClose={closeToast} />

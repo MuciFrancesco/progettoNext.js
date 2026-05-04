@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { AdminModule } from './admin/admin.module';
+import { ProductModule } from './product/product.module';
+import { CheckoutModule } from './checkout/checkout.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { AdminModule } from './admin/admin.module';
     UserModule,
     BookmarkModule,
     AdminModule,
+    ProductModule,
+    CheckoutModule,
   ],
   providers: [
     {

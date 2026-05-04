@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { MuiThemeProvider } from '@/providers/MuiThemeProvider';
+import { CartProvider } from '@/providers/CartProvider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -35,7 +36,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <MuiThemeProvider>{children}</MuiThemeProvider>
+        <MuiThemeProvider>
+          <CartProvider>{children}</CartProvider>
+        </MuiThemeProvider>
       </body>
     </html>
   );

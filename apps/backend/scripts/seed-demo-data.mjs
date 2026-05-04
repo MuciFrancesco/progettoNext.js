@@ -2,11 +2,14 @@
  * Seed demo data:
  *  - 50 prodotti distribuiti tra le categorie
  *  - 20 utenti non-admin
- *  - 200 ordini con date sparse (oggi / settimane / mesi / anni fa)
+ *  - almeno 5 prodotti gia acquistati per ogni utente, in date diverse
+ *  - 200 ordini aggiuntivi con date sparse (oggi / settimane / mesi / anni fa)
  */
 
 import process from 'node:process';
 import { randomUUID } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import argon2 from 'argon2';
 import { Client } from 'pg';
 
@@ -42,6 +45,59 @@ function weightedOrderDate() {
   if (bucket < 0.5) return randomPastDate(7); // ultima settimana
   if (bucket < 0.75) return randomPastDate(30); // ultimo mese
   return randomPastDate(365); // ultimo anno
+}
+
+function orderDateDaysAgo(daysAgo) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  date.setHours(randInt(9, 20), randInt(0, 59), randInt(0, 59), 0);
+  return date;
+}
+
+function guaranteedOrderDate(userIndex, orderIndex) {
+  const dateOffsets = [1, 6, 18, 45, 120];
+  return orderDateDaysAgo(dateOffsets[orderIndex] + userIndex);
+}
+
+function escapeSvgText(value) {
+  return value.replace(/[&<>"']/g, (char) => {
+    const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' };
+    return entities[char];
+  });
+}
+
+function productImagePath(product) {
+  return `/uploads/demo/${product.category.toLowerCase()}-${product.id.split('-')[0]}.svg`;
+}
+
+async function writeProductPlaceholder(product) {
+  const uploadsDir = join(process.cwd(), 'uploads', 'demo');
+  await mkdir(uploadsDir, { recursive: true });
+
+  const accentByCategory = {
+    TECHNOLOGY: '#2563eb',
+    HOME: '#059669',
+    CLOTHING: '#db2777',
+    SPORTS: '#ea580c',
+    BOOKS: '#7c3aed',
+    FOOD: '#ca8a04',
+    BEAUTY: '#be123c',
+    TOYS: '#0891b2',
+    OTHER: '#475569',
+  };
+  const accent = accentByCategory[product.category] ?? '#475569';
+  const fileName = `${product.category.toLowerCase()}-${product.id.split('-')[0]}.svg`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="${escapeSvgText(product.title)}">
+  <rect width="960" height="640" fill="#f8fafc"/>
+  <rect x="64" y="64" width="832" height="512" rx="40" fill="${accent}" opacity="0.12"/>
+  <circle cx="760" cy="158" r="86" fill="${accent}" opacity="0.2"/>
+  <rect x="120" y="388" width="720" height="42" rx="21" fill="${accent}" opacity="0.18"/>
+  <rect x="120" y="456" width="520" height="32" rx="16" fill="${accent}" opacity="0.14"/>
+  <text x="120" y="284" fill="#0f172a" font-family="Arial, sans-serif" font-size="52" font-weight="700">${escapeSvgText(product.name)}</text>
+  <text x="120" y="344" fill="${accent}" font-family="Arial, sans-serif" font-size="30" font-weight="700">${escapeSvgText(product.category)}</text>
+</svg>`;
+
+  await writeFile(join(uploadsDir, fileName), svg, 'utf8');
 }
 
 // ── Catalogo prodotti (50 voci) ───────────────────────────────────────────────
@@ -247,6 +303,8 @@ async function main() {
   for (const p of PRODUCT_TEMPLATES) {
     const id = randomUUID();
     const stock = randInt(5, 200);
+    const imagePath = productImagePath({ ...p, id });
+    await writeProductPlaceholder({ ...p, id });
     await client.query(
       `INSERT INTO products (id, title, name, description, category, "priceInCents", "imagePath", "stock_quantity", "isAvailableForPurchase", "createdAt", "updatedAt")
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,NOW(),NOW())
@@ -258,7 +316,7 @@ async function main() {
         `${p.name} — prodotto di qualità nella categoria ${p.category.toLowerCase()}.`,
         p.category,
         p.price,
-        `/uploads/${p.category.toLowerCase()}-${id.split('-')[0]}.jpg`,
+        imagePath,
         stock,
       ]
     );
@@ -268,38 +326,71 @@ async function main() {
   console.log(`  ✓ ${productIds.length} prodotti inseriti`);
 
   // 2. Utenti non-admin ─────────────────────────────────────────────────────────
-  console.log('\nInserisco 20 utenti non-admin...');
+  const existingProducts = await client.query(
+    `SELECT id, name, title, category FROM products WHERE "imagePath" LIKE '/uploads/%'`
+  );
+  for (const product of existingProducts.rows) {
+    const imagePath = productImagePath(product);
+    await writeProductPlaceholder(product);
+    await client.query(
+      `UPDATE products SET "imagePath" = $2, "imagePaths" = ARRAY[$2]::text[], "updatedAt" = NOW() WHERE id = $1`,
+      [product.id, imagePath]
+    );
+  }
+
+  console.log('\nInserisco utenti non-admin...');
   const userIds = [];
   const defaultHash = await argon2.hash('Demo1234!');
+  const requestedUserHash = await argon2.hash('Amacabanane97!');
+
+  async function insertDemoUser({ email, firstName, lastName, passwordHash = defaultHash }) {
+    const id = randomUUID();
+    const result = await client.query(
+      `INSERT INTO users (id, email, hash, "is_admin", "is_employee", "can_create_cart", "can_order_products", "preferred_locale", "first_name", "last_name", "created_at", "updated_at")
+       VALUES ($1,$2,$3,false,false,true,true,'it',$4,$5,NOW(),NOW())
+       ON CONFLICT (email) DO UPDATE SET
+         hash = EXCLUDED.hash,
+         "is_admin" = false,
+         "is_employee" = false,
+         "can_create_cart" = true,
+         "can_order_products" = true,
+         "first_name" = EXCLUDED."first_name",
+         "last_name" = EXCLUDED."last_name",
+         "updated_at" = NOW()
+       RETURNING id`,
+      [id, email, passwordHash, firstName, lastName]
+    );
+    userIds.push(result.rows[0].id);
+  }
+
+  await insertDemoUser({
+    email: 'adolf000@gmail.it',
+    firstName: 'Adolf',
+    lastName: 'Demo',
+    passwordHash: requestedUserHash,
+  });
 
   for (let i = 0; i < 20; i++) {
-    const id = randomUUID();
     const firstName = pick(FIRST_NAMES);
     const lastName = pick(LAST_NAMES);
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase().replace(' ', '')}.${i + 1}@demo.dev`;
 
-    await client.query(
-      `INSERT INTO users (id, email, hash, "is_admin", "can_create_cart", "can_order_products", "preferred_locale", "first_name", "last_name", "created_at", "updated_at")
-       VALUES ($1,$2,$3,false,true,true,'it',$4,$5,NOW(),NOW())
-       ON CONFLICT (email) DO NOTHING`,
-      [id, email, defaultHash, firstName, lastName]
-    );
-    userIds.push(id);
+    await insertDemoUser({ email, firstName, lastName });
   }
   console.log(`  ✓ ${userIds.length} utenti inseriti`);
 
   // 3. Ordini ──────────────────────────────────────────────────────────────────
-  console.log('\nInserisco 2 ordini garantiti per utente...');
+  console.log('\nInserisco 5 acquisti garantiti per utente in date diverse...');
   let ordersInserted = 0;
 
-  for (const userId of userIds) {
-    for (let j = 0; j < 2; j++) {
+  for (const [userIndex, userId] of userIds.entries()) {
+    for (let j = 0; j < 5; j++) {
       const orderId = randomUUID();
-      const productId = pick(productIds);
+      const productId = productIds[(userIndex * 5 + j) % productIds.length];
       const price = productPrices[productId];
       const qty = randInt(1, 3);
       const total = price * qty;
-      const createdAt = weightedOrderDate();
+      const createdAt = guaranteedOrderDate(userIndex, j);
 
       await client.query(
         `INSERT INTO orders (id, "userId", "productId", "totalPriceInCents", "createdAt", "updatedAt")

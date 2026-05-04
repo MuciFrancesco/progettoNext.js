@@ -34,6 +34,7 @@ services:
       - ./apps/backend/prisma:/app/apps/backend/prisma
       - ./apps/backend/test:/app/apps/backend/test
       - ./apps/backend/scripts:/app/apps/backend/scripts
+      - ./apps/backend/uploads:/app/apps/backend/uploads
     depends_on:
       dev-db:
         condition: service_healthy

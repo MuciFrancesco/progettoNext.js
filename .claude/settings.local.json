@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(xargs grep *)",
+      "Skill(codex:setup)",
+      "Read(//c/Users/Franc/.agents/skills/**)",
+      "Read(//c/Users/Franc/.codex/**)",
+      "Bash(Get-ChildItem \"C:/Users/Franc/.codex/skills/\" -Recurse)",
+      "Bash(Select-Object FullName)",
+      "Bash(python -m graphify --help)"
     ]
   }
 }

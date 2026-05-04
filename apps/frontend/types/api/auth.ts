@@ -29,6 +29,7 @@ export interface BackendMeResponse {
   readonly secondname?: string | null;
   readonly lastname: string | null;
   readonly isAdmin?: boolean;
+  readonly isEmployee?: boolean;
   readonly role?: UserRole;
   readonly createdAt?: string;
   readonly updatedAt?: string;

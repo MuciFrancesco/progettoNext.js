@@ -1,5 +1,6 @@
 import { AdminRoutes } from '@/lib/routes';
 import type { TranslationKey } from '@/lib/i18n/translator';
+import type { UserRole } from '@/types/api/user';
 
 export interface AdminPanelConfig {
   readonly href: string;
@@ -9,7 +10,7 @@ export interface AdminPanelConfig {
   readonly testId: string;
 }
 
-export const adminPanelsConfig: AdminPanelConfig[] = [
+const allPanels: AdminPanelConfig[] = [
   {
     href: AdminRoutes.ROLE,
     titleKey: 'dashboardPanelRoleTitle',
@@ -39,3 +40,12 @@ export const adminPanelsConfig: AdminPanelConfig[] = [
     testId: 'panel-orders',
   },
 ];
+
+const employeePanelTestIds = new Set(['panel-add-product', 'panel-update-product']);
+
+export function getAdminPanelsConfig(role: UserRole): AdminPanelConfig[] {
+  if (role === 'EMPLOYEE') {
+    return allPanels.filter((p) => employeePanelTestIds.has(p.testId));
+  }
+  return allPanels;
+}

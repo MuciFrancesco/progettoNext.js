@@ -14,12 +14,15 @@ function getAdminEmails(): Set<string> {
 export function resolveRole(
   email: string,
   backendRole?: UserRole,
-  backendIsAdmin?: boolean
+  backendIsAdmin?: boolean,
+  backendIsEmployee?: boolean
 ): UserRole {
   if (typeof backendIsAdmin === 'boolean') {
-    return backendIsAdmin ? 'ADMIN' : 'USER';
+    if (backendIsAdmin) return 'ADMIN';
+    if (backendIsEmployee) return 'EMPLOYEE';
+    return 'USER';
   }
-  if (backendRole === 'ADMIN' || backendRole === 'USER') {
+  if (backendRole === 'ADMIN' || backendRole === 'EMPLOYEE' || backendRole === 'USER') {
     return backendRole;
   }
   return getAdminEmails().has(email.toLowerCase()) ? 'ADMIN' : 'USER';

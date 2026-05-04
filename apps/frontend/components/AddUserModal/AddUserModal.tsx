@@ -22,6 +22,7 @@ export type AddUserModalProps = {
   readonly formFirstName: string;
   readonly formLastName: string;
   readonly formIsAdmin: boolean;
+  readonly formIsEmployee: boolean;
   readonly isAddPending: boolean;
   readonly addUserError: string | null;
   readonly addUserSuccess: string | null;
@@ -32,6 +33,7 @@ export type AddUserModalProps = {
   readonly onFirstNameChange: (value: string) => void;
   readonly onLastNameChange: (value: string) => void;
   readonly onIsAdminChange: (value: boolean) => void;
+  readonly onIsEmployeeChange: (value: boolean) => void;
 };
 
 export function AddUserModal({
@@ -42,6 +44,7 @@ export function AddUserModal({
   formFirstName,
   formLastName,
   formIsAdmin,
+  formIsEmployee,
   isAddPending,
   addUserError,
   addUserSuccess,
@@ -52,6 +55,7 @@ export function AddUserModal({
   onFirstNameChange,
   onLastNameChange,
   onIsAdminChange,
+  onIsEmployeeChange,
 }: AddUserModalProps) {
   const t = createTranslator(locale);
 
@@ -123,11 +127,27 @@ export function AddUserModal({
             control={
               <Checkbox
                 checked={formIsAdmin}
-                onChange={(e) => onIsAdminChange(e.target.checked)}
+                onChange={(e) => {
+                  onIsAdminChange(e.target.checked);
+                  if (e.target.checked) onIsEmployeeChange(false);
+                }}
                 color="primary"
               />
             }
             label={t('newUserFieldIsAdmin')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formIsEmployee}
+                onChange={(e) => {
+                  onIsEmployeeChange(e.target.checked);
+                  if (e.target.checked) onIsAdminChange(false);
+                }}
+                color="primary"
+              />
+            }
+            label={t('newUserFieldIsEmployee')}
           />
 
           {addUserError && <Alert severity="error">{addUserError}</Alert>}

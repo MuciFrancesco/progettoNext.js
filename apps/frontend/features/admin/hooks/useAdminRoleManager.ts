@@ -12,10 +12,11 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { ToastMessage } from '@/components/ToastNotification/ToastNotification';
 
-export type RoleSortKey = 'name' | 'email' | 'isAdmin' | 'canCreateCart' | 'canOrderProducts';
+export type RoleSortKey = 'name' | 'email' | 'isAdmin' | 'isEmployee' | 'canCreateCart' | 'canOrderProducts';
 
 export type EditableRole = {
   isAdmin: boolean;
+  isEmployee: boolean;
   canCreateCart: boolean;
   canOrderProducts: boolean;
 };
@@ -31,6 +32,7 @@ function initDrafts(users: BackendUser[]): Record<string, EditableRole> {
   for (const user of users) {
     map[user.id] = {
       isAdmin: !!user.isAdmin,
+      isEmployee: !!user.isEmployee,
       canCreateCart: user.canCreateCart ?? true,
       canOrderProducts: user.canOrderProducts ?? true,
     };
@@ -81,6 +83,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
   const [formFirstName, setFormFirstName] = useState('');
   const [formLastName, setFormLastName] = useState('');
   const [formIsAdmin, setFormIsAdmin] = useState(false);
+  const [formIsEmployee, setFormIsEmployee] = useState(false);
 
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {
@@ -94,6 +97,9 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
           break;
         case 'isAdmin':
           cmp = Number(!!a.isAdmin) - Number(!!b.isAdmin);
+          break;
+        case 'isEmployee':
+          cmp = Number(!!a.isEmployee) - Number(!!b.isEmployee);
           break;
         case 'canCreateCart':
           cmp = Number(a.canCreateCart ?? true) - Number(b.canCreateCart ?? true);
@@ -164,6 +170,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
           if (!draft) return false;
           return (
             draft.isAdmin !== !!user.isAdmin ||
+            draft.isEmployee !== !!user.isEmployee ||
             draft.canCreateCart !== (user.canCreateCart ?? true) ||
             draft.canOrderProducts !== (user.canOrderProducts ?? true)
           );
@@ -182,6 +189,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
           return updateUserRoleAction({
             userId,
             isAdmin: draft.isAdmin,
+            isEmployee: draft.isEmployee,
             canCreateCart: draft.canCreateCart,
             canOrderProducts: draft.canOrderProducts,
           });
@@ -225,6 +233,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
         const updated = await updateUserRoleAction({
           userId,
           isAdmin: draft.isAdmin,
+          isEmployee: draft.isEmployee,
           canCreateCart: draft.canCreateCart,
           canOrderProducts: draft.canOrderProducts,
         });
@@ -249,6 +258,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
       ...prev,
       [userId]: {
         isAdmin: !!original.isAdmin,
+        isEmployee: !!original.isEmployee,
         canCreateCart: original.canCreateCart ?? true,
         canOrderProducts: original.canOrderProducts ?? true,
       },
@@ -326,6 +336,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
     setFormFirstName('');
     setFormLastName('');
     setFormIsAdmin(false);
+    setFormIsEmployee(false);
     setAddUserError(null);
     setAddUserSuccess(null);
     setIsAddModalOpen(true);
@@ -340,6 +351,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
     setFormFirstName('');
     setFormLastName('');
     setFormIsAdmin(false);
+    setFormIsEmployee(false);
   };
 
   useEffect(() => {
@@ -359,6 +371,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
       firstName: formFirstName.trim() || undefined,
       lastName: formLastName.trim() || undefined,
       isAdmin: formIsAdmin,
+      isEmployee: formIsEmployee,
     });
   };
 
@@ -374,6 +387,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
           ...prev,
           [newUser.id]: {
             isAdmin: !!newUser.isAdmin,
+            isEmployee: !!newUser.isEmployee,
             canCreateCart: newUser.canCreateCart ?? true,
             canOrderProducts: newUser.canOrderProducts ?? true,
           },
@@ -445,11 +459,13 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
     formFirstName,
     formLastName,
     formIsAdmin,
+    formIsEmployee,
     setFormEmail,
     setFormPassword,
     setFormFirstName,
     setFormLastName,
     setFormIsAdmin,
+    setFormIsEmployee,
     handleAddUserSubmit,
   };
 }
