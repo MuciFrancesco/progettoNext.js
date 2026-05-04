@@ -1,0 +1,9 @@
+.inactiveChip {
+  padding-inline: 0.5rem;
+  border-color: var(--border);
+  background: transparent;
+}
+
+.inactiveChip:hover {
+  background: var(--muted);
+}

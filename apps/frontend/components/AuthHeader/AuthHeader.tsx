@@ -6,6 +6,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './AuthHeader.module.scss';
 
 type AuthHeaderProps = {
   readonly locale: Locale;
@@ -17,16 +18,8 @@ export function AuthHeader({ locale, isSigninMode, onModeChange }: AuthHeaderPro
   const t = createTranslator(locale);
   return (
     <>
-      <Paper variant="outlined" sx={{ py: 2, textAlign: 'center' }}>
-        <Typography
-          variant="caption"
-          sx={{
-            textTransform: 'uppercase',
-            letterSpacing: '0.2em',
-            fontWeight: 500,
-            color: 'var(--primary)',
-          }}
-        >
+      <Paper variant="outlined" className={styles.paper}>
+        <Typography variant="caption" className={styles.caption}>
           {t('authTitle')}
         </Typography>
       </Paper>
@@ -34,20 +27,12 @@ export function AuthHeader({ locale, isSigninMode, onModeChange }: AuthHeaderPro
       <ToggleButtonGroup
         value={isSigninMode ? 'signin' : 'signup'}
         exclusive
-        sx={{
-          display: 'flex',
-          width: '100%',
-          '& .MuiToggleButton-root.Mui-selected': {
-            backgroundColor: '#0D47A1',
-            color: 'white',
-            '&:hover': { backgroundColor: '#1565C0' },
-          },
-        }}
+        className={styles.toggleGroup}
       >
         <ToggleButton
           value="signin"
           data-testid="auth-mode-signin-tab"
-          sx={{ flex: 1 }}
+          className={styles.toggleButton}
           onClick={() => onModeChange('signin')}
         >
           {t('signinTitle')}
@@ -55,7 +40,7 @@ export function AuthHeader({ locale, isSigninMode, onModeChange }: AuthHeaderPro
         <ToggleButton
           value="signup"
           data-testid="auth-mode-signup-tab"
-          sx={{ flex: 1 }}
+          className={styles.toggleButton}
           onClick={() => onModeChange('signup')}
         >
           {t('signupTitle')}

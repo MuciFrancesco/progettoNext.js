@@ -9,7 +9,13 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { fetchProductStatuses } from '@/lib/api/product-status-client';
 import type { BackendProduct } from '@/types/api/product';
+import type { ProductStatusSnapshot } from '@/types/api/product';
+import {
+  reconcileCartItemsWithStatuses,
+  type CartStockAlert,
+} from '@/providers/cart-stock';
 
 export type CartItem = {
   readonly product: BackendProduct;
@@ -20,10 +26,14 @@ type CartContextValue = {
   readonly items: CartItem[];
   readonly totalQuantity: number;
   readonly totalInCents: number;
+  readonly stockAlerts: readonly CartStockAlert[];
   readonly addItem: (product: BackendProduct) => void;
   readonly updateQuantity: (productId: string, quantity: number) => void;
   readonly removeItem: (productId: string) => void;
   readonly syncWithProducts: (products: readonly BackendProduct[]) => void;
+  readonly syncWithProductStatuses: (statuses: readonly ProductStatusSnapshot[]) => void;
+  readonly refreshCartStock: () => Promise<void>;
+  readonly clearStockAlerts: () => void;
   readonly clearCart: () => void;
 };
 
@@ -41,6 +51,7 @@ function sanitizeItems(items: CartItem[]): CartItem[] {
 
 export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [stockAlerts, setStockAlerts] = useState<CartStockAlert[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
@@ -114,6 +125,28 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     );
   }, []);
 
+  const syncWithProductStatuses = useCallback((statuses: readonly ProductStatusSnapshot[]) => {
+    if (statuses.length === 0) return;
+
+    setItems((current) => {
+      const result = reconcileCartItemsWithStatuses(current, statuses);
+      if (result.alerts.length > 0) {
+        setStockAlerts((previous) => [...result.alerts, ...previous]);
+      }
+      return result.items;
+    });
+  }, []);
+
+  const refreshCartStock = useCallback(async () => {
+    if (items.length === 0) return;
+    const statuses = await fetchProductStatuses(items.map((item) => item.product.id));
+    syncWithProductStatuses(statuses);
+  }, [items, syncWithProductStatuses]);
+
+  const clearStockAlerts = useCallback(() => {
+    setStockAlerts([]);
+  }, []);
+
   const clearCart = useCallback(() => setItems([]), []);
 
   const value = useMemo<CartContextValue>(() => {
@@ -126,13 +159,28 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
       items,
       totalQuantity,
       totalInCents,
+      stockAlerts,
       addItem,
       updateQuantity,
       removeItem,
       syncWithProducts,
+      syncWithProductStatuses,
+      refreshCartStock,
+      clearStockAlerts,
       clearCart,
     };
-  }, [addItem, clearCart, items, removeItem, syncWithProducts, updateQuantity]);
+  }, [
+    addItem,
+    clearCart,
+    clearStockAlerts,
+    items,
+    refreshCartStock,
+    removeItem,
+    stockAlerts,
+    syncWithProducts,
+    syncWithProductStatuses,
+    updateQuantity,
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

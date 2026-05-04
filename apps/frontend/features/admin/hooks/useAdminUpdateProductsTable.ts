@@ -17,6 +17,7 @@ import type {
 } from '@/types/api/product';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 
 export type SortField = 'title' | 'name' | 'category' | 'stockQuantity' | 'isAvailableForPurchase';
 export type SortDirection = 'asc' | 'desc';
@@ -54,8 +55,6 @@ function toEditableProduct(product: BackendProduct): EditableProduct {
     category: product.category,
   };
 }
-
-const PAGE_SIZE = 20;
 
 export function useAdminUpdateProductsTable(
   initialResponse: PaginatedProductsResponse,
@@ -186,7 +185,7 @@ export function useAdminUpdateProductsTable(
           title: title || undefined,
           name: name || undefined,
           page: newPage + 1,
-          limit: PAGE_SIZE,
+          limit: DEFAULT_PAGE_SIZE,
         });
         setProducts(res.data);
         setTotal(res.total);

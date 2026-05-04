@@ -12,6 +12,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import styles from './ResetPasswordForm.module.scss';
 
 type ResetPasswordFormProps = {
   readonly locale: Locale;
@@ -27,12 +28,12 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
 
   if (!token) {
     return (
-      <Card variant="outlined" sx={{ width: '100%', maxWidth: 448 }}>
-        <CardContent sx={{ pt: 3 }} className="space-y-4">
+      <Card variant="outlined" className={styles.card}>
+        <CardContent className={styles.paddedCardContent}>
           <Typography variant="body2" color="error" data-testid="reset-password-invalid-token">
             {t('resetPasswordInvalidToken')}
           </Typography>
-          <Link href="/forgot-password" style={{ fontSize: '0.875rem', color: 'var(--primary)' }}>
+          <Link href="/forgot-password" className={styles.link}>
             {t('forgotPasswordBack')}
           </Link>
         </CardContent>
@@ -56,12 +57,12 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
 
   if (success) {
     return (
-      <Card variant="outlined" sx={{ width: '100%', maxWidth: 448 }}>
-        <CardContent sx={{ pt: 3 }} className="space-y-4">
+      <Card variant="outlined" className={styles.card}>
+        <CardContent className={styles.paddedCardContent}>
           <Typography variant="body2" color="text.secondary" data-testid="reset-password-success">
             {t('resetPasswordSuccess')}
           </Typography>
-          <Link href="/login?mode=signin" style={{ fontSize: '0.875rem', color: 'var(--primary)' }}>
+          <Link href="/login?mode=signin" className={styles.link}>
             {t('forgotPasswordBack')}
           </Link>
         </CardContent>
@@ -70,10 +71,10 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
   }
 
   return (
-    <Card variant="outlined" sx={{ width: '100%', maxWidth: 448 }}>
+    <Card variant="outlined" className={styles.card}>
       <CardHeader title={t('resetPasswordTitle')} />
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <form onSubmit={handleSubmit} className={styles.cardContent} noValidate>
           <Typography variant="body2" color="text.secondary">
             {t('resetPasswordSubtitle')}
           </Typography>

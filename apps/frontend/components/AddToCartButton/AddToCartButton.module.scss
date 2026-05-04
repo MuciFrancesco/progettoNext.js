@@ -1,0 +1,29 @@
+.controlsGrid {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px 44px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.iconButton {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.quantityBox {
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.quantityValue {
+  font-weight: 800;
+}
+
+.addButton {
+  width: 100%;
+  border-radius: 12px;
+}

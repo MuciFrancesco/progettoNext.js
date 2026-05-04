@@ -5,6 +5,7 @@ import { requireAdminSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { AdminRoleManager } from '@/features/admin/components/AdminRoleManager';
 import { listAdminUsers } from '@/lib/api/admin';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -17,7 +18,7 @@ export default async function AdminRolePage() {
   const locale = await getCurrentLocale();
   const initialResponse = await listAdminUsers({ page: 1, limit: 20 });
   return (
-    <section className="space-y-4">
+    <section className={styles.section}>
       <Suspense
         fallback={
           <GlobalPageLoading title={t('rolePageTitle')} subtitle={t('loadingAwaitingServer')} />

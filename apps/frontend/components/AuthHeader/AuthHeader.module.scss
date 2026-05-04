@@ -1,0 +1,29 @@
+.paper {
+  padding-block: 1rem;
+  text-align: center;
+}
+
+.caption {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.toggleGroup {
+  display: flex;
+  width: 100%;
+}
+
+.toggleGroup :global(.MuiToggleButton-root.Mui-selected) {
+  background: #0d47a1;
+  color: #fff;
+}
+
+.toggleGroup :global(.MuiToggleButton-root.Mui-selected:hover) {
+  background: #1565c0;
+}
+
+.toggleButton {
+  flex: 1;
+}

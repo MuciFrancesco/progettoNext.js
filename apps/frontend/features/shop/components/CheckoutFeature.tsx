@@ -2,7 +2,7 @@
 
 import { Checkout } from '@/components/Checkout/Checkout';
 import type { Locale } from '@/lib/i18n/translation';
-import { useCheckoutPage } from '../hooks/useCheckoutPage';
+import { useCheckoutPage } from '@/features/shop/hooks/useCheckoutPage';
 
 export function CheckoutFeature({ locale }: Readonly<{ locale: Locale }>) {
   const checkout = useCheckoutPage(locale);

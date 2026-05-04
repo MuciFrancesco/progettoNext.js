@@ -3,7 +3,7 @@
 import { ProductCatalog } from '@/components/ProductCatalog/ProductCatalog';
 import type { Locale } from '@/lib/i18n/translation';
 import type { BackendProduct } from '@/types/api/product';
-import { useProductCatalog } from '../hooks/useProductCatalog';
+import { useProductCatalog } from '@/features/shop/hooks/useProductCatalog';
 
 type ProductCatalogFeatureProps = {
   readonly products: BackendProduct[];
@@ -23,6 +23,7 @@ export function ProductCatalogFeature({ products, locale }: Readonly<ProductCata
       labels={catalog.labels}
       onQueryChange={catalog.setQuery}
       onCategoryChange={catalog.setCategory}
+      onRefreshProduct={catalog.refreshProduct}
     />
   );
 }

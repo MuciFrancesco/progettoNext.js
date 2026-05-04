@@ -5,6 +5,7 @@ import { listAdminOrders } from '@/lib/api/admin';
 import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -28,9 +29,9 @@ async function AdminOrdersPage() {
     <Suspense
       fallback={<GlobalPageLoading title={t('navOrders')} subtitle={t('loadingAwaitingServer')} />}
     >
-      <section data-testid="admin-orders-page" className="space-y-6">
+      <section data-testid="admin-orders-page" className={styles.section}>
         <header>
-          <h1 className="text-2xl font-semibold">{t('navOrders')}</h1>
+          <h1 className={styles.title}>{t('navOrders')}</h1>
         </header>
         <AdminOrdersTable initialResponse={initialResponse} locale={locale} />
       </section>

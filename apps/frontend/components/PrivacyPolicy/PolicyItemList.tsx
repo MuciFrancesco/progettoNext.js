@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { ReactNode } from 'react';
+import styles from './PolicyItemList.module.scss';
 
 interface PolicyItemListProps {
   readonly items: ReactNode[];
@@ -15,11 +16,7 @@ export function PolicyItemList({ items, ordered = false }: PolicyItemListProps) 
   return (
     <Box
       component={ordered ? 'ol' : 'ul'}
-      sx={{
-        pl: 3,
-        color: 'text.secondary',
-        listStyleType: ordered ? 'decimal' : 'disc',
-      }}
+      className={ordered ? styles.orderedList : styles.unorderedList}
     >
       {items.map((item, index) => (
         <li key={index}>

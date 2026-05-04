@@ -8,6 +8,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import styles from './SignupFormCard.module.scss';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { useFormik } from 'formik';
@@ -57,7 +58,7 @@ export function SignupFormCard({
           data-testid="signup-form"
           onSubmit={formik.handleSubmit}
           noValidate
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          className={styles.formStack}
         >
           <TextField
             id="signup-firstname"
@@ -163,7 +164,7 @@ export function SignupFormCard({
             {t('signupSubmit')}
           </MuiButton>
 
-          <div style={{ margin: '8px 0', height: '1px', background: 'var(--border)' }} />
+          <div className={styles.dividerSpacer} />
 
           <Divider>
             <Typography variant="subtitle2" color="text.secondary">
@@ -171,7 +172,7 @@ export function SignupFormCard({
             </Typography>
           </Divider>
 
-          <div style={{ display: 'grid', gap: '8px' }}>
+          <div className={styles.socialButtons}>
             <MuiButton
               component="a"
               href={`${resolvedBackendBaseUrl}/auth/google`}

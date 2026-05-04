@@ -4,6 +4,7 @@ import Chip from '@mui/material/Chip';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { DashboardLink } from './helpers/dashboardLinks';
+import styles from './NavChip.module.scss';
 
 type NavChipProps = {
   readonly link: DashboardLink;
@@ -22,12 +23,7 @@ export function NavChip({ link }: NavChipProps) {
       icon={link.Icon ? <link.Icon fontSize="small" /> : undefined}
       variant={isActive ? 'filled' : 'outlined'}
       color={isActive ? 'primary' : 'default'}
-      sx={{
-        px: 0.5,
-        borderColor: isActive ? undefined : 'var(--border)',
-        bgcolor: isActive ? undefined : 'transparent',
-        '&:hover': { bgcolor: isActive ? undefined : 'var(--muted)' },
-      }}
+      className={!isActive ? styles.inactiveChip : undefined}
     />
   );
 }

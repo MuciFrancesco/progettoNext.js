@@ -1,10 +1,10 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { PolicyHeader } from '../PrivacyPolicy/PolicyHeader';
-import { PolicyBackLink } from '../PrivacyPolicy/PolicyBackLink';
-import { ContactInfoCard } from './ContactInfoCard';
-import { ContactMapPlaceholder } from './ContactMapPlaceholder';
+import { PolicyHeader } from '@/components/PrivacyPolicy/PolicyHeader';
+import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink';
+import { ContactInfoCard } from '@/components/Contact/ContactInfoCard';
+import { ContactMapPlaceholder } from '@/components/Contact/ContactMapPlaceholder';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';

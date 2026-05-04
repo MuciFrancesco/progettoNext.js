@@ -3,9 +3,9 @@ import Container from '@mui/material/Container';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-import { PolicySection } from '../PrivacyPolicy/PolicySection';
-import { PolicyHeader } from '../PrivacyPolicy/PolicyHeader';
-import { PolicyBackLink } from '../PrivacyPolicy/PolicyBackLink';
+import { PolicySection } from '@/components/PrivacyPolicy/PolicySection';
+import { PolicyHeader } from '@/components/PrivacyPolicy/PolicyHeader';
+import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 
 const LOCALE_BCP47: Record<string, string> = {

@@ -35,9 +35,9 @@ export const homeTestIds = {
 
 export const localeSwitcherTestIds = {
   home: {
-    root: 'home-locale-switcher-root',
-    label: 'home-locale-switcher-label',
-    select: 'home-locale-switcher-select',
+    root: 'login-locale-switcher-root',
+    label: 'login-locale-switcher-label',
+    select: 'login-locale-switcher-select',
   },
   user: {
     root: 'user-locale-switcher-root',
@@ -55,7 +55,7 @@ export const userPageTestIds = {
   page: 'user-page',
   title: 'user-page-title',
   greeting: 'user-page-greeting',
-  signoutButton: 'user-signout-button',
+  signoutButton: 'user-header-signout-button',
 } as const;
 
 export const adminPageTestIds = {

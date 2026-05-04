@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -152,6 +152,11 @@ function removeSavedCard() {
   } catch {}
 }
 
+function getInitialSavedCard(): SavedCard | null {
+  if (typeof window === 'undefined') return null;
+  return loadSavedCard();
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 type Props = {
@@ -170,20 +175,12 @@ export function CardPaymentForm({ locale, totalInCents, isProcessing, errorMessa
   const [cvc, setCvc] = useState('');
   const [name, setName] = useState('');
   const [wantSave, setWantSave] = useState(false);
-  const [useSaved, setUseSaved] = useState(false);
-  const [saved, setSaved] = useState<SavedCard | null>(null);
+  const [saved, setSaved] = useState<SavedCard | null>(getInitialSavedCard);
+  const [useSaved, setUseSaved] = useState(() => Boolean(getInitialSavedCard()));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const brand = detectBrand(cardNumber);
   const rawDigits = cardNumber.replace(/\D/g, '');
-
-  // Load saved card on mount (client-only)
-  useEffect(() => {
-    const s = loadSavedCard();
-    setSaved(s);
-    if (s) setUseSaved(true);
-  }, []);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
@@ -312,7 +309,6 @@ export function CardPaymentForm({ locale, totalInCents, isProcessing, errorMessa
       {/* Card number with brand badge */}
       <Box sx={{ position: 'relative' }}>
         <TextField
-          inputRef={inputRef}
           label={t('checkoutCardNumber')}
           value={cardNumber}
           onChange={handleNumberChange}

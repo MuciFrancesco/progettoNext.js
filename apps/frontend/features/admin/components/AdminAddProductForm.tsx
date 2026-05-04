@@ -2,11 +2,12 @@
 
 import { lazy, Suspense } from 'react';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
-import { useAdminAddProductForm } from '../hooks/useAdminAddProductForm';
+import { useAdminAddProductForm } from '@/features/admin/hooks/useAdminAddProductForm';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './AdminAddProductForm.module.scss';
 
-const AddProductForm = lazy(() => import('@/components/AddProductForm/AddProductForm'));
+const AddProductForm = lazy(() => import('@/features/admin/ui/add-product/AddProductForm'));
 
 export function AdminAddProductForm({ locale }: Readonly<{ locale: Locale }>) {
   const t = createTranslator(locale);
@@ -26,7 +27,7 @@ export function AdminAddProductForm({ locale }: Readonly<{ locale: Locale }>) {
   } = useAdminAddProductForm(locale);
 
   return (
-    <section className="space-y-4 rounded-xl border border-border p-4">
+    <section className={styles.section}>
       <Suspense fallback={<ComponentLoading label={t('productFormLoading')} />}>
         {isPending ? (
           <ComponentLoading label={t('productFormLoading')} />

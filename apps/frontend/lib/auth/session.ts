@@ -5,9 +5,9 @@ import { resolveRole } from '@/lib/auth/roles';
 import type { AuthSession } from '@/types/api/auth';
 import type { UserRole } from '@/types/api/user';
 
-const AUTH_COOKIE_NAME = 'access_token';
-const REFRESH_COOKIE_NAME = 'refresh_token';
-const SESSION_EXPIRED_COOKIE_NAME = 'session_expired';
+export const AUTH_COOKIE_NAME = 'access_token';
+export const REFRESH_COOKIE_NAME = 'refresh_token';
+export const SESSION_EXPIRED_COOKIE_NAME = 'session_expired';
 
 function expireSession(): never {
   redirect('/auth/logout');

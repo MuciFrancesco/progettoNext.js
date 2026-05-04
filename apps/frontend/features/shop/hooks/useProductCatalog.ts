@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { fetchProductStatuses } from '@/lib/api/product-status-client';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
 import type { BackendProduct, ProductCategory } from '@/types/api/product';
 import { PRODUCT_CATEGORIES } from '@/types/api/product';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { useCart } from '@/providers/CartProvider';
+import { APP_NAME } from '@/lib/constants';
+import { mergeProductsWithStatuses } from '@/providers/cart-stock';
 
 export type ProductCatalogCategoryOption = {
   readonly value: ProductCategory | 'ALL';
@@ -15,13 +18,62 @@ export type ProductCatalogCategoryOption = {
 
 export function useProductCatalog(products: BackendProduct[], locale: Locale) {
   const t = useMemo(() => createTranslator(locale), [locale]);
-  const { syncWithProducts } = useCart();
+  const { syncWithProducts, syncWithProductStatuses } = useCart();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<ProductCategory | 'ALL'>('ALL');
+  const [liveProducts, setLiveProducts] = useState(products);
+  const liveProductsRef = useRef(products);
 
   useEffect(() => {
+    liveProductsRef.current = liveProducts;
+  }, [liveProducts]);
+
+  useEffect(() => {
+    liveProductsRef.current = products;
+    setLiveProducts(products);
     syncWithProducts(products);
   }, [products, syncWithProducts]);
+
+  const refreshProducts = useCallback(
+    async (ids?: readonly string[]) => {
+      const targetIds = ids ?? liveProductsRef.current.map((product) => product.id);
+      if (targetIds.length === 0) return [];
+
+      const statuses = await fetchProductStatuses(targetIds);
+      setLiveProducts((current) => {
+        const merged = mergeProductsWithStatuses(current, statuses);
+        liveProductsRef.current = merged;
+        return merged;
+      });
+      syncWithProductStatuses(statuses);
+      return statuses;
+    },
+    [syncWithProductStatuses]
+  );
+
+  const refreshProduct = useCallback(
+    async (productId: string) => {
+      const statuses = await fetchProductStatuses([productId]);
+      if (statuses.length === 0) {
+        return liveProductsRef.current.find((item) => item.id === productId);
+      }
+
+      let nextProduct: BackendProduct | undefined;
+      setLiveProducts((current) => {
+        const merged = mergeProductsWithStatuses(current, statuses);
+        liveProductsRef.current = merged;
+        nextProduct = merged.find((item) => item.id === productId);
+        return merged;
+      });
+      syncWithProductStatuses(statuses);
+      return nextProduct;
+    },
+    [syncWithProductStatuses]
+  );
+
+  useEffect(() => {
+    void refreshProducts(products.map((product) => product.id));
+  }, [products, refreshProducts]);
 
   const categoryOptions = useMemo<ProductCatalogCategoryOption[]>(
     () => [
@@ -36,16 +88,16 @@ export function useProductCatalog(products: BackendProduct[], locale: Locale) {
 
   const filteredProducts = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return products.filter((product) => {
+    return liveProducts.filter((product) => {
       const matchesCategory = category === 'ALL' || product.category === category;
       const haystack = `${product.title} ${product.name} ${product.description}`.toLowerCase();
       return matchesCategory && (!needle || haystack.includes(needle));
     });
-  }, [category, products, query]);
+  }, [category, liveProducts, query]);
 
   return {
     labels: {
-      brand: 'ThinkShop',
+      brand: APP_NAME,
       title: t('catalogTitle'),
       subtitle: t('catalogSubtitle'),
       search: t('catalogSearch'),
@@ -62,6 +114,7 @@ export function useProductCatalog(products: BackendProduct[], locale: Locale) {
     filteredProducts,
     locale,
     query,
+    refreshProduct,
     setCategory,
     setQuery,
   };

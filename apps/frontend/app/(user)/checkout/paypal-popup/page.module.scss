@@ -1,0 +1,168 @@
+.root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #003087;
+  padding: 16px 24px;
+}
+
+.closeButton {
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  padding: 32px 28px;
+}
+
+.heading {
+  margin: 0 0 6px;
+  color: #003087;
+  font-size: 22px;
+}
+
+.subtitle,
+.reviewEmail {
+  margin: 0 0 24px;
+  color: #666;
+  font-size: 14px;
+}
+
+.reviewEmail {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin: 12px 0 4px;
+  color: #333;
+  font-size: 13px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.errorText {
+  margin: 4px 0 12px;
+  color: #c0392b;
+  font-size: 13px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  border-radius: 24px;
+  padding: 13px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border: 0;
+  background: #0070ba;
+  color: #fff;
+}
+
+.secondaryButton {
+  margin-top: 8px;
+  border: 1px solid #003087;
+  background: transparent;
+  color: #003087;
+}
+
+.footerText {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.signupLink {
+  color: #009cde;
+  cursor: pointer;
+}
+
+.reviewBox {
+  margin-bottom: 24px;
+  border: 1px solid #b3d9f0;
+  border-radius: 6px;
+  background: #f0f8ff;
+  padding: 16px;
+}
+
+.reviewRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reviewRow + .reviewRow {
+  margin-top: 6px;
+}
+
+.reviewLabel {
+  color: #333;
+  font-size: 14px;
+}
+
+.reviewMeta {
+  color: #666;
+  font-size: 13px;
+}
+
+.reviewAmount {
+  color: #003087;
+  font-size: 16px;
+}
+
+.approved {
+  padding: 32px;
+  text-align: center;
+}
+
+.approvedIcon {
+  margin-bottom: 12px;
+  font-size: 48px;
+}
+
+.approvedTitle {
+  color: #003087;
+}
+
+.approvedSubtitle {
+  color: #666;
+}

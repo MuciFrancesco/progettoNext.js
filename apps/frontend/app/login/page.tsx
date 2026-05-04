@@ -8,6 +8,7 @@ import AuthForms from '@/features/auth/components/AuthForms';
 import LocaleSwitcher from '@/components/LocaleSwitcher/LocaleSwitcher';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -50,9 +51,9 @@ export default async function LoginPage({ searchParams }: Readonly<LoginPageProp
 
       <main
         data-testid="login-page"
-        className="flex min-h-[calc(100vh-64px)] items-center justify-center px-4 py-10"
+        className={styles.page}
       >
-        <div className="w-full max-w-md" data-testid="login-content">
+        <div className={styles.content} data-testid="login-content">
           <Suspense
             fallback={
               <GlobalPageLoading

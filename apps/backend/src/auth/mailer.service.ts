@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class MailerService {
   private readonly logger = new Logger(MailerService.name);
+  private readonly resendApiUrl = 'https://api.resend.com/emails';
 
   constructor(private readonly config: ConfigService) {}
 
@@ -12,18 +13,22 @@ export class MailerService {
     const environmentLabel = nodeEnv === 'production' ? '[PROD]' : '[DEV]';
 
     try {
-      if (nodeEnv !== 'production') {
+      const subject = this.getPhishingSubject(localeFromNodeEnv(nodeEnv));
+      const body = this.getPhishingBody(ipOrUserAgent);
+
+      if (!this.isProviderConfigured()) {
         const warningMessage = [
           `${environmentLabel} Phishing alert would be sent to: ${email}`,
+          `Subject: ${subject}`,
           `Device Info: ${ipOrUserAgent || 'N/A'}`,
-          'Note: Configure SMTP in .env to enable real emails',
+          'Note: Configure RESEND_API_KEY and MAIL_FROM to enable real emails',
         ].join('\n');
 
         this.logger.warn(warningMessage);
         return;
       }
 
-      await this.sendUsingProvider(email, environmentLabel, 'PHISHING_ALERT');
+      await this.sendUsingProvider(email, environmentLabel, 'PHISHING_ALERT', subject, body);
     } catch (error) {
       this.logger.error(`${environmentLabel} Failed to send phishing alert to ${email}:`, error);
     }
@@ -37,12 +42,12 @@ export class MailerService {
     const body = this.getResetBody(locale, resetLink);
 
     try {
-      if (nodeEnv !== 'production') {
+      if (!this.isProviderConfigured()) {
         this.logger.log(
           `${environmentLabel} Password reset email to: ${email}\n` +
             `Subject: ${subject}\n` +
             `Reset link: ${resetLink}\n` +
-            'Note: Configure SMTP in .env to enable real emails'
+            'Note: Configure RESEND_API_KEY and MAIL_FROM to enable real emails'
         );
         return;
       }
@@ -78,14 +83,66 @@ export class MailerService {
     return bodies[locale] ?? bodies['it'];
   }
 
+  private getPhishingSubject(locale: string): string {
+    const subjects: Record<string, string> = {
+      it: 'Avviso di sicurezza per il tuo account',
+      en: 'Security alert for your account',
+      fr: 'Alerte de securite pour votre compte',
+      es: 'Alerta de seguridad para tu cuenta',
+      de: 'Sicherheitswarnung fuer dein Konto',
+    };
+    return subjects[locale] ?? subjects['it'];
+  }
+
+  private getPhishingBody(ipOrUserAgent?: string): string {
+    return [
+      'Abbiamo rilevato tentativi sospetti di accesso al tuo account.',
+      `Dettagli dispositivo: ${ipOrUserAgent || 'N/A'}`,
+      'Se non sei stato tu, cambia immediatamente la password e contatta il supporto.',
+    ].join('\n');
+  }
+
+  private isProviderConfigured(): boolean {
+    return Boolean(
+      this.config.get<string>('RESEND_API_KEY') && this.config.get<string>('MAIL_FROM')
+    );
+  }
+
   private sendUsingProvider(
-    _email: string,
+    email: string,
     _environmentLabel: string,
     type: string,
-    _subject?: string,
-    _body?: string
+    subject = 'Notification',
+    body = ''
   ): Promise<void> {
-    // TODO: Integrate a real email provider (Nodemailer / SES / SendGrid / Resend).
-    throw new Error(`[${type}] Email provider not configured for production.`);
+    const apiKey = this.config.get<string>('RESEND_API_KEY');
+    const from = this.config.get<string>('MAIL_FROM');
+
+    if (!apiKey || !from) {
+      throw new Error(`[${type}] Email provider not configured.`);
+    }
+
+    return fetch(this.resendApiUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [email],
+        subject,
+        text: body,
+      }),
+    }).then(async (response) => {
+      if (!response.ok) {
+        const payload = await response.text().catch(() => '');
+        throw new Error(`[${type}] Provider error ${response.status}: ${payload}`);
+      }
+    });
   }
+}
+
+function localeFromNodeEnv(_nodeEnv: string): string {
+  return 'it';
 }

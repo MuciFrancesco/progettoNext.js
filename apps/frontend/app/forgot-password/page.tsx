@@ -3,6 +3,7 @@ import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm/ForgotPasswordForm';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -24,7 +25,7 @@ export default async function ForgotPasswordPage({
   return (
     <main
       data-testid="forgot-password-page"
-      className="flex min-h-screen items-center justify-center px-6"
+      className={styles.page}
     >
       <Suspense
         fallback={

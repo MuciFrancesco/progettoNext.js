@@ -4,6 +4,10 @@ const BACKEND_BASE_URL = process.env.BACKEND_URL ?? 'http://localhost:3333';
 
 const SAFE_ERROR_PATTERN = /^[\w\s.,!?:;'"()-]+$/;
 const MAX_ERROR_LENGTH = 200;
+type BackendFetchOverrides = {
+  cache?: RequestCache;
+  next?: { revalidate?: number | false; tags?: string[] };
+};
 
 export class BackendRequestError extends Error {
   constructor(
@@ -43,7 +47,8 @@ function getErrorMessage(payload: unknown, fallback: string): string {
 export async function backendRequest<T>(
   path: string,
   init?: RequestInit,
-  errorFallback = 'Request failed'
+  errorFallback = 'Request failed',
+  fetchOverrides?: BackendFetchOverrides
 ): Promise<T> {
   const headers = new Headers(init?.headers);
   if (!headers.has('Content-Type')) {
@@ -53,7 +58,8 @@ export async function backendRequest<T>(
   const response = await fetch(`${BACKEND_BASE_URL}${path}`, {
     ...init,
     headers,
-    cache: 'no-store',
+    cache: fetchOverrides?.cache ?? 'no-store',
+    next: fetchOverrides?.next,
   });
 
   const payload = (await response.json().catch(() => null)) as unknown;

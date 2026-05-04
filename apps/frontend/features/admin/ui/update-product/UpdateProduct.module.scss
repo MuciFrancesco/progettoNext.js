@@ -1,0 +1,29 @@
+.containImage {
+  object-fit: contain;
+}
+
+.fileUploadGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fileInput {
+  font-size: 0.875rem;
+}
+
+.fileInput::file-selector-button {
+  margin-right: 0.5rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: #0d47a1;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+}
+
+.fileInput:hover::file-selector-button {
+  background: #1565c0;
+}

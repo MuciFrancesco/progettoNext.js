@@ -5,6 +5,7 @@ import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { AdminUpdateProductsTable } from '@/features/admin/components/AdminUpdateProductsTable';
 import { getAdminProductsAction } from '@/lib/actions/admin';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -27,7 +28,7 @@ export default async function AdminUpdateProductPage({
   });
 
   return (
-    <section className="space-y-4">
+    <section className={styles.section}>
       <Suspense
         fallback={
           <GlobalPageLoading

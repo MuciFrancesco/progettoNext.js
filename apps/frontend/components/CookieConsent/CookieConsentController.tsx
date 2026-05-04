@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import CookieConsentBanner from './CookieConsentBanner';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
@@ -34,18 +34,17 @@ function saveConsent(analytics: boolean, marketing: boolean) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function shouldShowBanner() {
+  if (typeof window === 'undefined') return false;
+  return !loadConsent();
+}
+
 export default function CookieConsentController({ locale }: Readonly<{ locale: Locale }>) {
   const t = createTranslator(locale);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(shouldShowBanner);
   const [showDetails, setShowDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
-
-  useEffect(() => {
-    if (!loadConsent()) {
-      setVisible(true);
-    }
-  }, []);
 
   function handleAcceptAll() {
     saveConsent(true, true);

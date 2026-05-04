@@ -141,6 +141,10 @@ export type Dictionary = {
   readonly sessionExpiredTitle: string;
   readonly sessionExpiredSubtitle: string;
   readonly sessionExpiredLoginCta: string;
+  readonly errorTitle: string;
+  readonly errorSubtitle: string;
+  readonly errorRetry: string;
+  readonly errorGoHome: string;
   readonly backendRequestFailed: string;
   readonly tokenUnavailable: string;
   readonly continueWithGoogle: string;
@@ -268,6 +272,8 @@ export type Dictionary = {
   readonly cartCheckout: string;
   readonly cartUnitSuffix: string;
   readonly cartAddItem: string;
+  readonly cartStockRemoved: string;
+  readonly cartStockReduced: string;
   readonly productUnavailable: string;
   readonly checkoutTitle: string;
   readonly checkoutSubtitle: string;

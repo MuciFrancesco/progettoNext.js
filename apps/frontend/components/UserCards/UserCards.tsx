@@ -10,6 +10,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import type { BackendUser } from '@/types/api/user';
+import styles from './UserCards.module.scss';
 
 interface UserCardProps {
   readonly imageSrc: string;
@@ -47,24 +48,11 @@ function UserCard({
     <MuiCard
       data-testid={testIdPrefix ? `${testIdPrefix}-card` : undefined}
       variant="outlined"
-      sx={{
-        position: 'relative',
-        mx: 'auto',
-        width: '100%',
-        maxWidth: 384,
-        overflow: 'hidden',
-        pt: 0,
-      }}
+      className={styles.card}
     >
       <Box
         data-testid={testIdPrefix ? `${testIdPrefix}-overlay` : undefined}
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 30,
-          aspectRatio: '16/9',
-          bgcolor: 'rgba(0,0,0,0.30)',
-        }}
+        className={styles.overlay}
       />
       <Image
         src={imageSrc}
@@ -78,7 +66,7 @@ function UserCard({
         title={
           <Typography
             variant="subtitle1"
-            sx={{ fontWeight: 600 }}
+            className={styles.title}
             data-testid={testIdPrefix ? `${testIdPrefix}-title` : undefined}
           >
             {title}
@@ -102,7 +90,7 @@ function UserCard({
           />
         }
       />
-      <CardContent sx={{ pt: 0 }}>
+      <CardContent className={styles.cardContent}>
         <Typography
           variant="body2"
           data-testid={testIdPrefix ? `${testIdPrefix}-content` : undefined}
@@ -116,11 +104,7 @@ function UserCard({
           fullWidth
           disableElevation
           data-testid={testIdPrefix ? `${testIdPrefix}-details-button` : undefined}
-          sx={{
-            bgcolor: 'var(--accent)',
-            color: 'var(--accent-foreground)',
-            '&:hover': { bgcolor: 'rgba(var(--accent-rgb, 217 179 16) / 0.85)' },
-          }}
+          className={styles.detailsButton}
         >
           {detailsLabel}
         </MuiButton>
@@ -142,7 +126,7 @@ function UserCards({
   return (
     <div
       data-testid="admin-users-grid"
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      className={styles.grid}
     >
       {users.map((user, index) => {
         const fullName = [user.firstname, user.secondname, user.lastname]

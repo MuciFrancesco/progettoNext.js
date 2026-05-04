@@ -12,6 +12,7 @@ import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
 import { formatCurrency, resolveProductImageSrc } from '@/lib/shop/format';
 import { AddToCartButton } from '@/components/AddToCartButton/AddToCartButton';
+import styles from './ProductCatalog.module.scss';
 
 type ProductCatalogCategoryOption = {
   readonly value: ProductCategory | 'ALL';
@@ -41,6 +42,7 @@ type ProductCatalogProps = {
   readonly labels: ProductCatalogLabels;
   readonly onQueryChange: (value: string) => void;
   readonly onCategoryChange: (value: ProductCategory | 'ALL') => void;
+  readonly onRefreshProduct: (productId: string) => Promise<BackendProduct | undefined>;
 };
 
 export function ProductCatalog({
@@ -52,6 +54,7 @@ export function ProductCatalog({
   labels,
   onQueryChange,
   onCategoryChange,
+  onRefreshProduct,
 }: Readonly<ProductCatalogProps>) {
   const t = createTranslator(locale);
 
@@ -59,13 +62,13 @@ export function ProductCatalog({
     <Box
       component="section"
       data-testid="product-catalog"
-      className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6"
+      className={styles.pageSection}
     >
-      <Box className="flex flex-col gap-3">
+      <Box className={styles.headerBlock}>
         <Typography variant="overline" sx={{ color: 'var(--primary)', fontWeight: 700 }}>
           {labels.brand}
         </Typography>
-        <Box className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <Box className={styles.titleRow}>
           <Box>
             <Typography component="h1" variant="h3" sx={{ fontWeight: 700 }}>
               {labels.title}
@@ -101,7 +104,7 @@ export function ProductCatalog({
           <Typography>{labels.empty}</Typography>
         </Paper>
       ) : (
-        <Box className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Box className={styles.productGrid}>
           {products.map((product) => (
             <Paper
               key={product.id}
@@ -122,7 +125,7 @@ export function ProductCatalog({
                     alt={product.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    style={{ objectFit: 'contain' }}
+                    className={styles.containImage}
                     unoptimized
                   />
                 ) : (
@@ -139,7 +142,7 @@ export function ProductCatalog({
                 )}
               </Box>
               <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 1.5, p: 2 }}>
-                <Box className="flex items-start justify-between gap-3">
+                <Box className={styles.productHeadingRow}>
                   <Box>
                     <Typography component="h2" variant="h6" sx={{ fontWeight: 700 }}>
                       {product.title}
@@ -153,7 +156,7 @@ export function ProductCatalog({
                 <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', flex: 1 }}>
                   {product.description}
                 </Typography>
-                <Box className="flex items-center justify-between gap-3">
+                <Box className={styles.priceRow}>
                   <Typography sx={{ fontWeight: 800, color: 'var(--primary)' }}>
                     {formatCurrency(product.priceInCents, locale)}
                   </Typography>
@@ -168,6 +171,7 @@ export function ProductCatalog({
                   increaseLabel={labels.increaseQuantity}
                   removeLabel={labels.removeFromCart}
                   unavailableLabel={labels.unavailable}
+                  onRefreshProduct={onRefreshProduct}
                 />
               </Box>
             </Paper>

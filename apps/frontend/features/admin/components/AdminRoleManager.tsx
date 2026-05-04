@@ -1,15 +1,16 @@
 'use client';
 
 import { lazy, Suspense } from 'react';
+import Stack from '@mui/material/Stack';
 import type { PaginatedUsersResponse } from '@/types/api/user';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
-import { AddUserModal } from '@/components/AddUserModal/AddUserModal';
+import { AddUserModal } from '@/features/admin/ui/add-user-modal/AddUserModal';
 import { ToastNotification } from '@/components/ToastNotification/ToastNotification';
-import { useAdminRoleManager, fullName } from '../hooks/useAdminRoleManager';
+import { useAdminRoleManager, fullName } from '@/features/admin/hooks/useAdminRoleManager';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 
-const RoleManager = lazy(() => import('@/components/RoleManager/RoleManager'));
+const RoleManager = lazy(() => import('@/features/admin/ui/role-manager/RoleManager'));
 
 type AdminRoleManagerProps = {
   readonly initialResponse: PaginatedUsersResponse;
@@ -80,7 +81,7 @@ export function AdminRoleManager({
   } = useAdminRoleManager(initialResponse, locale);
 
   return (
-    <section className="space-y-4">
+    <Stack component="section" spacing={2}>
       {isPending ? <ComponentLoading label={t('roleManagerLoading')} /> : null}
       <Suspense fallback={<ComponentLoading label={t('roleManagerLoading')} />}>
         <RoleManager
@@ -93,33 +94,44 @@ export function AdminRoleManager({
           fullName={fullName}
           locale={locale}
           currentUserId={currentUserId}
-          openAddModal={openAddModal}
-          onRequestSaveAll={requestSaveAll}
+          headerActions={{
+            selectedCount: selectedIds.size,
+            changedCount: changedUserIds.length,
+            onDeleteSelected: requestDeleteSelected,
+            onRequestSaveAll: requestSaveAll,
+            onOpenAddModal: openAddModal,
+          }}
           saveAllConfirmOpen={saveAllConfirmOpen}
           onCancelSaveAll={cancelSaveAll}
           onConfirmSaveAll={saveAllUsers}
-          changedCount={changedUserIds.length}
-          sortKey={sortKey}
-          sortDir={sortDir}
-          onSort={handleSort}
-          searchEmail={searchEmail}
-          searchName={searchName}
-          onSearchEmailChange={setSearchEmail}
-          onSearchNameChange={setSearchName}
-          onSearch={handleSearch}
-          onSearchReset={handleSearchReset}
+          tableControls={{
+            sortKey,
+            sortDir,
+            onSort: handleSort,
+            page,
+            total,
+            onPageChange: handlePageChange,
+          }}
+          searchControls={{
+            searchEmail,
+            searchName,
+            onSearchEmailChange: setSearchEmail,
+            onSearchNameChange: setSearchName,
+            onSearch: handleSearch,
+            onSearchReset: handleSearchReset,
+          }}
           searchToast={searchToast}
           onCloseSearchToast={closeSearchToast}
-          page={page}
-          total={total}
-          onPageChange={handlePageChange}
-          selectedIds={selectedIds}
-          onToggleSelect={toggleSelect}
-          onDeleteUser={requestDeleteUser}
-          onDeleteSelected={requestDeleteSelected}
-          deleteConfirm={deleteConfirm}
-          onCancelDelete={cancelDelete}
-          onConfirmDelete={confirmDelete}
+          selectionControls={{
+            selectedIds,
+            onToggleSelect: toggleSelect,
+          }}
+          deleteControls={{
+            onDeleteUser: requestDeleteUser,
+            deleteConfirm,
+            onCancelDelete: cancelDelete,
+            onConfirmDelete: confirmDelete,
+          }}
         />
         <AddUserModal
           locale={locale}
@@ -144,6 +156,6 @@ export function AdminRoleManager({
         />
       </Suspense>
       <ToastNotification toast={toast} onClose={closeToast} />
-    </section>
+    </Stack>
   );
 }

@@ -5,6 +5,7 @@ import { listMyOrders } from '@/lib/api/user';
 import { MyOrdersTable } from '@/features/user/components/MyOrdersTable';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -30,13 +31,13 @@ export default async function PurchaseHistoryPage() {
     >
     <section
       data-testid="purchase-history-page"
-      className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-10"
+      className={styles.page}
     >
       <header>
-        <h1 data-testid="purchase-history-title" className="text-2xl font-semibold">
+        <h1 data-testid="purchase-history-title" className={styles.title}>
           {t('purchaseHistoryTitle')}
         </h1>
-        <p className="text-muted-foreground">{t('purchaseHistorySubtitle')}</p>
+        <p className={styles.subtitle}>{t('purchaseHistorySubtitle')}</p>
       </header>
       <MyOrdersTable initialResponse={initialResponse} locale={locale} />
     </section>

@@ -1,3 +1,5 @@
+import styles from './GlobalPageLoading.module.scss';
+
 type GlobalPageLoadingProps = {
   readonly title: string;
   readonly subtitle: string;
@@ -5,11 +7,11 @@ type GlobalPageLoadingProps = {
 
 export function GlobalPageLoading({ title, subtitle }: Readonly<GlobalPageLoadingProps>) {
   return (
-    <section className="flex min-h-[70vh] flex-col items-center justify-center gap-4 px-6">
-      <div className="size-12 animate-spin rounded-full border-4 border-muted border-t-primary" />
-      <div className="space-y-1 text-center">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
+    <section className={styles.section}>
+      <div className={styles.spinner} />
+      <div className={styles.textBlock}>
+        <h2 className={styles.title}>{title}</h2>
+        <p className={styles.subtitle}>{subtitle}</p>
       </div>
     </section>
   );

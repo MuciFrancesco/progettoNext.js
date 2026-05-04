@@ -5,8 +5,7 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendOrder, OrderFilter, PaginatedOrdersResponse } from '@/types/api/order';
 import { getAdminOrdersAction } from '@/lib/actions/admin';
-
-const PAGE_SIZE = 20;
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 
 export type OrderSortKey = 'email' | 'firstName' | 'lastName' | 'product' | 'total' | 'date';
 
@@ -41,7 +40,7 @@ export function useAdminOrders(initialResponse: PaginatedOrdersResponse, locale:
     startTransition(async () => {
       const res = await getAdminOrdersAction({
         page: newPage + 1,
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         filter: newFilter,
       });
       setOrders(res.data);

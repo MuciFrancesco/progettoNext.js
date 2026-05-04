@@ -1,0 +1,45 @@
+.paypalAmount {
+  margin-left: 4px;
+}
+
+.pageLayout {
+  margin: 0 auto;
+  display: grid;
+  width: 100%;
+  max-width: 80rem;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.totalRow {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .pageLayout {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pageLayout {
+    grid-template-columns: 1fr 340px;
+  }
+}

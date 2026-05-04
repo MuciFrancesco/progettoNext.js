@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader';
 import { CartFeature } from '@/features/shop/components/CartFeature';
+import styles from './page.module.scss';
 
 export const metadata: Metadata = {
   title: 'Cart',
@@ -11,7 +12,7 @@ export default async function CartPage() {
   const locale = await getCurrentLocale();
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-background to-muted/30">
+    <div className={styles.shell}>
       <PublicShopHeader />
       <main className="flex-1">
         <CartFeature locale={locale} />

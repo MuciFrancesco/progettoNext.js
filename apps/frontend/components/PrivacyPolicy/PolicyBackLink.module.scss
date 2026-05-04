@@ -1,0 +1,12 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.link:hover {
+  color: var(--primary);
+}

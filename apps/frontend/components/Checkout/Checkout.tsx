@@ -12,6 +12,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import type { CartItem } from '@/providers/CartProvider';
 import type { Locale } from '@/lib/i18n/translation';
 import { formatCurrency } from '@/lib/shop/format';
+import styles from './Checkout.module.scss';
 import { CardPaymentForm } from './CardPaymentForm';
 import type { CardBrand } from './CardPaymentForm';
 import type { PaymentMethod } from '@/features/shop/hooks/useCheckoutPage';
@@ -63,7 +64,7 @@ export function Checkout({
     <Box
       component="section"
       data-testid="checkout-page"
-      className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_340px]"
+      className={styles.pageLayout}
     >
       {/* ── Payment panel ── */}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
@@ -161,7 +162,7 @@ export function Checkout({
                       ) : (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <PayPalWordmark />
-                          <span style={{ marginLeft: 4 }}>
+                          <span className={styles.paypalAmount}>
                             {formatCurrency(totalInCents, locale)}
                           </span>
                         </Box>
@@ -181,9 +182,9 @@ export function Checkout({
         <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
           {labels.summary}
         </Typography>
-        <Box className="flex flex-col gap-2">
+        <Box className={styles.summaryList}>
           {items.map((item) => (
-            <Box key={item.product.id} className="flex justify-between gap-3 text-sm">
+            <Box key={item.product.id} className={styles.summaryItem}>
               <Typography variant="body2" sx={{ flex: 1 }}>
                 {item.product.title}{' '}
                 <Typography component="span" variant="body2" color="text.secondary">
@@ -196,7 +197,7 @@ export function Checkout({
             </Box>
           ))}
         </Box>
-        <Box className="mt-4 flex justify-between border-t border-border pt-4">
+        <Box className={styles.totalRow}>
           <Typography sx={{ fontWeight: 600 }}>{labels.total}</Typography>
           <Typography component="strong" sx={{ fontWeight: 800 }}>
             {formatCurrency(totalInCents, locale)}

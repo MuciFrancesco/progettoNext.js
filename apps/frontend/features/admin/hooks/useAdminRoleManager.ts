@@ -11,6 +11,7 @@ import type { BackendUser, CreateUserInput, PaginatedUsersResponse } from '@/typ
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { ToastMessage } from '@/components/ToastNotification/ToastNotification';
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 
 export type RoleSortKey = 'name' | 'email' | 'isAdmin' | 'isEmployee' | 'canCreateCart' | 'canOrderProducts';
 
@@ -24,8 +25,6 @@ export type EditableRole = {
 export function fullName(user: BackendUser): string {
   return [user.firstname, user.secondname, user.lastname].filter(Boolean).join(' ') || user.email;
 }
-
-const PAGE_SIZE = 20;
 
 function initDrafts(users: BackendUser[]): Record<string, EditableRole> {
   const map: Record<string, EditableRole> = {};
@@ -125,7 +124,7 @@ export function useAdminRoleManager(initialResponse: PaginatedUsersResponse, loc
     startTransition(async () => {
       const res = await getAdminUsersAction({
         page: newPage + 1, // API is 1-based
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         email: email || undefined,
         name: name || undefined,
       });

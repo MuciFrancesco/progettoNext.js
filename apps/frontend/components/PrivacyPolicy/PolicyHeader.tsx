@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import styles from './PolicyHeader.module.scss';
 
 export interface PolicyHeaderProps {
   readonly title: string;
@@ -8,8 +9,8 @@ export interface PolicyHeaderProps {
 
 export function PolicyHeader({ title, subtitle }: PolicyHeaderProps) {
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
+    <Box className={styles.header}>
+      <Typography variant="h4" className={styles.title}>
         {title}
       </Typography>
       {subtitle && (

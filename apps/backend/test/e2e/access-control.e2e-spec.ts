@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../src/prisma/prisma.service';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { describe } from 'node:test';
 
 describe('Access Control (e2e)', () => {
   let app: INestApplication;
@@ -10,6 +11,7 @@ describe('Access Control (e2e)', () => {
 
   const password = process.env['E2E_PASSWORD'] ?? 'E2e$Test1';
   const standardEmail = `user-e2e-${Date.now()}@example.com`;
+  const employeeEmail = `employee-e2e-${Date.now()}@example.com`;
   const adminEmail = `admin-e2e-${Date.now()}@example.com`;
 
   beforeAll(async () => {
@@ -27,8 +29,12 @@ describe('Access Control (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.loginAttempt.deleteMany({ where: { email: { in: [standardEmail, adminEmail] } } });
-    await prisma.user.deleteMany({ where: { email: { in: [standardEmail, adminEmail] } } });
+    await prisma.loginAttempt.deleteMany({
+      where: { email: { in: [standardEmail, employeeEmail, adminEmail] } },
+    });
+    await prisma.user.deleteMany({
+      where: { email: { in: [standardEmail, employeeEmail, adminEmail] } },
+    });
     await app.close();
   });
 
@@ -55,6 +61,43 @@ describe('Access Control (e2e)', () => {
 
     await request(app.getHttpServer())
       .get('/users')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .get('/admin/products')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+  });
+
+  it('employee puo accedere a /admin/products ma non a /admin/orders', async () => {
+    await request(app.getHttpServer()).post('/auth/signup').send({
+      email: employeeEmail,
+      password,
+      firstName: 'Employee',
+      lastName: 'User',
+    });
+
+    await prisma.user.update({
+      where: { email: employeeEmail },
+      data: { isEmployee: true },
+    });
+
+    const signin = await request(app.getHttpServer())
+      .post('/auth/signin')
+      .send({ email: employeeEmail, password })
+      .expect(200);
+
+    const token = signin.body.access_token as string;
+    expect(token).toBeTruthy();
+
+    await request(app.getHttpServer())
+      .get('/admin/products')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .get('/admin/orders')
       .set('Authorization', `Bearer ${token}`)
       .expect(403);
   });
@@ -86,6 +129,18 @@ describe('Access Control (e2e)', () => {
       .expect(200)
       .expect((res) => {
         expect(Array.isArray(res.body)).toBe(true);
+      });
+
+    await request(app.getHttpServer())
+      .get('/admin/orders')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            data: expect.any(Array),
+          })
+        );
       });
   });
 });

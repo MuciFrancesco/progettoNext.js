@@ -11,8 +11,12 @@ import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { getLanguageOptions } from '@/lib/i18n/translator';
 import { getAdminFooterSections, getSharedFooterSections } from '@/lib/footer/footerSections';
 import { getCurrentSession } from '@/lib/auth/session';
+import { APP_NAME } from '@/lib/constants';
+import styles from './layout.module.scss';
+import Box from '@mui/material/Box';
 import React from 'react';
 
+// Reads session cookies on each request, so this layout must stay dynamically rendered.
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardLayout({ children }: { children?: React.ReactNode }) {
@@ -39,7 +43,15 @@ export default async function DashboardLayout({ children }: { children?: React.R
   const badgeLabel = role === 'EMPLOYEE' ? t('employeeControlLabel') : t('adminControlLabel');
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-background to-muted/30">
+    <Box
+      component="div"
+      sx={{
+        display: 'flex',
+        minHeight: '100vh',
+        flexDirection: 'column',
+        background: 'linear-gradient(to bottom, var(--background), color-mix(in oklch, var(--muted) 30%, transparent))',
+      }}
+    >
       <SessionExpiryWatcher />
       <DashboardHeader
         badgeLabel={badgeLabel}
@@ -47,28 +59,32 @@ export default async function DashboardLayout({ children }: { children?: React.R
         links={navLinks}
         rightSlot={
           <>
-            <div className="flex items-center gap-2">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <LocaleSwitcher
                 currentLocale={locale}
                 label={t('languageLabel')}
                 options={getLanguageOptions(locale)}
                 testIdPrefix="admin-locale-switcher"
               />
-            </div>
-            <form data-testid="admin-signout-form" style={{ display: 'contents' }}>
+            </Box>
+            <form data-testid="admin-signout-form" className={styles.signoutForm}>
               <LogoutButton locale={locale} testId="admin-signout-button" />
             </form>
           </>
         }
       />
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">{children}</main>
+      <Box
+        component="main"
+        sx={{ mx: 'auto', width: '100%', maxWidth: '72rem', px: { xs: 2, sm: 3 }, py: 3 }}
+      >
+        {children}
+      </Box>
       <AppFooter
-        appName="ThinkShop"
+        appName={APP_NAME}
         copyright={t('footerCopyright').replace('{year}', new Date().getFullYear().toString())}
         note={t('footerAdminNote')}
         sections={[...getAdminFooterSections(t), ...getSharedFooterSections(t)]}
       />
-    </div>
+    </Box>
   );
 }
-

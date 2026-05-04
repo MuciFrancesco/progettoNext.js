@@ -4,6 +4,7 @@ import { AdminAddProductForm } from '@/features/admin/components/AdminAddProduct
 import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { Suspense } from 'react';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -16,7 +17,7 @@ export default async function AdminAddProductPage() {
   const locale = await getCurrentLocale();
 
   return (
-    <section className="space-y-4">
+    <section className={styles.section}>
       <Suspense
         fallback={
           <GlobalPageLoading

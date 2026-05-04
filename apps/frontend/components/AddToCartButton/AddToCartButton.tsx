@@ -10,6 +10,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { BackendProduct } from '@/types/api/product';
 import { useCart } from '@/providers/CartProvider';
+import styles from './AddToCartButton.module.scss';
 
 type AddToCartButtonProps = {
   readonly product: BackendProduct;
@@ -18,6 +19,7 @@ type AddToCartButtonProps = {
   readonly increaseLabel: string;
   readonly removeLabel: string;
   readonly unavailableLabel: string;
+  readonly onRefreshProduct?: (productId: string) => Promise<BackendProduct | undefined>;
 };
 
 export function AddToCartButton({
@@ -27,50 +29,50 @@ export function AddToCartButton({
   increaseLabel,
   removeLabel,
   unavailableLabel,
+  onRefreshProduct,
 }: Readonly<AddToCartButtonProps>) {
   const { addItem, items, removeItem, updateQuantity } = useCart();
   const disabled = !product.isAvailableForPurchase || product.stockQuantity <= 0;
   const cartItem = items.find((item) => item.product.id === product.id);
 
+  const handleAdd = async () => {
+    const latestProduct = onRefreshProduct ? await onRefreshProduct(product.id) : product;
+    if (!latestProduct || !latestProduct.isAvailableForPurchase || latestProduct.stockQuantity <= 0) {
+      return;
+    }
+    addItem(latestProduct);
+  };
+
   if (cartItem) {
     const canIncrease = cartItem.quantity < product.stockQuantity;
 
+    const handleIncrease = async () => {
+      const latestProduct = onRefreshProduct ? await onRefreshProduct(product.id) : product;
+      if (!latestProduct || latestProduct.stockQuantity <= 0) {
+        return;
+      }
+      updateQuantity(product.id, Math.min(cartItem.quantity + 1, latestProduct.stockQuantity));
+    };
+
     return (
-      <Box
-        data-testid={`cart-controls-${product.id}`}
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: '44px 1fr 44px 44px',
-          gap: 1,
-          alignItems: 'center',
-        }}
-      >
+      <Box data-testid={`cart-controls-${product.id}`} className={styles.controlsGrid}>
         <IconButton
           aria-label={decreaseLabel}
           onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
           data-testid={`decrease-cart-${product.id}`}
-          sx={{ border: '1px solid var(--border)', borderRadius: 1.5 }}
+          className={styles.iconButton}
         >
           <RemoveIcon fontSize="small" />
         </IconButton>
-        <Box
-          sx={{
-            minHeight: 40,
-            display: 'grid',
-            placeItems: 'center',
-            border: '1px solid var(--border)',
-            borderRadius: 1.5,
-            bgcolor: 'var(--card)',
-          }}
-        >
-          <Typography sx={{ fontWeight: 800 }}>{cartItem.quantity}</Typography>
+        <Box className={styles.quantityBox}>
+          <Typography className={styles.quantityValue}>{cartItem.quantity}</Typography>
         </Box>
         <IconButton
           aria-label={increaseLabel}
           disabled={!canIncrease}
-          onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
+          onClick={() => void handleIncrease()}
           data-testid={`increase-cart-${product.id}`}
-          sx={{ border: '1px solid var(--border)', borderRadius: 1.5 }}
+          className={styles.iconButton}
         >
           <AddIcon fontSize="small" />
         </IconButton>
@@ -78,7 +80,7 @@ export function AddToCartButton({
           aria-label={removeLabel}
           onClick={() => removeItem(product.id)}
           data-testid={`remove-cart-${product.id}`}
-          sx={{ border: '1px solid var(--border)', borderRadius: 1.5 }}
+          className={styles.iconButton}
         >
           <DeleteIcon fontSize="small" />
         </IconButton>
@@ -92,9 +94,9 @@ export function AddToCartButton({
       variant="contained"
       startIcon={<AddShoppingCartIcon />}
       disabled={disabled}
-      onClick={() => addItem(product)}
+      onClick={() => void handleAdd()}
       data-testid={`add-to-cart-${product.id}`}
-      sx={{ borderRadius: 1.5, width: '100%' }}
+      className={styles.addButton}
     >
       {disabled ? unavailableLabel : addLabel}
     </Button>

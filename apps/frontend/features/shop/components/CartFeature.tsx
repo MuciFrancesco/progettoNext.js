@@ -2,7 +2,7 @@
 
 import { Cart } from '@/components/Cart/Cart';
 import type { Locale } from '@/lib/i18n/translation';
-import { useCartPage } from '../hooks/useCartPage';
+import { useCartPage } from '@/features/shop/hooks/useCartPage';
 
 export function CartFeature({ locale }: Readonly<{ locale: Locale }>) {
   const cart = useCartPage(locale);
@@ -14,6 +14,7 @@ export function CartFeature({ locale }: Readonly<{ locale: Locale }>) {
       hasItems={cart.hasItems}
       labels={cart.labels}
       locale={cart.locale}
+      stockAlerts={cart.stockAlerts}
       onQuantityChange={cart.updateQuantity}
       onRemove={cart.removeItem}
     />

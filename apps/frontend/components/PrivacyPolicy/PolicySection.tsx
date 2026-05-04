@@ -1,6 +1,7 @@
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type { ReactNode } from 'react';
+import styles from './PolicySection.module.scss';
 
 export interface PolicySectionProps {
   readonly title: string;
@@ -9,8 +10,8 @@ export interface PolicySectionProps {
 
 export function PolicySection({ title, children }: PolicySectionProps) {
   return (
-    <Paper variant="outlined" sx={{ p: { xs: 2.5, md: 3.5 }, borderRadius: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: 'text.primary' }}>
+    <Paper variant="outlined" className={styles.section}>
+      <Typography variant="h6" className={styles.title}>
         {title}
       </Typography>
       {children}

@@ -8,6 +8,8 @@ import Link from 'next/link';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import type { ReactNode } from 'react';
+import { APP_NAME } from '@/lib/constants';
+import styles from './DashboardHeader.module.scss';
 import type { DashboardLink } from './helpers/dashboardLinks';
 import { NavChip } from './NavChip';
 import { NavDrawer } from './NavDrawer';
@@ -56,17 +58,7 @@ export function DashboardHeader({
         }}
       >
         {/* Logo */}
-        <Link
-          href={logoHref}
-          aria-label="ThinkShop home"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginRight: 4,
-            flexShrink: 0,
-            textDecoration: 'none',
-          }}
-        >
+        <Link href={logoHref} aria-label={`${APP_NAME} home`} className={styles.logoLink}>
           <Box
             component="span"
             sx={{

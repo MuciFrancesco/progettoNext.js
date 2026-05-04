@@ -4,11 +4,12 @@ import { lazy, Suspense } from 'react';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { useSearchParams } from 'next/navigation';
-import { useAuthForm } from '../hooks/useAuthForm';
+import { useAuthForm } from '@/features/auth/hooks/useAuthForm';
 import { AuthHeader } from '@/components/AuthHeader/AuthHeader';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
 import { Footer } from '@/components/Footer/Footer';
 import Popup from '@/components/ui/popup';
+import styles from './AuthForms.module.scss';
 
 const SigninFormCard = lazy(() =>
   import('@/components/SigninFormCard/SigninFormCard').then((m) => ({ default: m.SigninFormCard }))
@@ -41,7 +42,7 @@ export default function AuthForms({ locale }: Readonly<AuthFormsProps>) {
   const isSigninMode = activeMode === 'signin';
 
   return (
-    <div data-testid="auth-root" className="space-y-4">
+    <div data-testid="auth-root" className={styles.root}>
       <AuthHeader locale={locale} isSigninMode={isSigninMode} onModeChange={handleModeChange} />
 
       {serverError ? <Popup message={serverError} type="error" /> : null}

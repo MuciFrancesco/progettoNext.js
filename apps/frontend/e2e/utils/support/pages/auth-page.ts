@@ -1,13 +1,12 @@
 import { expect, type Page } from '@playwright/test';
-import { authTestIds, homeTestIds, localeSwitcherTestIds } from '../auth-test-ids';
+import { authTestIds, localeSwitcherTestIds } from '../auth-test-ids';
 
 export class AuthPage {
   constructor(private readonly page: Page) {}
 
   async goto(mode: 'signin' | 'signup' = 'signin'): Promise<void> {
-    const suffix = mode === 'signup' ? '?mode=signup' : '';
-    await this.page.goto(`/${suffix}`);
-    await expect(this.page.getByTestId(homeTestIds.page)).toBeVisible();
+    await this.page.goto(`/login?mode=${mode}`);
+    await expect(this.page.getByTestId('login-page')).toBeVisible();
     await expect(this.page.getByTestId(authTestIds.root)).toBeVisible();
   }
 

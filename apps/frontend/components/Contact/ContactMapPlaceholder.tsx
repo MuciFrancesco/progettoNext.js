@@ -2,6 +2,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import MapIcon from '@mui/icons-material/Map';
+import styles from './ContactMapPlaceholder.module.scss';
 
 interface ContactMapPlaceholderProps {
   address: string;
@@ -10,21 +11,9 @@ interface ContactMapPlaceholderProps {
 
 export function ContactMapPlaceholder({ address, caption }: ContactMapPlaceholderProps) {
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        borderRadius: 3,
-        overflow: 'hidden',
-        height: 220,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'action.hover',
-      }}
-    >
-      <Box sx={{ color: 'text.disabled', mb: 1 }}>
-        <MapIcon sx={{ fontSize: 48 }} />
+    <Paper variant="outlined" className={styles.card}>
+      <Box className={styles.iconWrap}>
+        <MapIcon className={styles.icon} />
       </Box>
       <Typography variant="body2" color="text.secondary">
         {address}

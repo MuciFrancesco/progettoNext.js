@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { localeSwitcherTestIds, userPageTestIds } from '../auth-test-ids';
+import { userPageTestIds } from '../auth-test-ids';
 
 export class UserPage {
   constructor(private readonly page: Page) {}
@@ -10,11 +10,19 @@ export class UserPage {
   }
 
   async changeLocale(locale: string): Promise<void> {
-    await this.page.getByTestId(localeSwitcherTestIds.user.select).selectOption(locale);
+    await this.page.context().addCookies([
+      {
+        name: 'locale',
+        value: locale,
+        domain: '127.0.0.1',
+        path: '/',
+      },
+    ]);
+    await this.page.reload();
   }
 
   async expectLocale(locale: string): Promise<void> {
-    await expect(this.page.getByTestId(localeSwitcherTestIds.user.select)).toHaveValue(locale);
+    await expect(this.page.locator('html')).toHaveAttribute('lang', locale);
   }
 
   async signOut(): Promise<void> {

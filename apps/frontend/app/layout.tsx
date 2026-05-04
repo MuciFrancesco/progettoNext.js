@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { APP_NAME } from '@/lib/constants';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { MuiThemeProvider } from '@/providers/MuiThemeProvider';
 import { CartProvider } from '@/providers/CartProvider';
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'ThinkShop',
-    template: 'ThinkShop - %s',
+    default: APP_NAME,
+    template: `${APP_NAME} - %s`,
   },
   description: 'ThinkShop — Il tuo negozio online',
   icons: {

@@ -3,11 +3,12 @@
 import { lazy, Suspense } from 'react';
 import type { PaginatedProductsResponse } from '@/types/api/product';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
-import { useAdminUpdateProductsTable } from '../hooks/useAdminUpdateProductsTable';
+import { useAdminUpdateProductsTable } from '@/features/admin/hooks/useAdminUpdateProductsTable';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './AdminUpdateProductsTable.module.scss';
 
-const UpdateProduct = lazy(() => import('@/components/UpdateProduct/UpdateProduct'));
+const UpdateProduct = lazy(() => import('@/features/admin/ui/update-product/UpdateProduct'));
 
 type AdminUpdateProductsTableProps = {
   readonly initialResponse: PaginatedProductsResponse;
@@ -80,7 +81,7 @@ export function AdminUpdateProductsTable({
   } = useAdminUpdateProductsTable(initialResponse, locale, initialSearchName, initialProductId);
 
   return (
-    <section className="space-y-4">
+    <section className={styles.section}>
       {isPending ? <ComponentLoading label={t('productUpdateLoading')} /> : null}
 
       <Suspense fallback={<ComponentLoading label={t('updateProductPageLoading')} />}>

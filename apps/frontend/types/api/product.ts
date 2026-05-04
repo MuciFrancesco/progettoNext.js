@@ -72,3 +72,9 @@ export interface PaginatedProductsResponse {
   readonly data: BackendProduct[];
   readonly total: number;
 }
+
+export interface ProductStatusSnapshot {
+  readonly id: string;
+  readonly stockQuantity: number;
+  readonly isAvailableForPurchase: boolean;
+}

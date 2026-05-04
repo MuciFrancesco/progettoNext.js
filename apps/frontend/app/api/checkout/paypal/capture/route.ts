@@ -1,1 +1,1 @@
-export { POST } from '../../capture/route';
+export { POST } from '@/app/api/checkout/capture/route';

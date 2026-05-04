@@ -1,6 +1,5 @@
 import {
   Controller,
-  ForbiddenException,
   HttpCode,
   HttpStatus,
   BadRequestException,
@@ -13,9 +12,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { readFileSync, mkdirSync, existsSync, unlinkSync } from 'node:fs';
-import { GetUser } from 'src/auth/decorator';
-import { JwtGuard } from 'src/auth/guard';
+import { mkdirSync, existsSync, unlinkSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { AdminOrEmployeeGuard, JwtGuard } from 'src/auth/guard';
 
 const UPLOAD_DIR = join(process.cwd(), 'uploads', 'products');
 
@@ -33,20 +32,18 @@ const MAGIC_BYTES: Array<{ mime: string; bytes: number[] }> = [
   { mime: 'image/webp', bytes: [0x52, 0x49, 0x46, 0x46] }, // RIFF header
 ];
 
-function validateMagicBytes(filePath: string, declaredMime: string): boolean {
+async function validateMagicBytes(filePath: string, declaredMime: string): Promise<boolean> {
   try {
-    const buffer = readFileSync(filePath);
+    const buffer = await readFile(filePath);
     if (buffer.length < 4) return false;
 
     const matched = MAGIC_BYTES.find((sig) => sig.bytes.every((b, i) => buffer[i] === b));
 
     if (!matched) return false;
 
-    // For JPEG, the declared MIME can be image/jpeg
     if (declaredMime === 'image/jpeg' && matched.mime === 'image/jpeg') return true;
     if (declaredMime === matched.mime) return true;
 
-    // WEBP sits inside a RIFF container — check for WEBP marker at offset 8
     if (declaredMime === 'image/webp' && matched.mime === 'image/webp') {
       return (
         buffer.length >= 12 &&
@@ -66,14 +63,9 @@ function validateMagicBytes(filePath: string, declaredMime: string): boolean {
 @UseGuards(JwtGuard)
 @Controller('admin')
 export class UploadController {
-  private assertAdminOrEmployee(isAdmin: boolean, isEmployee: boolean) {
-    if (!isAdmin && !isEmployee) {
-      throw new ForbiddenException('Solo admin o employee');
-    }
-  }
-
   @Post('upload')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminOrEmployeeGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -103,21 +95,13 @@ export class UploadController {
       },
     })
   )
-  uploadProductImage(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @UploadedFile() file: Express.Multer.File
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
-
+  async uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('Nessun file caricato.');
     }
 
-    // Validate magic bytes to prevent MIME spoofing
     const filePath = join(UPLOAD_DIR, file.filename);
-    if (!validateMagicBytes(filePath, file.mimetype)) {
-      // Delete the spoofed file immediately
+    if (!(await validateMagicBytes(filePath, file.mimetype))) {
       try {
         unlinkSync(filePath);
       } catch {

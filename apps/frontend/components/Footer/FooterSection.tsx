@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { FooterLink } from './FooterLink';
+import styles from './FooterSection.module.scss';
 
 export interface FooterSectionItem {
   href: string;
@@ -15,11 +16,8 @@ export interface FooterSectionProps {
 
 export function FooterSection({ title, items }: FooterSectionProps) {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Typography
-        variant="overline"
-        sx={{ color: 'text.disabled', fontWeight: 600, letterSpacing: '0.1em' }}
-      >
+    <Box className={styles.section}>
+      <Typography variant="overline" className={styles.title}>
         {title}
       </Typography>
       {items.map((item) => (

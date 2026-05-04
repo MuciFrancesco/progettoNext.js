@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { adminPageTestIds, localeSwitcherTestIds, userPageTestIds } from '../auth-test-ids';
+import { adminPageTestIds, localeSwitcherTestIds } from '../auth-test-ids';
 
 export class AdminPage {
   constructor(private readonly page: Page) {}
@@ -10,15 +10,15 @@ export class AdminPage {
 
   async expectVisible(): Promise<void> {
     await expect(this.page.getByTestId(adminPageTestIds.page)).toBeVisible();
-    await expect(this.page.getByTestId(adminPageTestIds.title)).toBeVisible();
+    await expect(this.page.getByRole('heading', { level: 1 })).toBeVisible();
   }
 
   async expectRedirectedToUserArea(): Promise<void> {
-    await expect(this.page.getByTestId(userPageTestIds.page)).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: /pagina non trovata/i })).toBeVisible();
   }
 
   async expectRedirectedToAuth(): Promise<void> {
-    await expect(this.page).toHaveURL(/\/$/);
+    await expect(this.page).toHaveURL(/\/login\?mode=signin$/);
   }
 
   async changeLocale(locale: string): Promise<void> {

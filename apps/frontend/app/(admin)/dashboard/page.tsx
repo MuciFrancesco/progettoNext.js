@@ -5,6 +5,7 @@ import { listAdminOrders } from '@/lib/api/admin';
 import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable';
 import { getAdminPanelsConfig } from '@/features/admin/config/adminPanels';
 import { PanelsGrid } from '@/components/PanelsGrid/PanelsGrid';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -34,9 +35,9 @@ async function AdminPage() {
   }));
 
   return (
-    <section data-testid="admin-dashboard-page" className="space-y-6">
+    <section data-testid="admin-dashboard-page" className={styles.section}>
       <header>
-        <h1 className="text-2xl font-semibold">{t('adminDashboardTitle')}</h1>
+        <h1 className={styles.title}>{t('adminDashboardTitle')}</h1>
       </header>
       <PanelsGrid panels={panels} goToLabel={t('dashboardPanelGoTo')} />
       {isAdmin && <AdminOrdersTable initialResponse={initialResponse} locale={locale} />}

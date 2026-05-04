@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -13,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator';
-import { JwtGuard } from 'src/auth/guard';
+import { AdminGuard, AdminOrEmployeeGuard, JwtGuard } from 'src/auth/guard';
 import { AdminService } from './admin.service';
 import {
   CreateProductDto,
@@ -30,28 +29,15 @@ import {
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  private assertAdmin(isAdmin: boolean) {
-    if (!isAdmin) {
-      throw new ForbiddenException('Solo admin');
-    }
-  }
-
-  private assertAdminOrEmployee(isAdmin: boolean, isEmployee: boolean) {
-    if (!isAdmin && !isEmployee) {
-      throw new ForbiddenException('Solo admin o employee');
-    }
-  }
-
   @Get('users')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminGuard)
   listUsers(
-    @GetUser('isAdmin') isAdmin: boolean,
     @Query('email') email?: string,
     @Query('name') name?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string
   ) {
-    this.assertAdmin(isAdmin);
     return this.adminService.listUsers({
       email: email || undefined,
       name: name || undefined,
@@ -62,45 +48,35 @@ export class AdminController {
 
   @Patch('users/:userId/role')
   @HttpCode(HttpStatus.OK)
-  updateUserRole(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @Param('userId') userId: string,
-    @Body() dto: UpdateUserRoleDto
-  ) {
-    this.assertAdmin(isAdmin);
+  @UseGuards(AdminGuard)
+  updateUserRole(@Param('userId') userId: string, @Body() dto: UpdateUserRoleDto) {
     return this.adminService.updateUserRole(userId, dto);
   }
 
   @Post('users')
   @HttpCode(HttpStatus.CREATED)
-  createUser(@GetUser('isAdmin') isAdmin: boolean, @Body() dto: CreateUserDto) {
-    this.assertAdmin(isAdmin);
+  @UseGuards(AdminGuard)
+  createUser(@Body() dto: CreateUserDto) {
     return this.adminService.createUser(dto);
   }
 
   @Delete('users/bulk')
   @HttpCode(HttpStatus.OK)
-  deleteUsers(
-    @GetUser('id') callerId: string,
-    @GetUser('isAdmin') isAdmin: boolean,
-    @Body() dto: DeleteUsersDto
-  ) {
-    this.assertAdmin(isAdmin);
+  @UseGuards(AdminGuard)
+  deleteUsers(@GetUser('id') callerId: string, @Body() dto: DeleteUsersDto) {
     return this.adminService.deleteUsers(dto.ids, callerId);
   }
 
   @Get('products')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminOrEmployeeGuard)
   listProducts(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
     @Query('categories') categories?: string,
     @Query('title') title?: string,
     @Query('name') name?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string
   ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
     return this.adminService.listProducts({
       categories: categories
         ? (categories.split(',').filter(Boolean) as import('@prisma/client').ProductCategory[])
@@ -114,79 +90,54 @@ export class AdminController {
 
   @Post('products')
   @HttpCode(HttpStatus.OK)
-  createProduct(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @Body() dto: CreateProductDto
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  createProduct(@Body() dto: CreateProductDto) {
     return this.adminService.createProduct(dto);
   }
 
   @Get('products/bulk-status')
   @HttpCode(HttpStatus.OK)
-  getBulkStatus(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  getBulkStatus() {
     return this.adminService.getBulkStatus();
   }
 
   @Patch('products/bulk')
   @HttpCode(HttpStatus.OK)
-  bulkUpdateProducts(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @Body() dto: BulkUpdateProductDto
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  bulkUpdateProducts(@Body() dto: BulkUpdateProductDto) {
     return this.adminService.bulkUpdateProducts(dto);
   }
 
   @Patch('products/:productId')
   @HttpCode(HttpStatus.OK)
-  updateProduct(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @Param('productId') productId: string,
-    @Body() dto: UpdateProductDto
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  updateProduct(@Param('productId') productId: string, @Body() dto: UpdateProductDto) {
     return this.adminService.updateProduct(productId, dto);
   }
 
   @Delete('products/bulk')
   @HttpCode(HttpStatus.OK)
-  bulkDeleteProducts(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @Body() dto: BulkDeleteProductDto
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  bulkDeleteProducts(@Body() dto: BulkDeleteProductDto) {
     return this.adminService.bulkDeleteProducts(dto.ids);
   }
 
   @Delete('products/:productId')
   @HttpCode(HttpStatus.OK)
-  deleteProduct(
-    @GetUser('isAdmin') isAdmin: boolean,
-    @GetUser('isEmployee') isEmployee: boolean,
-    @Param('productId') productId: string
-  ) {
-    this.assertAdminOrEmployee(isAdmin, isEmployee);
+  @UseGuards(AdminOrEmployeeGuard)
+  deleteProduct(@Param('productId') productId: string) {
     return this.adminService.deleteProduct(productId);
   }
 
   @Get('orders')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminGuard)
   listOrders(
-    @GetUser('isAdmin') isAdmin: boolean,
     @Query('page') page = '1',
     @Query('limit') limit = '20',
     @Query('filter') filter = 'all'
   ) {
-    this.assertAdmin(isAdmin);
     const pageNum = Math.max(1, Number.parseInt(page, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, Number.parseInt(limit, 10) || 20));
     const validFilter = ['today', 'week', 'month', 'year', 'all'].includes(filter)

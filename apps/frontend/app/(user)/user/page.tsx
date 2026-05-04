@@ -3,6 +3,7 @@ import { requireUserSession } from '@/lib/auth/session';
 import { getTranslator } from '@/lib/i18n/locale';
 import { PanelsGrid } from '@/components/PanelsGrid/PanelsGrid';
 import { userPanelsConfig } from '@/features/user/config/userPanels';
+import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslator();
@@ -23,10 +24,10 @@ export default async function UserPage() {
   return (
     <section
       data-testid="user-page"
-      className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-6 py-10"
+      className={styles.page}
     >
       <div data-testid="user-page-header">
-        <h1 data-testid="user-page-title" className="text-3xl font-semibold tracking-tight">
+        <h1 data-testid="user-page-title" className={styles.title}>
           {t('userAreaTitle')}
         </h1>
       </div>

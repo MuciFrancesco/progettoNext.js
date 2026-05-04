@@ -86,7 +86,8 @@ export function useCheckoutPage(locale: Locale) {
 
   // ── Card payment ───────────────────────────────────────────────────────────
 
-  async function submitCardPayment(_info: { last4: string; brand: CardBrand }) {
+  async function submitCardPayment(info: { last4: string; brand: CardBrand }) {
+    void info;
     setStatus('processing');
     setMessage('');
     const ok = await capture('/api/checkout/capture');

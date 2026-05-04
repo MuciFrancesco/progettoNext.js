@@ -1,0 +1,13 @@
+.orderedList,
+.unorderedList {
+  padding-left: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.orderedList {
+  list-style-type: decimal;
+}
+
+.unorderedList {
+  list-style-type: disc;
+}

@@ -30,14 +30,16 @@ export default function LogoutButton({ locale, testId = 'signout-button' }: Logo
 
   return (
     <>
-      <button
+      <Button
         data-testid={testId}
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-full border border-border px-3 py-1.5 text-sm hover:bg-muted"
+        variant="outlined"
+        color="inherit"
+        size="small"
       >
         {t('logout')}
-      </button>
+      </Button>
 
       <Dialog open={open} onClose={() => !isPending && setOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle>{t('logoutConfirmTitle')}</DialogTitle>

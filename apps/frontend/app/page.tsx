@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const [locale, productsResponse] = await Promise.all([
     getCurrentLocale(),
-    listPublicProducts({ limit: 60 }).catch(() => ({ data: [], total: 0 })),
+    listPublicProducts({ limit: 60, revalidate: 60 }).catch(() => ({ data: [], total: 0 })),
   ]);
 
   return (

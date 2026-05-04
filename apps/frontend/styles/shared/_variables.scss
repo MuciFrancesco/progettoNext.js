@@ -1,0 +1,72 @@
+// Design tokens — mappati dai CSS custom properties in globals.css
+// Usare queste variabili in tutti i .module.scss
+
+// ─── Colori ────────────────────────────────────────────────────────────────
+$color-background:        var(--background);
+$color-foreground:        var(--foreground);
+$color-primary:           var(--primary);
+$color-primary-fg:        var(--primary-foreground);
+$color-secondary:         var(--secondary);
+$color-secondary-fg:      var(--secondary-foreground);
+$color-muted:             var(--muted);
+$color-muted-fg:          var(--muted-foreground);
+$color-accent:            var(--accent);
+$color-accent-fg:         var(--accent-foreground);
+$color-destructive:       var(--destructive);
+$color-border:            var(--border);
+$color-input:             var(--input);
+$color-ring:              var(--ring);
+$color-card:              var(--card);
+$color-card-fg:           var(--card-foreground);
+
+// Palette admin buttons — allineati a MuiThemeProvider
+$color-btn-add:           #0d47a1;
+$color-btn-add-hover:     #1565c0;
+$color-btn-edit:          #1565c0;
+$color-btn-edit-hover:    #0d47a1;
+$color-btn-bulk:          #1e88e5;
+$color-btn-bulk-hover:    #1565c0;
+
+// ─── Spacing (scala MUI: 1 unit = 8px) ────────────────────────────────────
+$spacing-1:   4px;
+$spacing-2:   8px;
+$spacing-3:   12px;
+$spacing-4:   16px;
+$spacing-5:   20px;
+$spacing-6:   24px;
+$spacing-8:   32px;
+$spacing-10:  40px;
+$spacing-12:  48px;
+
+// ─── Border Radius ─────────────────────────────────────────────────────────
+$radius-sm:   var(--radius-sm);
+$radius-md:   var(--radius-md);
+$radius-lg:   var(--radius-lg);
+$radius-xl:   var(--radius-xl);
+$radius-2:    8px;
+$radius-3:    12px;
+
+// ─── Typography ────────────────────────────────────────────────────────────
+$font-family:  var(--font-geist-sans), system-ui, sans-serif;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+
+// ─── Breakpoints (allineati a MUI) ─────────────────────────────────────────
+$bp-sm:   600px;
+$bp-md:   900px;
+$bp-lg:   1200px;
+$bp-xl:   1536px;
+$bp-wide: 1350px;
+
+// ─── Z-index ───────────────────────────────────────────────────────────────
+$z-appbar:  30;
+$z-drawer:  1200;
+$z-modal:   1300;
+$z-tooltip: 1500;
+
+// ─── Transizioni ───────────────────────────────────────────────────────────
+$transition-fast:   150ms ease-out;
+$transition-normal: 300ms ease-out;

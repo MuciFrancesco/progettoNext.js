@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -13,6 +14,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import type { CartItem } from '@/providers/CartProvider';
 import { formatCurrency, resolveProductImageSrc } from '@/lib/shop/format';
 import type { Locale } from '@/lib/i18n/translation';
+import styles from './Cart.module.scss';
 
 type CartLabels = {
   readonly title: string;
@@ -33,6 +35,7 @@ type CartProps = {
   readonly hasItems: boolean;
   readonly labels: CartLabels;
   readonly locale: Locale;
+  readonly stockAlerts: ReadonlyArray<{ readonly productId: string; readonly message: string }>;
   readonly onQuantityChange: (productId: string, quantity: number) => void;
   readonly onRemove: (productId: string) => void;
 };
@@ -43,6 +46,7 @@ export function Cart({
   hasItems,
   labels,
   locale,
+  stockAlerts,
   onQuantityChange,
   onRemove,
 }: Readonly<CartProps>) {
@@ -50,14 +54,24 @@ export function Cart({
     <Box
       component="section"
       data-testid="cart-page"
-      className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6"
+      sx={{ mx: 'auto', display: 'flex', width: '100%', maxWidth: '64rem', flexDirection: 'column', gap: 3, px: { xs: 2, sm: 3 }, py: 4 }}
     >
-      <Box className="flex flex-col gap-2">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Typography component="h1" variant="h3" sx={{ fontWeight: 700 }}>
           {labels.title}
         </Typography>
         <Typography sx={{ color: 'var(--muted-foreground)' }}>{labels.subtitle}</Typography>
       </Box>
+
+      {stockAlerts.length > 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {stockAlerts.map((alert) => (
+            <Alert key={`${alert.productId}-${alert.message}`} severity="warning">
+              {alert.message}
+            </Alert>
+          ))}
+        </Box>
+      ) : null}
 
       {!hasItems ? (
         <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
@@ -68,8 +82,8 @@ export function Cart({
           </Button>
         </Paper>
       ) : (
-        <Box className="grid gap-4 lg:grid-cols-[1fr_320px]">
-          <Box className="flex flex-col gap-3">
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 320px' }, gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {items.map((item) => (
               <Paper
                 key={item.product.id}
@@ -84,19 +98,19 @@ export function Cart({
                   alignItems: 'center',
                 }}
               >
-                <Box className="relative h-20 overflow-hidden rounded-md bg-secondary sm:h-24">
+                <Box sx={{ position: 'relative', height: { xs: 80, sm: 96 }, overflow: 'hidden', borderRadius: 1, bgcolor: 'var(--secondary)' }}>
                   {item.product.imagePath ? (
                     <Image
                       src={resolveProductImageSrc(item.product.imagePath)}
                       alt={item.product.title}
                       fill
                       sizes="112px"
-                      style={{ objectFit: 'contain' }}
+                      className={styles.containImage}
                       unoptimized
                     />
                   ) : null}
                 </Box>
-                <Box className="min-w-0">
+                <Box sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontWeight: 700 }}>{item.product.title}</Typography>
                   <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
                     {formatCurrency(item.product.priceInCents, locale)} {labels.unitSuffix}
@@ -117,7 +131,7 @@ export function Cart({
                     sx={{ mt: 1, width: 120 }}
                   />
                 </Box>
-                <Box className="col-span-2 flex items-center justify-between sm:col-span-1 sm:flex-col sm:items-end sm:gap-3">
+                <Box sx={{ gridColumn: { xs: 'span 2', sm: 'span 1' }, display: 'flex', alignItems: { xs: 'center', sm: 'flex-end' }, justifyContent: 'space-between', flexDirection: { sm: 'column' }, gap: { sm: 1.5 } }}>
                   <Typography sx={{ fontWeight: 800 }}>
                     {formatCurrency(item.product.priceInCents * item.quantity, locale)}
                   </Typography>
@@ -137,7 +151,7 @@ export function Cart({
             <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
               {labels.total}
             </Typography>
-            <Box className="mb-4 flex items-center justify-between">
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: 'var(--muted-foreground)' }}>{labels.items}</Typography>
               <Typography component="strong" sx={{ fontWeight: 800 }}>
                 {formatCurrency(totalInCents, locale)}

@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const AUTH_COOKIE_NAME = 'access_token';
-const REFRESH_COOKIE_NAME = 'refresh_token';
-const SESSION_EXPIRED_COOKIE_NAME = 'session_expired';
+import {
+  AUTH_COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
+  SESSION_EXPIRED_COOKIE_NAME,
+} from '@/lib/auth/session';
 
 async function expireSession(request: Request): Promise<NextResponse> {
   const cookieStore = await cookies();

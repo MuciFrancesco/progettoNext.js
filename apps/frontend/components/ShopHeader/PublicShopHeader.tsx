@@ -1,5 +1,6 @@
 import { getCurrentSession } from '@/lib/auth/session';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
+import { APP_NAME } from '@/lib/constants';
 import { PublicShopHeaderShell } from './PublicShopHeaderShell';
 
 export async function PublicShopHeader() {
@@ -11,7 +12,7 @@ export async function PublicShopHeader() {
 
   return (
     <PublicShopHeaderShell
-      appName="ThinkShop"
+      appName={APP_NAME}
       cartLabel={t('cartTitle')}
       loginLabel={t('signinSubmit')}
       locale={locale}

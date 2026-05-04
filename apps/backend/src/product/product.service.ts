@@ -58,4 +58,17 @@ export class ProductService {
 
     return { data, total };
   }
+
+  async getProductStatuses(ids: string[]) {
+    if (ids.length === 0) return [];
+
+    return this.prisma.product.findMany({
+      where: { id: { in: ids } },
+      select: {
+        id: true,
+        stockQuantity: true,
+        isAvailableForPurchase: true,
+      },
+    });
+  }
 }

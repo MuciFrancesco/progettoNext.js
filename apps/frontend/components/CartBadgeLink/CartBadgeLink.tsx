@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link';
 import { useCart } from '@/providers/CartProvider';
+import styles from './CartBadgeLink.module.scss';
 
 type CartBadgeLinkProps = {
   readonly label: string;
@@ -23,7 +24,7 @@ export function CartBadgeLink({ label }: Readonly<CartBadgeLinkProps>) {
           <ShoppingCartIcon fontSize="small" />
         </Badge>
       }
-      sx={{ borderRadius: 1.5, color: 'var(--foreground)', borderColor: 'var(--border)' }}
+      className={styles.button}
     >
       {label}
     </Button>

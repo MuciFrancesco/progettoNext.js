@@ -26,12 +26,10 @@ import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import type { BackendOrder, OrderFilter } from '@/types/api/order';
 import type { FilterOption, OrderSortKey } from '@/features/admin/hooks/useAdminOrders';
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 import OrdersTableHead from './OrdersTableHead';
 import OrdersTableBody from './OrdersTableBody';
 import styles from './OrdersTable.module.scss';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3333';
-const PAGE_SIZE = 20;
 
 const LOCALE_MAP: Record<Locale, string> = {
   it: 'it-IT',
@@ -125,8 +123,8 @@ export default function OrdersTable({
           component="div"
           count={total}
           page={page}
-          rowsPerPage={PAGE_SIZE}
-          rowsPerPageOptions={[PAGE_SIZE]}
+          rowsPerPage={DEFAULT_PAGE_SIZE}
+          rowsPerPageOptions={[DEFAULT_PAGE_SIZE]}
           onPageChange={handlePageChange}
           labelDisplayedRows={({ from, to, count }) => {
             const kount = count === -1 ? to + '+' : String(count);

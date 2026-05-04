@@ -2,6 +2,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { ReactNode } from 'react';
+import styles from './ContactInfoCard.module.scss';
 
 export interface ContactInfoCardProps {
   readonly icon: ReactNode;
@@ -12,21 +13,10 @@ export interface ContactInfoCardProps {
 
 export function ContactInfoCard({ icon, title, primaryText, secondaryText }: ContactInfoCardProps) {
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        display: 'flex',
-        gap: 2,
-        alignItems: 'flex-start',
-        transition: 'border-color 0.2s',
-        '&:hover': { borderColor: 'primary.main' },
-      }}
-    >
-      <Box sx={{ color: 'primary.main', mt: 0.25 }}>{icon}</Box>
+    <Paper variant="outlined" className={styles.card}>
+      <Box className={styles.icon}>{icon}</Box>
       <Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.25 }}>
+        <Typography variant="subtitle2" className={styles.title}>
           {title}
         </Typography>
         <Typography variant="body2" color="text.primary">

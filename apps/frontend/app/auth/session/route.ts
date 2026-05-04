@@ -1,8 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getCurrentSession } from '@/lib/auth/session';
-
-const SESSION_EXPIRED_COOKIE_NAME = 'session_expired';
+import { getCurrentSession, SESSION_EXPIRED_COOKIE_NAME } from '@/lib/auth/session';
 
 export async function GET(): Promise<NextResponse> {
   const cookieStore = await cookies();

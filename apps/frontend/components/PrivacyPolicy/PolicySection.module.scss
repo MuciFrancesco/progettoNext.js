@@ -1,0 +1,15 @@
+.section {
+  padding: 1.25rem;
+  border-radius: 24px;
+}
+
+.title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 900px) {
+  .section {
+    padding: 1.75rem;
+  }
+}

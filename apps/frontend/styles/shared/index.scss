@@ -1,0 +1,6 @@
+// Barrel — importare in ogni .module.scss:
+// @use '@/styles/shared' as ds;
+// Uso: ds.$color-primary | @include ds.flex-row($gap: 8px)
+
+@forward 'variables';
+@forward 'mixins';

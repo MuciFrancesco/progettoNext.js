@@ -1,0 +1,16 @@
+.dividerSpacer {
+  margin: 8px 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.socialButtons {
+  display: grid;
+  gap: 8px;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

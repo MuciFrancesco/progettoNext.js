@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import styles from './ForgotPasswordForm.module.scss';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -50,11 +51,11 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
   }
 
   return (
-    <Card variant="outlined" sx={{ width: '100%', maxWidth: 448 }}>
+    <Card variant="outlined" className={styles.card}>
       <CardHeader title={t('forgotPasswordTitle')} />
       <CardContent>
         {submitted ? (
-          <div className="space-y-4">
+          <div className={styles.stack}>
             <Typography
               variant="body2"
               color="text.secondary"
@@ -72,7 +73,7 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
             </MuiButton>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <form onSubmit={handleSubmit} className={styles.stack} noValidate>
             <Typography variant="body2" color="text.secondary">
               {t('forgotPasswordSubtitle')}
             </Typography>

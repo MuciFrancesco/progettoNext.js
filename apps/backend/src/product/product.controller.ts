@@ -23,4 +23,17 @@ export class ProductController {
       limit: limit ? Math.min(100, Math.max(1, Number.parseInt(limit, 10) || 20)) : 20,
     });
   }
+
+  @Get('status')
+  @HttpCode(HttpStatus.OK)
+  getProductStatuses(@Query('ids') ids?: string) {
+    return this.productService.getProductStatuses(
+      ids
+        ? ids
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : []
+    );
+  }
 }

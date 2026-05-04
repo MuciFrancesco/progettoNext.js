@@ -6,8 +6,7 @@ import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendOrder, OrderFilter, PaginatedOrdersResponse } from '@/types/api/order';
 import { getMyOrdersAction } from '@/lib/actions/user';
 import type { FilterOption, OrderSortKey } from '@/features/admin/hooks/useAdminOrders';
-
-const PAGE_SIZE = 20;
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 
 export function useMyOrders(initialResponse: PaginatedOrdersResponse, locale: Locale) {
   const t = createTranslator(locale);
@@ -35,7 +34,7 @@ export function useMyOrders(initialResponse: PaginatedOrdersResponse, locale: Lo
     startTransition(async () => {
       const res = await getMyOrdersAction({
         page: newPage + 1,
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         filter: newFilter,
       });
       setOrders(res.data);

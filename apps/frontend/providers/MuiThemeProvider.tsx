@@ -41,25 +41,22 @@ const theme = createTheme({
             color: 'var(--foreground)',
             '&:hover': { backgroundColor: 'var(--muted)' },
           },
-          // Variante "add" — blu navy scuro: aggiunta nuova risorsa
           '&.btn-add': {
-            backgroundColor: '#0D47A1',
+            backgroundColor: '#0d47a1',
             color: '#ffffff',
-            '&:hover': { backgroundColor: '#1565C0' },
+            '&:hover': { backgroundColor: '#1565c0' },
             '&.Mui-disabled': { opacity: 0.5 },
           },
-          // Variante "edit" — blu medio-scuro: modifica singola
           '&.btn-edit': {
-            backgroundColor: '#1565C0',
+            backgroundColor: '#1565c0',
             color: '#ffffff',
-            '&:hover': { backgroundColor: '#0D47A1' },
+            '&:hover': { backgroundColor: '#0d47a1' },
             '&.Mui-disabled': { opacity: 0.5 },
           },
-          // Variante "bulk" — blu chiaro: azione su selezione multipla
           '&.btn-bulk': {
-            backgroundColor: '#1E88E5',
+            backgroundColor: '#1e88e5',
             color: '#ffffff',
-            '&:hover': { backgroundColor: '#1565C0' },
+            '&:hover': { backgroundColor: '#1565c0' },
             '&.Mui-disabled': { opacity: 0.5 },
           },
         },

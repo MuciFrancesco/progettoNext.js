@@ -1,8 +1,9 @@
 import { cookies } from 'next/headers';
 import { defaultLocale, type Locale } from '@/lib/i18n/translation';
+import { LOCALE_COOKIE_NAME } from '@/lib/constants';
 import { isLocale, translate, type TranslationKey } from '@/lib/i18n/translator';
 
-export const LOCALE_COOKIE_NAME = 'locale';
+export { LOCALE_COOKIE_NAME } from '@/lib/constants';
 
 export async function getCurrentLocale(): Promise<Locale> {
   const cookieStore = await cookies();

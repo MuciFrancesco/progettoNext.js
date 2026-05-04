@@ -7,6 +7,7 @@ import {
 import { Prisma, ProductCategory } from '@prisma/client';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { BulkStatusStore } from './bulk-status.store';
 import {
   CreateProductDto,
   CreateUserDto,
@@ -25,13 +26,13 @@ type SimilarProduct = {
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  // TODO: Replace with a DB flag or Redis entry — in-memory state breaks with multiple instances.
-  private bulkBusy = false;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bulkStatusStore: BulkStatusStore
+  ) {}
 
   getBulkStatus(): { isBusy: boolean } {
-    return { isBusy: this.bulkBusy };
+    return { isBusy: this.bulkStatusStore.isBusy() };
   }
 
   async bulkUpdateProducts(dto: BulkUpdateProductDto) {
@@ -59,7 +60,7 @@ export class AdminService {
       updatedAt: true,
     } as const;
 
-    this.bulkBusy = true;
+    this.bulkStatusStore.setBusy(true);
     try {
       const updated = await this.prisma.$transaction(
         dto.ids.map((id) =>
@@ -68,7 +69,7 @@ export class AdminService {
       );
       return updated;
     } finally {
-      this.bulkBusy = false;
+      this.bulkStatusStore.setBusy(false);
     }
   }
 
@@ -542,3 +543,4 @@ export class AdminService {
     });
   }
 }
+
