@@ -13,6 +13,7 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendProduct, ProductCategory } from '@/types/api/product';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
+import styles from './UpdateProduct.module.scss';
 
 interface UpdateProductTableBodyProps {
   readonly products: BackendProduct[];
@@ -57,34 +58,34 @@ export default function UpdateProductTableBody({
             </TableCell>
             <TableCell>{product.title}</TableCell>
             <TableCell>{product.name}</TableCell>
-            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+            <TableCell className={styles.desktopCell}>
               {t(categoryTranslationKey(product.category))}
             </TableCell>
             <TableCell align="center">{product.stockQuantity}</TableCell>
-            <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+            <TableCell align="center" className={styles.tabletCell}>
               {product.isAvailableForPurchase ? (
                 <Tooltip title={t('productFieldAvailableForPurchase')}>
                   <CheckCircleIcon
                     fontSize="small"
-                    sx={{ color: 'success.main', verticalAlign: 'middle' }}
+                    className={styles.successIcon}
                   />
                 </Tooltip>
               ) : (
                 <Tooltip title={t('productFieldAvailableForPurchase')}>
                   <CancelIcon
                     fontSize="small"
-                    sx={{ color: 'error.main', verticalAlign: 'middle' }}
+                    className={styles.errorIcon}
                   />
                 </Tooltip>
               )}
             </TableCell>
             <TableCell align="right">
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+              <Box className={styles.rowActions}>
                 <Tooltip title={t('productUpdateButton')}>
                   <span>
                     <IconButton
                       size="small"
-                      sx={{ color: '#1565C0' }}
+                      className={styles.editButton}
                       onClick={() => openEditModal(product.id)}
                       disabled={isPending}
                     >
@@ -96,7 +97,7 @@ export default function UpdateProductTableBody({
                   <span>
                     <IconButton
                       size="small"
-                      sx={{ color: '#EF5350' }}
+                      className={styles.deleteButton}
                       onClick={() => deleteProduct(product.id)}
                       disabled={isPending}
                     >
@@ -111,7 +112,7 @@ export default function UpdateProductTableBody({
       })}
       {products.length === 0 && (
         <TableRow>
-          <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+          <TableCell colSpan={7} align="center" className={styles.emptyCell}>
             —
           </TableCell>
         </TableRow>

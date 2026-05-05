@@ -1,0 +1,19 @@
+.desktopCell {
+  display: none;
+}
+
+.tabletCell {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .tabletCell {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 900px) {
+  .desktopCell {
+    display: table-cell;
+  }
+}

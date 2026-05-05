@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
-import { AdminAddProductForm } from '@/features/admin/components/AdminAddProductForm';
+import { AdminAddProductForm } from '@/features/admin/components/AdminAddProductForm/AdminAddProductForm';
 import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { Suspense } from 'react';

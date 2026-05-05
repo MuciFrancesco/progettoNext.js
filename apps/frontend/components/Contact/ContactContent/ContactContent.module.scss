@@ -1,0 +1,14 @@
+@use '@/styles/shared' as ds;
+
+.page {
+  @include ds.page-y-padding;
+}
+
+.cardsGrid {
+  @include ds.responsive-two-column-grid($gap: ds.$spacing-6, $margin-bottom: ds.$spacing-8);
+}
+
+.companyInfo {
+  margin-top: ds.$spacing-8;
+  text-align: center;
+}

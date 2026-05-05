@@ -1,0 +1,52 @@
+.triggerButton {
+  color: var(--foreground);
+  margin-left: auto;
+}
+
+.drawerPaper {
+  width: 280px;
+}
+
+.drawerHeader {
+  padding: 20px 16px;
+}
+
+.sectionLabel {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.navList {
+  padding-top: 8px;
+}
+
+.navItem {
+  border-radius: 12px;
+  margin-inline: 8px;
+  margin-bottom: 4px;
+}
+
+.navItem.Mui-selected {
+  background: var(--primary);
+  color: var(--primary-foreground, white);
+}
+
+.navItem.Mui-selected:hover {
+  background: color-mix(in srgb, var(--primary) 88%, black);
+}
+
+.navItem.Mui-selected :global(.MuiListItemIcon-root) {
+  color: var(--primary-foreground, white);
+}
+
+.navItemIcon {
+  min-width: 36px;
+}
+
+.navItemLabel {
+  font-size: 0.9rem;
+}
+
+.navItemLabelActive {
+  font-weight: 600;
+}

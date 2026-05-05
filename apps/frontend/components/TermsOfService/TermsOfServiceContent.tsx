@@ -3,10 +3,11 @@ import Container from '@mui/material/Container';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-import { PolicySection } from '@/components/PrivacyPolicy/PolicySection';
-import { PolicyHeader } from '@/components/PrivacyPolicy/PolicyHeader';
-import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink';
+import { PolicySection } from '@/components/PrivacyPolicy/PolicySection/PolicySection';
+import { PolicyHeader } from '@/components/PrivacyPolicy/PolicyHeader/PolicyHeader';
+import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink/PolicyBackLink';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
+import styles from './TermsOfServiceContent.module.scss';
 
 const LOCALE_BCP47: Record<string, string> = {
   it: 'it-IT',
@@ -24,13 +25,13 @@ export async function TermsOfServiceContent() {
     year: 'numeric',
   });
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 } }}>
+    <Container maxWidth="md" className={styles.page}>
       <PolicyBackLink label={t('contactBackLink')} />
       <PolicyHeader
         title={t('termsPageTitle')}
         subtitle={`${t('lastUpdatedLabel')}: ${lastUpdated}`}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Box className={styles.sections}>
         <PolicySection title={t('termsS1Title')}>
           <Typography variant="body1" color="text.secondary">
             {t('termsS1Body')}
@@ -42,17 +43,17 @@ export async function TermsOfServiceContent() {
           </Typography>
         </PolicySection>
         <PolicySection title={t('termsS3Title')}>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body1" color="text.secondary" className={styles.paragraphSpacing}>
             {t('termsS3Body')}
           </Typography>
-          <List component="ul" sx={{ pl: 2, listStyleType: 'disc', color: 'text.secondary' }}>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+          <List component="ul" className={styles.bulletList}>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS3Item1')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS3Item2')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS3Item3')}</Typography>
             </ListItem>
           </List>
@@ -63,17 +64,17 @@ export async function TermsOfServiceContent() {
           </Typography>
         </PolicySection>
         <PolicySection title={t('termsS5Title')}>
-          <List component="ol" sx={{ pl: 2, listStyleType: 'decimal', color: 'text.secondary' }}>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+          <List component="ol" className={styles.numberedList}>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS5Item1')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS5Item2')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS5Item3')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS5Item4')}</Typography>
             </ListItem>
           </List>
@@ -89,17 +90,17 @@ export async function TermsOfServiceContent() {
           </Typography>
         </PolicySection>
         <PolicySection title={t('termsS8Title')}>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body1" color="text.secondary" className={styles.paragraphSpacing}>
             {t('termsS8Body')}
           </Typography>
-          <List component="ul" sx={{ pl: 2, listStyleType: 'disc', color: 'text.secondary' }}>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+          <List component="ul" className={styles.bulletList}>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS8Item1')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS8Item2')}</Typography>
             </ListItem>
-            <ListItem sx={{ display: 'list-item', pl: 0.5 }} disableGutters>
+            <ListItem className={styles.listItem} disableGutters>
               <Typography variant="body1">{t('termsS8Item3')}</Typography>
             </ListItem>
           </List>

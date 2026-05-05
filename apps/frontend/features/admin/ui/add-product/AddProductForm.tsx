@@ -105,14 +105,14 @@ export default function AddProductForm({
   return (
     <>
       {similarProducts.length > 0 ? (
-        <Alert severity="warning" sx={{ mb: 1 }}>
-          <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+        <Alert severity="warning" className={styles.duplicateAlert}>
+          <Typography variant="body2" className={styles.duplicateTitle}>
             {t('productDuplicateWarningTitle')}
           </Typography>
           {similarProducts.map((item) => (
             <Box
               key={item.id}
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}
+              className={styles.duplicateItem}
             >
               <Typography variant="body2">
                 {item.title} ({item.name})
@@ -127,7 +127,7 @@ export default function AddProductForm({
               </MuiButton>
             </Box>
           ))}
-          <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+          <Box className={styles.duplicateActions}>
             <MuiButton
               size="small"
               variant="contained"
@@ -148,14 +148,14 @@ export default function AddProductForm({
         </Alert>
       ) : null}
       <header>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <Typography variant="h5" className={styles.title}>
           {t('addProductPageTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {t('addProductPageSubtitle')}
         </Typography>
       </header>
-      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { md: '1fr 1fr' } }}>
+      <Box className={styles.formGrid}>
         <TextField
           label={`${t('productFieldTitle')} *`}
           fullWidth
@@ -175,23 +175,23 @@ export default function AddProductForm({
           minRows={4}
           value={draft.description}
           onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-          sx={{ gridColumn: { md: 'span 2' } }}
+          className={styles.fullWidthField}
         />
-        <Box sx={{ gridColumn: { md: 'span 2' } }}>
-          <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+        <Box className={styles.fullWidthField}>
+          <Typography variant="body2" className={styles.imageLabel}>
             {t('productFieldPhotoUrl')} * ({draft.imagePaths.length}/{maxImages})
           </Typography>
 
           {/* Image cards */}
           {draft.imagePaths.length > 0 && (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 1.5 }}>
+            <Box className={styles.imageList}>
               {draft.imagePaths.map((path, index) => (
-                <Box key={path + String(index)} sx={{ position: 'relative', flexShrink: 0 }}>
+                <Box key={path + String(index)} className={styles.imageItem}>
                   <Card
                     variant="outlined"
-                    sx={{ width: 88, height: 88, borderRadius: 2, overflow: 'hidden' }}
+                    className={styles.imageCard}
                   >
-                    <CardMedia component="div" sx={{ width: 88, height: 88, position: 'relative' }}>
+                    <CardMedia component="div" className={styles.imageMedia}>
                       <Image
                         src={resolveProductImageSrc(path)}
                         alt={`${t('productImageRemoveAlt')} ${index + 1}`}
@@ -205,19 +205,9 @@ export default function AddProductForm({
                     size="small"
                     aria-label={t('productImageRemoveAlt')}
                     onClick={() => removeImage(index)}
-                    sx={{
-                      position: 'absolute',
-                      top: -8,
-                      right: -8,
-                      backgroundColor: 'background.paper',
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      '&:hover': { backgroundColor: 'error.light', color: 'white' },
-                      width: 22,
-                      height: 22,
-                    }}
+                    className={styles.removeImageButton}
                   >
-                    <CloseIcon sx={{ fontSize: 14 }} />
+                    <CloseIcon className={styles.smallIcon} />
                   </IconButton>
                 </Box>
               ))}
@@ -225,7 +215,7 @@ export default function AddProductForm({
           )}
 
           {/* Add image button */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box className={styles.imageActions}>
             <Tooltip
               title={atMax ? t('productImageMaxReached') : ''}
               disableHoverListener={!atMax}

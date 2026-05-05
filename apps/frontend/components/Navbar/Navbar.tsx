@@ -6,26 +6,20 @@ import MuiLink from '@mui/material/Link';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode, type ComponentProps } from 'react';
+import styles from './Navbar.module.scss';
 
 function NavLink(props: Readonly<Omit<ComponentProps<typeof Link>, 'className'>>) {
   const pathname = usePathname();
   const isActive = pathname === props.href;
+  const className = isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink;
+
   return (
     <MuiLink
       component={Link}
       href={props.href as string}
       {...(props as object)}
       underline="none"
-      sx={{
-        px: 2,
-        py: 1.5,
-        borderRadius: 1,
-        color: 'primary.contrastText',
-        transition: 'background-color 200ms',
-        bgcolor: isActive ? 'rgba(255,255,255,0.20)' : 'transparent',
-        fontWeight: isActive ? 600 : 400,
-        '&:hover': { bgcolor: 'rgba(255,255,255,0.15)' },
-      }}
+      className={className}
     />
   );
 }
@@ -36,9 +30,9 @@ function Navbar({ children }: Readonly<{ children?: ReactNode }>) {
       position="static"
       data-testid="admin-navbar"
       elevation={0}
-      sx={{ bgcolor: 'var(--primary)', color: 'var(--primary-foreground)' }}
+      className={styles.navbar}
     >
-      <Toolbar sx={{ justifyContent: 'center', gap: 0.5, px: 2 }}>{children}</Toolbar>
+      <Toolbar className={styles.toolbar}>{children}</Toolbar>
     </AppBar>
   );
 }

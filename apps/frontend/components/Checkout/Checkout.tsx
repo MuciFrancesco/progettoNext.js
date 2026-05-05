@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,8 +14,6 @@ import type { CartItem } from '@/providers/CartProvider';
 import type { Locale } from '@/lib/i18n/translation';
 import { formatCurrency } from '@/lib/shop/format';
 import styles from './Checkout.module.scss';
-import { CardPaymentForm } from './CardPaymentForm';
-import type { CardBrand } from './CardPaymentForm';
 import type { PaymentMethod } from '@/features/shop/hooks/useCheckoutPage';
 
 type CheckoutStatus = 'idle' | 'loading' | 'ready' | 'processing' | 'paypal-open' | 'error';
@@ -39,7 +38,7 @@ type CheckoutProps = {
   readonly locale: Locale;
   readonly selectedMethod: PaymentMethod;
   readonly onMethodChange: (method: PaymentMethod) => void;
-  readonly onCardSubmit: (info: { last4: string; brand: CardBrand }) => void;
+  readonly cardForm: ReactNode;
   readonly onPayPalClick: () => void;
 };
 
@@ -52,7 +51,7 @@ export function Checkout({
   locale,
   selectedMethod,
   onMethodChange,
-  onCardSubmit,
+  cardForm,
   onPayPalClick,
 }: Readonly<CheckoutProps>) {
   const isProcessing = status === 'processing';
@@ -67,18 +66,18 @@ export function Checkout({
       className={styles.pageLayout}
     >
       {/* ── Payment panel ── */}
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 800, mb: 0.5 }}>
+      <Paper variant="outlined" className={styles.panel}>
+        <Typography variant="h5" component="h1" className={styles.title}>
           {labels.title}
         </Typography>
 
         {isLoading ? (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4 }}>
+          <Box className={styles.loadingRow}>
             <CircularProgress size={24} />
             <Typography color="text.secondary">Caricamento...</Typography>
           </Box>
         ) : isError ? (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert severity="error" className={styles.errorAlert}>
             {message}
           </Alert>
         ) : (
@@ -87,44 +86,36 @@ export function Checkout({
             <Tabs
               value={selectedMethod}
               onChange={(_e, v: PaymentMethod) => onMethodChange(v)}
-              sx={{ mb: 3, mt: 1.5, borderBottom: 1, borderColor: 'divider' }}
+              className={styles.tabs}
             >
               <Tab
                 value="card"
                 label={labels.cardTab}
-                icon={<CreditCardIcon sx={{ fontSize: 18 }} />}
+                icon={<CreditCardIcon className={styles.tabIcon} />}
                 iconPosition="start"
-                sx={{ textTransform: 'none', fontWeight: 600, minHeight: 44 }}
+                className={styles.tab}
               />
               <Tab
                 value="paypal"
                 label={labels.paypalTab}
                 icon={<PayPalIcon />}
                 iconPosition="start"
-                sx={{ textTransform: 'none', fontWeight: 600, minHeight: 44 }}
+                className={styles.tab}
               />
             </Tabs>
 
             {/* ── Card form ── */}
-            {selectedMethod === 'card' && (
-              <CardPaymentForm
-                locale={locale}
-                totalInCents={totalInCents}
-                isProcessing={isProcessing}
-                errorMessage={isError ? message : undefined}
-                onSubmit={onCardSubmit}
-              />
-            )}
+            {selectedMethod === 'card' && cardForm}
 
             {/* ── PayPal ── */}
             {selectedMethod === 'paypal' && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box className={styles.paypalPanel}>
                 {isPaypalOpen ? (
                   <Alert severity="info" icon={false}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Box className={styles.paypalLoading}>
                       <CircularProgress size={18} />
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <Typography variant="body2" className={styles.paypalLoadingTitle}>
                           {labels.paypalOpening}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -143,24 +134,15 @@ export function Checkout({
                       size="large"
                       onClick={onPayPalClick}
                       disabled={isProcessing}
-                      sx={{
-                        backgroundColor: '#ffc439',
-                        color: '#003087',
-                        fontWeight: 800,
-                        fontSize: '1.05rem',
-                        py: 1.5,
-                        borderRadius: 3,
-                        '&:hover': { backgroundColor: '#f0b429' },
-                        '&:disabled': { backgroundColor: '#ffc439', opacity: 0.6 },
-                      }}
+                      className={styles.paypalButton}
                     >
                       {isProcessing ? (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <CircularProgress size={18} sx={{ color: '#003087' }} />
+                        <Box className={styles.inlineCenter}>
+                          <CircularProgress size={18} className={styles.paypalSpinner} />
                           <span>Elaborazione...</span>
                         </Box>
                       ) : (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box className={styles.inlineCenter}>
                           <PayPalWordmark />
                           <span className={styles.paypalAmount}>
                             {formatCurrency(totalInCents, locale)}
@@ -178,28 +160,28 @@ export function Checkout({
       </Paper>
 
       {/* ── Order summary ── */}
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: 'fit-content' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+      <Paper variant="outlined" className={styles.summaryPanel}>
+        <Typography variant="h6" className={styles.summaryTitle}>
           {labels.summary}
         </Typography>
         <Box className={styles.summaryList}>
           {items.map((item) => (
             <Box key={item.product.id} className={styles.summaryItem}>
-              <Typography variant="body2" sx={{ flex: 1 }}>
+              <Typography variant="body2" className={styles.summaryText}>
                 {item.product.title}{' '}
                 <Typography component="span" variant="body2" color="text.secondary">
                   × {item.quantity}
                 </Typography>
               </Typography>
-              <Typography component="strong" variant="body2" sx={{ fontWeight: 800, flexShrink: 0 }}>
+              <Typography component="strong" variant="body2" className={styles.strongText}>
                 {formatCurrency(item.product.priceInCents * item.quantity, locale)}
               </Typography>
             </Box>
           ))}
         </Box>
         <Box className={styles.totalRow}>
-          <Typography sx={{ fontWeight: 600 }}>{labels.total}</Typography>
-          <Typography component="strong" sx={{ fontWeight: 800 }}>
+          <Typography className={styles.totalLabel}>{labels.total}</Typography>
+          <Typography component="strong" className={styles.strongText}>
             {formatCurrency(totalInCents, locale)}
           </Typography>
         </Box>

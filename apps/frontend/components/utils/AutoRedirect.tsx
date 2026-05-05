@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useAutoRedirect } from '@/features/utils/hooks/useAutoRedirect';
 
 type AutoRedirectProps = {
   href: string;
@@ -8,15 +8,6 @@ type AutoRedirectProps = {
 };
 
 export default function AutoRedirect({ href, delayMs = 350 }: Readonly<AutoRedirectProps>) {
-  useEffect(() => {
-    const timer = globalThis.setTimeout(() => {
-      globalThis.location.replace(href);
-    }, delayMs);
-
-    return () => {
-      globalThis.clearTimeout(timer);
-    };
-  }, [delayMs, href]);
-
+  useAutoRedirect(href, delayMs);
   return null;
 }

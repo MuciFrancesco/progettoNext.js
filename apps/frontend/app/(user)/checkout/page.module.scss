@@ -1,6 +1,5 @@
+@use '@/styles/shared' as ds;
+
 .shell {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  background: linear-gradient(to bottom, var(--background), color-mix(in srgb, var(--muted) 30%, transparent));
+  @include ds.app-shell;
 }

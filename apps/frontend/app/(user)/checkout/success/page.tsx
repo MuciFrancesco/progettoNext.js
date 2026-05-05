@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { requireUserSession } from '@/lib/auth/session';
-import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader';
-import { CheckoutSuccessFeature } from '@/features/shop/components/CheckoutSuccessFeature';
+import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
+import { CheckoutSuccessFeature } from '@/features/shop/components/CheckoutSuccessFeature/CheckoutSuccessFeature';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {

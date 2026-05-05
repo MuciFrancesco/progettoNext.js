@@ -1,0 +1,64 @@
+@use '@/styles/shared' as ds;
+
+.header {
+  @include ds.admin-page-header;
+}
+
+.title {
+  font-weight: 600 !important;
+}
+
+.tableWrap {
+  @include ds.admin-table-wrap;
+}
+
+.searchForm {
+  @include ds.admin-search-form;
+}
+
+.searchField {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.headerActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: ds.$spacing-2;
+}
+
+.saveAllButton {
+  border-color: #4caf50 !important;
+  color: #4caf50 !important;
+}
+
+.saveAllButton:hover {
+  border-color: #388e3c !important;
+  color: #388e3c !important;
+}
+
+.nameCell {
+  font-weight: 500;
+}
+
+.mutedCell {
+  color: var(--muted-foreground);
+}
+
+.rowActions {
+  display: flex;
+  justify-content: center;
+  gap: ds.$spacing-1;
+}
+
+.saveButtonActive {
+  color: #4caf50 !important;
+}
+
+.resetButtonActive {
+  color: #42a5f5 !important;
+}
+
+.deleteButtonActive {
+  color: #ef5350 !important;
+}

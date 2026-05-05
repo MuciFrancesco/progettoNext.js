@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
-import { AdminUpdateProductsTable } from '@/features/admin/components/AdminUpdateProductsTable';
+import { AdminUpdateProductsTable } from '@/features/admin/components/AdminUpdateProductsTable/AdminUpdateProductsTable';
 import { getAdminProductsAction } from '@/lib/actions/admin';
 import styles from './page.module.scss';
 

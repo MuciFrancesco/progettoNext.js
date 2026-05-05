@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { requireAdminSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { listAdminOrders } from '@/lib/api/admin';
-import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable';
+import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable/AdminOrdersTable';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import styles from './page.module.scss';

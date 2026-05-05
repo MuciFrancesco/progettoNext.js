@@ -120,3 +120,73 @@
 .footerIcon {
   font-size: 0.9rem !important;
 }
+
+.list {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: inherit;
+  text-decoration: none;
+  background-color: var(--card);
+  border-top: 1px solid var(--border);
+  transition: background-color 150ms;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.row:hover {
+  background-color: var(--secondary);
+}
+
+.rowActive {
+  background-color: var(--primary);
+}
+
+.rowActive:hover {
+  background-color: var(--primary);
+  opacity: 0.92;
+}
+
+.rowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background-color: rgba(11, 60, 93, 0.08);
+  font-size: 1rem;
+}
+
+.rowIconActive {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.rowTitle {
+  flex: 1;
+  color: var(--foreground);
+  font-weight: 600 !important;
+}
+
+.rowTitleActive {
+  color: var(--primary-foreground);
+}
+
+.rowArrow {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 0.9rem !important;
+}
+
+.rowArrowActive {
+  color: rgba(255, 255, 255, 0.8);
+}

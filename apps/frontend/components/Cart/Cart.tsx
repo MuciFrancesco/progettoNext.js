@@ -54,17 +54,17 @@ export function Cart({
     <Box
       component="section"
       data-testid="cart-page"
-      sx={{ mx: 'auto', display: 'flex', width: '100%', maxWidth: '64rem', flexDirection: 'column', gap: 3, px: { xs: 2, sm: 3 }, py: 4 }}
+      className={styles.page}
     >
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Typography component="h1" variant="h3" sx={{ fontWeight: 700 }}>
+      <Box className={styles.header}>
+        <Typography component="h1" variant="h3" className={styles.title}>
           {labels.title}
         </Typography>
-        <Typography sx={{ color: 'var(--muted-foreground)' }}>{labels.subtitle}</Typography>
+        <Typography className={styles.mutedText}>{labels.subtitle}</Typography>
       </Box>
 
       {stockAlerts.length > 0 ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box className={styles.alerts}>
           {stockAlerts.map((alert) => (
             <Alert key={`${alert.productId}-${alert.message}`} severity="warning">
               {alert.message}
@@ -74,31 +74,24 @@ export function Cart({
       ) : null}
 
       {!hasItems ? (
-        <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
-          <ShoppingBagIcon sx={{ mb: 1, color: 'var(--primary)' }} />
-          <Typography sx={{ mb: 2 }}>{labels.empty}</Typography>
-          <Button component={Link} href="/" variant="contained" sx={{ borderRadius: 1.5 }}>
+        <Paper variant="outlined" className={styles.emptyState}>
+          <ShoppingBagIcon className={styles.emptyIcon} />
+          <Typography className={styles.emptyText}>{labels.empty}</Typography>
+          <Button component={Link} href="/" variant="contained" className={styles.roundedButton}>
             {labels.goToCatalog}
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 320px' }, gap: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box className={styles.contentGrid}>
+          <Box className={styles.itemsList}>
             {items.map((item) => (
               <Paper
                 key={item.product.id}
                 variant="outlined"
                 data-testid={`cart-item-${item.product.id}`}
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '88px 1fr', sm: '112px 1fr auto' },
-                  gap: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  alignItems: 'center',
-                }}
+                className={styles.itemCard}
               >
-                <Box sx={{ position: 'relative', height: { xs: 80, sm: 96 }, overflow: 'hidden', borderRadius: 1, bgcolor: 'var(--secondary)' }}>
+                <Box className={styles.imageFrame}>
                   {item.product.imagePath ? (
                     <Image
                       src={resolveProductImageSrc(item.product.imagePath)}
@@ -110,9 +103,9 @@ export function Cart({
                     />
                   ) : null}
                 </Box>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 700 }}>{item.product.title}</Typography>
-                  <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+                <Box className={styles.itemInfo}>
+                  <Typography className={styles.itemTitle}>{item.product.title}</Typography>
+                  <Typography variant="body2" className={styles.mutedText}>
                     {formatCurrency(item.product.priceInCents, locale)} {labels.unitSuffix}
                   </Typography>
                   <TextField
@@ -128,11 +121,11 @@ export function Cart({
                         'data-testid': `cart-qty-${item.product.id}`,
                       },
                     }}
-                    sx={{ mt: 1, width: 120 }}
+                    className={styles.quantityField}
                   />
                 </Box>
-                <Box sx={{ gridColumn: { xs: 'span 2', sm: 'span 1' }, display: 'flex', alignItems: { xs: 'center', sm: 'flex-end' }, justifyContent: 'space-between', flexDirection: { sm: 'column' }, gap: { sm: 1.5 } }}>
-                  <Typography sx={{ fontWeight: 800 }}>
+                <Box className={styles.itemActions}>
+                  <Typography className={styles.lineTotal}>
                     {formatCurrency(item.product.priceInCents * item.quantity, locale)}
                   </Typography>
                   <IconButton
@@ -147,13 +140,13 @@ export function Cart({
             ))}
           </Box>
 
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: 'fit-content' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+          <Paper variant="outlined" className={styles.summary}>
+            <Typography variant="h6" className={styles.summaryTitle}>
               {labels.total}
             </Typography>
-            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Typography sx={{ color: 'var(--muted-foreground)' }}>{labels.items}</Typography>
-              <Typography component="strong" sx={{ fontWeight: 800 }}>
+            <Box className={styles.summaryRow}>
+              <Typography className={styles.mutedText}>{labels.items}</Typography>
+              <Typography component="strong" className={styles.summaryTotal}>
                 {formatCurrency(totalInCents, locale)}
               </Typography>
             </Box>
@@ -163,7 +156,7 @@ export function Cart({
               variant="contained"
               disabled={!hasItems}
               data-testid="cart-checkout-button"
-              sx={{ width: '100%', borderRadius: 1.5 }}
+              className={styles.checkoutButton}
             >
               {labels.checkout}
             </Button>

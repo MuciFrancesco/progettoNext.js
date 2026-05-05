@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import { SearchTextField } from '@/components/SearchTextField/SearchTextField';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './RoleManager.module.scss';
 
 type RoleManagerSearchBarProps = {
   readonly locale: Locale;
@@ -38,9 +39,9 @@ export function RoleManagerSearchBar({
         event.preventDefault();
         onSearch();
       }}
-      sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'flex-end' }}
+      className={styles.searchForm}
     >
-      <Box sx={{ flex: '1 1 220px', minWidth: 180 }}>
+      <Box className={styles.searchField}>
         <SearchTextField
           label={t('roleManagerSearchEmail')}
           value={searchEmail}
@@ -48,7 +49,7 @@ export function RoleManagerSearchBar({
           disabled={isPending}
         />
       </Box>
-      <Box sx={{ flex: '1 1 220px', minWidth: 180 }}>
+      <Box className={styles.searchField}>
         <SearchTextField
           label={t('roleManagerSearchName')}
           value={searchName}

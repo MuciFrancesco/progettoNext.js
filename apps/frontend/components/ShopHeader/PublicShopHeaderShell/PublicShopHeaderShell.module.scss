@@ -1,0 +1,49 @@
+.appBar {
+  top: 0;
+  z-index: 30;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  backdrop-filter: blur(8px);
+}
+
+.toolbar {
+  width: 100%;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: unset !important;
+  align-items: center;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--primary);
+  user-select: none;
+}
+
+.logoAccent {
+  color: var(--foreground);
+}
+
+.actionsSlot {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 600px) {
+  .toolbar {
+    padding-inline: 24px;
+  }
+}

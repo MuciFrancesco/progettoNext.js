@@ -1,0 +1,17 @@
+@use '@/styles/shared' as ds;
+
+.page {
+  @include ds.page-y-padding;
+}
+
+.sections {
+  @include ds.section-stack;
+}
+
+.paragraphSpacing {
+  margin-bottom: 16px;
+}
+
+.paragraphTopSpacing {
+  margin-top: ds.$spacing-2;
+}

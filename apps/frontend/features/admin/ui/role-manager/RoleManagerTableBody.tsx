@@ -8,9 +8,11 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
+import clsx from 'clsx';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendUser } from '@/types/api/user';
+import styles from './RoleManager.module.scss';
 
 interface RoleManagerTableBodyProps {
   readonly users: BackendUser[];
@@ -65,8 +67,8 @@ export default function RoleManagerTableBody({
                 disabled={isSelf}
               />
             </TableCell>
-            <TableCell sx={{ fontWeight: 500 }}>{fullName(user)}</TableCell>
-            <TableCell sx={{ color: 'text.secondary' }}>{user.email}</TableCell>
+            <TableCell className={styles.nameCell}>{fullName(user)}</TableCell>
+            <TableCell className={styles.mutedCell}>{user.email}</TableCell>
             <TableCell align="center" padding="checkbox">
               <Checkbox
                 checked={draft?.isAdmin ?? false}
@@ -112,12 +114,12 @@ export default function RoleManagerTableBody({
               />
             </TableCell>
             <TableCell align="center">
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+              <Box className={styles.rowActions}>
                 <Tooltip title={t('productSaveChangesButton')}>
                   <span>
                     <IconButton
                       size="small"
-                      sx={{ color: hasChanges ? '#4CAF50' : undefined }}
+                      className={clsx(hasChanges && styles.saveButtonActive)}
                       disabled={isPending || !hasChanges}
                       onClick={() => saveUser(user.id)}
                       aria-label={t('productSaveChangesButton')}
@@ -130,7 +132,7 @@ export default function RoleManagerTableBody({
                   <span>
                     <IconButton
                       size="small"
-                      sx={{ color: hasChanges ? '#42A5F5' : undefined }}
+                      className={clsx(hasChanges && styles.resetButtonActive)}
                       disabled={isPending || !hasChanges}
                       onClick={() => resetUser(user.id)}
                       aria-label={t('roleManagerReset')}
@@ -143,7 +145,7 @@ export default function RoleManagerTableBody({
                   <span>
                     <IconButton
                       size="small"
-                      sx={{ color: !isPending && !isSelf ? '#EF5350' : undefined }}
+                      className={clsx(!isPending && !isSelf && styles.deleteButtonActive)}
                       disabled={isPending || isSelf}
                       onClick={() => onDeleteUser(user.id)}
                       aria-label={t('roleManagerDeleteButton')}

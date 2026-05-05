@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { requireUserSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { listMyOrders } from '@/lib/api/user';
-import { MyOrdersTable } from '@/features/user/components/MyOrdersTable';
+import { MyOrdersTable } from '@/features/user/components/MyOrdersTable/MyOrdersTable';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import styles from './page.module.scss';

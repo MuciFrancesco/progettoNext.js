@@ -1,7 +1,83 @@
+@use '@/styles/shared' as ds;
+
 .hiddenFileInput {
   display: none;
 }
 
 .containImage {
-  object-fit: contain;
+  @include ds.object-contain;
+}
+
+.duplicateAlert {
+  margin-bottom: 8px;
+}
+
+.duplicateTitle {
+  margin-bottom: 8px !important;
+  font-weight: 600 !important;
+}
+
+.duplicateItem {
+  @include ds.flex-row($gap: ds.$spacing-2);
+  flex-wrap: wrap;
+  margin-bottom: ds.$spacing-1;
+}
+
+.duplicateActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: ds.$spacing-2;
+  margin-top: ds.$spacing-2;
+}
+
+.title {
+  font-weight: 600 !important;
+}
+
+.formGrid {
+  display: grid;
+  gap: ds.$spacing-4;
+}
+
+.fullWidthField {
+  @include ds.responsive-full-width-field;
+}
+
+.imageLabel {
+  margin-bottom: ds.$spacing-2 !important;
+  font-weight: 500 !important;
+}
+
+.imageList {
+  @include ds.image-thumb-list;
+}
+
+.imageItem {
+  @include ds.image-thumb-item;
+}
+
+.imageCard {
+  @include ds.image-thumb-card;
+}
+
+.imageMedia {
+  @include ds.image-thumb-media;
+}
+
+.removeImageButton {
+  @include ds.image-thumb-remove;
+}
+
+.smallIcon {
+  font-size: 14px !important;
+}
+
+.imageActions {
+  @include ds.flex-row($gap: ds.$spacing-3);
+}
+
+@media (min-width: 900px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
 }

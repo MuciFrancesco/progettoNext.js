@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getCurrentLocale } from '@/lib/i18n/locale';
-import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader';
-import { CartFeature } from '@/features/shop/components/CartFeature';
+import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
+import { CartFeature } from '@/features/shop/components/CartFeature/CartFeature';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {

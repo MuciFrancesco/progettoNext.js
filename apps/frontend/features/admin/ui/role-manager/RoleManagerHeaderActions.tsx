@@ -7,6 +7,7 @@ import MuiButton from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './RoleManager.module.scss';
 
 type RoleManagerHeaderActionsProps = {
   readonly locale: Locale;
@@ -30,7 +31,7 @@ export function RoleManagerHeaderActions({
   const t = createTranslator(locale);
 
   return (
-    <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
+    <Box className={styles.headerActions}>
       {selectedCount >= 2 ? (
         <MuiButton
           variant="outlined"
@@ -45,11 +46,7 @@ export function RoleManagerHeaderActions({
       ) : null}
       <MuiButton
         variant="outlined"
-        sx={{
-          borderColor: '#4CAF50',
-          color: '#4CAF50',
-          '&:hover': { borderColor: '#388E3C', color: '#388E3C' },
-        }}
+        className={styles.saveAllButton}
         disabled={changedCount < 2 || isPending}
         onClick={onRequestSaveAll}
         startIcon={<DoneAllIcon />}

@@ -85,7 +85,10 @@ describe('useCheckoutPage', () => {
     const { result } = renderHook(() => useCheckoutPage('it'));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/checkout', expect.objectContaining({ method: 'POST' }));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/checkout',
+        expect.objectContaining({ method: 'POST' })
+      );
       expect(result.current.status).toBe('ready');
     });
   });

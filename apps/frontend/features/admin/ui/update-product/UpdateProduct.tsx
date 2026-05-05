@@ -221,7 +221,7 @@ function UpdateProduct({
         onOpenBulkDelete={openBulkDeleteConfirm}
       />
 
-      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+      <TableContainer component={Paper} variant="outlined" className={styles.tableWrap}>
         <Table size="small">
           <UpdateProductTableHead
             locale={locale}
@@ -276,9 +276,7 @@ function UpdateProduct({
       >
         <DialogTitle>{t('productSaveChangesButton')}</DialogTitle>
         {editDraft && (
-          <DialogContent
-            sx={{ display: 'grid', gridTemplateColumns: { md: '1fr 1fr' }, gap: 2, pt: 2 }}
-          >
+          <DialogContent className={styles.editDialogContent}>
             <TextField
               label={t('productFieldTitle')}
               fullWidth
@@ -300,26 +298,26 @@ function UpdateProduct({
               minRows={3}
               value={editDraft.description}
               onChange={(e) => updateEditDraft({ description: e.target.value })}
-              sx={{ gridColumn: { md: 'span 2' } }}
+              className={styles.fullWidthField}
               disabled={isPending}
             />
-            <Box sx={{ gridColumn: { md: 'span 2' } }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+            <Box className={styles.fullWidthField}>
+              <Typography variant="body2" className={styles.imageLabel}>
                 {t('productFieldPhotoUrl')} ({editDraft.imagePaths.length}/10)
               </Typography>
 
               {/* Image grid */}
               {editDraft.imagePaths.length > 0 && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 1.5 }}>
+                <Box className={styles.imageList}>
                   {editDraft.imagePaths.map((path, index) => (
-                    <Box key={path + String(index)} sx={{ position: 'relative', flexShrink: 0 }}>
+                    <Box key={path + String(index)} className={styles.imageItem}>
                       <Card
                         variant="outlined"
-                        sx={{ width: 88, height: 88, borderRadius: 2, overflow: 'hidden' }}
+                        className={styles.imageCard}
                       >
                         <CardMedia
                           component="div"
-                          sx={{ width: 88, height: 88, position: 'relative' }}
+                          className={styles.imageMedia}
                         >
                           <Image
                             src={resolveProductImageSrc(path)}
@@ -334,18 +332,9 @@ function UpdateProduct({
                         size="small"
                         onClick={() => onEditImageRemove(index)}
                         disabled={isPending || editImageUploading}
-                        sx={{
-                          position: 'absolute',
-                          top: -8,
-                          right: -8,
-                          bgcolor: 'background.paper',
-                          border: '1px solid',
-                          borderColor: 'divider',
-                          p: '2px',
-                          '&:hover': { bgcolor: 'error.light', color: 'white' },
-                        }}
+                        className={styles.removeImageButton}
                       >
-                        <CloseIcon sx={{ fontSize: 14 }} />
+                        <CloseIcon className={styles.smallIcon} />
                       </IconButton>
                     </Box>
                   ))}
@@ -441,7 +430,7 @@ function UpdateProduct({
       >
         <DialogTitle>{t('productBulkEditTitle')}</DialogTitle>
         {bulkDraft && (
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+          <DialogContent className={styles.stackedDialogContent}>
             <Typography variant="body2" color="text.secondary">
               {t('productBulkEditSubtitle').replace('{count}', String(selectedIds.size))}
             </Typography>
@@ -494,8 +483,8 @@ function UpdateProduct({
 
       {/* Delete confirmation dialog */}
       <Dialog open={Boolean(deleteConfirm)} onClose={cancelDelete} maxWidth="xs" fullWidth>
-        <DialogTitle sx={{ color: 'error.main' }}>{t('productDeleteButton')}</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
+        <DialogTitle className={styles.dangerTitle}>{t('productDeleteButton')}</DialogTitle>
+        <DialogContent className={styles.dialogContentSpacing}>
           <Typography variant="body2">
             {t('productDeleteConfirm').replace('{title}', deleteConfirm?.title ?? '')}
           </Typography>
@@ -523,8 +512,8 @@ function UpdateProduct({
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle sx={{ color: 'error.main' }}>{t('productBulkDeleteTitle')}</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
+        <DialogTitle className={styles.dangerTitle}>{t('productBulkDeleteTitle')}</DialogTitle>
+        <DialogContent className={styles.dialogContentSpacing}>
           <Typography variant="body2">
             {t('productBulkDeleteSubtitle').replace('{count}', String(selectedIds.size))}
           </Typography>
@@ -548,10 +537,10 @@ function UpdateProduct({
       {/* Remote bulk-in-progress notice — non-dismissible, auto-clears when polling detects completion */}
       <Dialog open={isBulkBusyRemotely} maxWidth="sm" fullWidth>
         <DialogTitle>{t('productBulkInProgressTitle')}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+        <DialogContent className={styles.stackedDialogContent}>
           <Typography variant="body2">{t('productBulkInProgressBody')}</Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
+        <DialogActions className={styles.centeredActions}>
           <CircularProgress size={24} />
         </DialogActions>
       </Dialog>
@@ -573,4 +562,3 @@ function UpdateProduct({
 }
 
 export default UpdateProduct;
-

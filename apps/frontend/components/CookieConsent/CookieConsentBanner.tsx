@@ -10,6 +10,7 @@ import Switch from '@mui/material/Switch';
 import Collapse from '@mui/material/Collapse';
 import Slide from '@mui/material/Slide';
 import type { TranslationKey } from '@/lib/i18n/translator';
+import styles from './CookieConsentBanner.module.scss';
 
 type TranslateFn = (key: TranslationKey) => string;
 
@@ -42,37 +43,26 @@ export default function CookieConsentBanner({
     <Slide direction="up" in mountOnEnter unmountOnExit>
       <Paper
         elevation={8}
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1400,
-          borderRadius: '12px 12px 0 0',
-          p: { xs: 2, sm: 3 },
-          maxWidth: 900,
-          mx: 'auto',
-          width: '100%',
-        }}
+        className={styles.banner}
         role="dialog"
         aria-modal="true"
         aria-label={t('cookieConsentTitle')}
       >
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography variant="h6" className={styles.title}>
           {t('cookieConsentTitle')}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="body2" color="text.secondary" className={styles.description}>
           {t('cookieConsentDesc')}
         </Typography>
 
         <Collapse in={showDetails}>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+          <Divider className={styles.divider} />
+          <Box className={styles.toggleGroup}>
             <FormControlLabel
               control={<Switch checked disabled size="small" />}
               label={<Typography variant="body2">{t('cookieConsentEssentialLabel')}</Typography>}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mt: -1 }}>
+            <Typography variant="caption" color="text.secondary" className={styles.toggleCaption}>
               {t('cookieConsentLegalNote')}
             </Typography>
             <FormControlLabel
@@ -96,23 +86,16 @@ export default function CookieConsentBanner({
               label={<Typography variant="body2">{t('cookieConsentMarketingLabel')}</Typography>}
             />
           </Box>
-          <Divider sx={{ mb: 2 }} />
+          <Divider className={styles.divider} />
         </Collapse>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 1,
-            justifyContent: { xs: 'stretch', sm: 'flex-end' },
-          }}
-        >
+        <Box className={styles.actionRow}>
           {showDetails ? (
             <Button
               variant="contained"
               size="small"
               onClick={onSavePreferences}
-              sx={{ flexGrow: { xs: 1, sm: 0 } }}
+              className={styles.actionButton}
             >
               {t('cookieConsentSavePreferences')}
             </Button>
@@ -122,7 +105,7 @@ export default function CookieConsentBanner({
                 variant="outlined"
                 size="small"
                 onClick={onToggleDetails}
-                sx={{ flexGrow: { xs: 1, sm: 0 } }}
+                className={styles.actionButton}
               >
                 {t('cookieConsentCustomize')}
               </Button>
@@ -130,7 +113,7 @@ export default function CookieConsentBanner({
                 variant="outlined"
                 size="small"
                 onClick={onRejectNonEssential}
-                sx={{ flexGrow: { xs: 1, sm: 0 } }}
+                className={styles.actionButton}
               >
                 {t('cookieConsentRejectNonEssential')}
               </Button>
@@ -138,7 +121,7 @@ export default function CookieConsentBanner({
                 variant="contained"
                 size="small"
                 onClick={onAcceptAll}
-                sx={{ flexGrow: { xs: 1, sm: 0 } }}
+                className={styles.actionButton}
               >
                 {t('cookieConsentAcceptAll')}
               </Button>

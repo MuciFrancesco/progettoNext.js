@@ -1,0 +1,44 @@
+.emptyCell {
+  padding-block: 32px;
+  color: var(--muted-foreground);
+}
+
+.clickableRow {
+  cursor: pointer;
+}
+
+.mutedSmallCell {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.productCell {
+  font-weight: 500;
+}
+
+.desktopCell {
+  display: none;
+}
+
+.totalCell {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.dateCell {
+  display: none;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 600px) {
+  .dateCell {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 900px) {
+  .desktopCell {
+    display: table-cell;
+  }
+}

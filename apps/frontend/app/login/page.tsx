@@ -4,10 +4,10 @@ import { Suspense } from 'react';
 import { getCurrentSession, redirectByRole } from '@/lib/auth/session';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { getLanguageOptions } from '@/lib/i18n/translator';
-import AuthForms from '@/features/auth/components/AuthForms';
+import AuthForms from '@/features/auth/components/AuthForms/AuthForms';
 import LocaleSwitcher from '@/components/LocaleSwitcher/LocaleSwitcher';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
-import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader';
+import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader/DashboardHeader';
 import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {

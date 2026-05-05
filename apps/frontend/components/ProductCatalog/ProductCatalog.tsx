@@ -65,15 +65,15 @@ export function ProductCatalog({
       className={styles.pageSection}
     >
       <Box className={styles.headerBlock}>
-        <Typography variant="overline" sx={{ color: 'var(--primary)', fontWeight: 700 }}>
+        <Typography variant="overline" className={styles.eyebrow}>
           {labels.brand}
         </Typography>
         <Box className={styles.titleRow}>
           <Box>
-            <Typography component="h1" variant="h3" sx={{ fontWeight: 700 }}>
+            <Typography component="h1" variant="h3" className={styles.title}>
               {labels.title}
             </Typography>
-            <Typography sx={{ mt: 1, maxWidth: 680, color: 'var(--muted-foreground)' }}>
+            <Typography className={styles.subtitle}>
               {labels.subtitle}
             </Typography>
           </Box>
@@ -82,13 +82,13 @@ export function ProductCatalog({
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             size="small"
-            sx={{ minWidth: { md: 280 } }}
+            className={styles.searchField}
             slotProps={{ htmlInput: { 'data-testid': 'catalog-search' } }}
           />
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+      <Box className={styles.categoryFilters}>
         {categoryOptions.map((option) => (
           <Chip
             key={option.value}
@@ -100,7 +100,7 @@ export function ProductCatalog({
       </Box>
 
       {products.length === 0 ? (
-        <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
+        <Paper variant="outlined" className={styles.emptyState}>
           <Typography>{labels.empty}</Typography>
         </Paper>
       ) : (
@@ -110,15 +110,9 @@ export function ProductCatalog({
               key={product.id}
               variant="outlined"
               data-testid={`product-card-${product.id}`}
-              sx={{
-                display: 'flex',
-                minHeight: 420,
-                flexDirection: 'column',
-                overflow: 'hidden',
-                borderRadius: 2,
-              }}
+              className={styles.productCard}
             >
-              <Box sx={{ position: 'relative', height: 190, bgcolor: 'var(--secondary)' }}>
+              <Box className={styles.imageFrame}>
                 {product.imagePath ? (
                   <Image
                     src={resolveProductImageSrc(product.imagePath)}
@@ -129,38 +123,31 @@ export function ProductCatalog({
                     unoptimized
                   />
                 ) : (
-                  <Box
-                    sx={{
-                      height: '100%',
-                      display: 'grid',
-                      placeItems: 'center',
-                      color: 'var(--muted-foreground)',
-                    }}
-                  >
+                  <Box className={styles.imagePlaceholder}>
                     <Typography>{labels.brand}</Typography>
                   </Box>
                 )}
               </Box>
-              <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 1.5, p: 2 }}>
+              <Box className={styles.productContent}>
                 <Box className={styles.productHeadingRow}>
                   <Box>
-                    <Typography component="h2" variant="h6" sx={{ fontWeight: 700 }}>
+                    <Typography component="h2" variant="h6" className={styles.productTitle}>
                       {product.title}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+                    <Typography variant="body2" className={styles.mutedText}>
                       {product.name}
                     </Typography>
                   </Box>
                   <Chip size="small" label={t(categoryTranslationKey(product.category))} />
                 </Box>
-                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', flex: 1 }}>
+                <Typography variant="body2" className={styles.productDescription}>
                   {product.description}
                 </Typography>
                 <Box className={styles.priceRow}>
-                  <Typography sx={{ fontWeight: 800, color: 'var(--primary)' }}>
+                  <Typography className={styles.price}>
                     {formatCurrency(product.priceInCents, locale)}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                  <Typography variant="caption" className={styles.mutedText}>
                     {labels.stock}: {product.stockQuantity}
                   </Typography>
                 </Box>

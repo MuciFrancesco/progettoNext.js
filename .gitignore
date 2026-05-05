@@ -1,23 +1,29 @@
-node_modules
-dist
-.next
-out
-build
-coverage
+node_modules/
+dist/
+.next/
+out/
+build/
+coverage/
 .env
 !.env.example
 uploads/
-.agents
-.claude
-.cloude
-.codex
-.codex-plugins
-.github
-.pip-tmp
-.vscode
-.zencoder
-.zenflow
-graphify-out
+
+.agents/
+.claude/
+.cloude/
+.codex/
+.codex-plugins/
+.github/
+.pip-tmp/
+.vscode/
+.zencoder/
+.zenflow/
+
+graphify-out/
+docs/
+caveman/
+reports/
+
 agent.md
 AGENTS.md
 audit_tecnico.md
@@ -25,8 +31,3 @@ AUDIT_TECNICO.md
 skills.md
 SKILLS.md
 .graphifyignore
- docs
- docs/superpowers 
- .cloude
- docs
- docs/superpowers

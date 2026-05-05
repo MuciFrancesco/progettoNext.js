@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { requireAdminOrEmployeeSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import { listAdminOrders } from '@/lib/api/admin';
-import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable';
+import { AdminOrdersTable } from '@/features/admin/components/AdminOrdersTable/AdminOrdersTable';
 import { getAdminPanelsConfig } from '@/features/admin/config/adminPanels';
 import { PanelsGrid } from '@/components/PanelsGrid/PanelsGrid';
 import styles from './page.module.scss';

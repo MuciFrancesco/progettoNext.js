@@ -12,6 +12,7 @@ import {
   type SelectOption,
 } from '@/components/CategoryMultiSelect/CategoryMultiSelect';
 import { SearchTextField } from '@/components/SearchTextField/SearchTextField';
+import styles from './UpdateProduct.module.scss';
 
 type UpdateProductSearchBarProps = {
   readonly locale: Locale;
@@ -49,9 +50,9 @@ export function UpdateProductSearchBar({
         event.preventDefault();
         onSearch();
       }}
-      sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'flex-end' }}
+      className={styles.searchForm}
     >
-      <Box sx={{ flex: '1 1 200px', minWidth: 180 }}>
+      <Box className={styles.categorySearchField}>
         <CategoryMultiSelect
           label={t('productSearchCategory')}
           options={categoryOptions}
@@ -60,7 +61,7 @@ export function UpdateProductSearchBar({
           disabled={isLocked}
         />
       </Box>
-      <Box sx={{ flex: '1 1 180px', minWidth: 160 }}>
+      <Box className={styles.textSearchField}>
         <SearchTextField
           label={t('productSearchTitle')}
           value={searchTitleDraft}
@@ -68,7 +69,7 @@ export function UpdateProductSearchBar({
           disabled={isLocked}
         />
       </Box>
-      <Box sx={{ flex: '1 1 180px', minWidth: 160 }}>
+      <Box className={styles.textSearchField}>
         <SearchTextField
           label={t('productSearchName')}
           value={searchNameDraft}

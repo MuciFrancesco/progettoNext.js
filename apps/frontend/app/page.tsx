@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { listPublicProducts } from '@/lib/api/products';
-import { ProductCatalogFeature } from '@/features/shop/components/ProductCatalogFeature';
-import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader';
+import { ProductCatalogFeature } from '@/features/shop/components/ProductCatalogFeature/ProductCatalogFeature';
+import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
 
 export const metadata: Metadata = {
   title: 'Catalog',

@@ -6,6 +6,7 @@ import MuiButton from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import styles from './UpdateProduct.module.scss';
 
 type UpdateProductBulkActionsProps = {
   readonly locale: Locale;
@@ -25,7 +26,7 @@ export function UpdateProductBulkActions({
   const t = createTranslator(locale);
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+    <Box className={styles.bulkActions}>
       <MuiButton
         variant="contained"
         className="btn-add"

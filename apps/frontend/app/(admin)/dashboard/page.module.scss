@@ -1,9 +1,9 @@
+@use '@/styles/shared' as ds;
+
 .section {
-  display: grid;
-  gap: 1.5rem;
+  @include ds.dashboard-section;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  @include ds.page-title(1.5rem);
 }

@@ -25,6 +25,7 @@ import RoleManagerTableHead from './RoleManagerTableHead';
 import RoleManagerTableBody from './RoleManagerTableBody';
 import { RoleManagerHeaderActions } from './RoleManagerHeaderActions';
 import { RoleManagerSearchBar } from './RoleManagerSearchBar';
+import styles from './RoleManager.module.scss';
 
 type RoleManagerHeaderActionControls = {
   readonly selectedCount: number;
@@ -111,11 +112,9 @@ function RoleManager({
 
   return (
     <>
-      <Box
-        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}
-      >
+      <Box className={styles.header}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          <Typography variant="h5" className={styles.title}>
             {t('rolePageTitle')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -144,7 +143,7 @@ function RoleManager({
         onSearchReset={searchControls.onSearchReset}
       />
 
-      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+      <TableContainer component={Paper} variant="outlined" className={styles.tableWrap}>
         <Table size="small">
           <RoleManagerTableHead
             locale={locale}

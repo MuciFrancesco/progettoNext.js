@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import { requireAdminSession } from '@/lib/auth/session';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
-import { AdminRoleManager } from '@/features/admin/components/AdminRoleManager';
+import { AdminRoleManager } from '@/features/admin/components/AdminRoleManager/AdminRoleManager';
 import { listAdminUsers } from '@/lib/api/admin';
 import styles from './page.module.scss';
 

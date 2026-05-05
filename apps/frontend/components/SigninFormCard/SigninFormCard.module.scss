@@ -1,21 +1,15 @@
+@use '@/styles/shared' as ds;
+
 .forgotPasswordRow {
   text-align: right;
 }
 
 .forgotPasswordLink {
-  font-size: 0.875rem;
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.forgotPasswordLink:hover {
-  text-decoration: underline;
+  @include ds.primary-text-link;
 }
 
 .formStack {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  @include ds.form-stack;
 }
 
 .socialButtons {

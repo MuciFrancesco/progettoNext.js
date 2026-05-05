@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
 import { useCart } from '@/providers/CartProvider';
-import type { CardBrand } from '@/components/Checkout/CardPaymentForm';
+import type { CardBrand } from '@/features/shop/helpers/cardPayment';
 
 type CheckoutStatus = 'idle' | 'loading' | 'ready' | 'processing' | 'paypal-open' | 'error';
 export type PaymentMethod = 'card' | 'paypal';

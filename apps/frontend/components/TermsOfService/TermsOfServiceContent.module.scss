@@ -1,0 +1,30 @@
+@use '@/styles/shared' as ds;
+
+.page {
+  @include ds.page-y-padding;
+}
+
+.sections {
+  @include ds.section-stack;
+}
+
+.paragraphSpacing {
+  margin-bottom: ds.$spacing-4;
+}
+
+.bulletList {
+  padding-left: ds.$spacing-4;
+  color: var(--muted-foreground);
+  list-style-type: disc;
+}
+
+.numberedList {
+  padding-left: ds.$spacing-4;
+  color: var(--muted-foreground);
+  list-style-type: decimal;
+}
+
+.listItem {
+  display: list-item;
+  padding-left: ds.$spacing-1;
+}

@@ -1,10 +1,9 @@
-﻿'use client';
+'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { forgotPasswordAction } from '@/lib/actions/auth';
+import type { FormEvent } from 'react';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
+import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,41 +12,36 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import styles from './ForgotPasswordForm.module.scss';
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
 type ForgotPasswordFormProps = {
   readonly locale: Locale;
   readonly initialEmail?: string;
+  readonly email: string;
+  readonly emailError: string | null;
+  readonly submitted: boolean;
+  readonly loading: boolean;
+  readonly onEmailChange: (value: string) => void;
+  readonly onEmailBlur: () => void;
+  readonly onSubmit: () => Promise<boolean>;
+  readonly onBack: () => void;
 };
 
-export default function ForgotPasswordForm({ locale, initialEmail = '' }: ForgotPasswordFormProps) {
+export default function ForgotPasswordForm({
+  locale,
+  initialEmail = '',
+  email,
+  emailError,
+  submitted,
+  loading,
+  onEmailChange,
+  onEmailBlur,
+  onSubmit,
+  onBack,
+}: Readonly<ForgotPasswordFormProps>) {
   const t = createTranslator(locale);
-  const router = useRouter();
-  const [email, setEmail] = useState(initialEmail);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  function validateEmail(value: string): boolean {
-    if (!value.trim()) {
-      setEmailError(t('validationEmailRequired'));
-      return false;
-    }
-    if (!EMAIL_REGEX.test(value.trim())) {
-      setEmailError(t('validationEmailInvalid'));
-      return false;
-    }
-    setEmailError(null);
-    return true;
-  }
-
-  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!validateEmail(email)) return;
-    setLoading(true);
-    await forgotPasswordAction(email);
-    setLoading(false);
-    setSubmitted(true);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await onSubmit();
   }
 
   return (
@@ -55,7 +49,7 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
       <CardHeader title={t('forgotPasswordTitle')} />
       <CardContent>
         {submitted ? (
-          <div className={styles.stack}>
+          <Box className={styles.stack}>
             <Typography
               variant="body2"
               color="text.secondary"
@@ -67,13 +61,13 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
               variant="outlined"
               fullWidth
               data-testid="forgot-password-back-button"
-              onClick={() => router.push('/login?mode=signin')}
+              onClick={onBack}
             >
               {t('forgotPasswordBack')}
             </MuiButton>
-          </div>
+          </Box>
         ) : (
-          <form onSubmit={handleSubmit} className={styles.stack} noValidate>
+          <Box component="form" onSubmit={handleSubmit} className={styles.stack} noValidate>
             <Typography variant="body2" color="text.secondary">
               {t('forgotPasswordSubtitle')}
             </Typography>
@@ -85,16 +79,11 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
               placeholder={t('emailPlaceholder')}
               fullWidth
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (emailError) validateEmail(e.target.value);
-              }}
-              onBlur={() => validateEmail(email)}
+              onChange={(event) => onEmailChange(event.target.value)}
+              onBlur={onEmailBlur}
               error={!!emailError}
               helperText={
-                emailError ? (
-                  <span data-testid="forgot-password-email-error">{emailError}</span>
-                ) : undefined
+                emailError ? <span data-testid="forgot-password-email-error">{emailError}</span> : undefined
               }
               autoFocus={!initialEmail}
             />
@@ -113,11 +102,11 @@ export default function ForgotPasswordForm({ locale, initialEmail = '' }: Forgot
               variant="outlined"
               fullWidth
               data-testid="forgot-password-back-button"
-              onClick={() => router.push('/login?mode=signin')}
+              onClick={onBack}
             >
               {t('forgotPasswordBack')}
             </MuiButton>
-          </form>
+          </Box>
         )}
       </CardContent>
     </Card>

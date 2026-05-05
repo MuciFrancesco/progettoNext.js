@@ -1,3 +1,3 @@
 'use client';
 
-export { default } from '@/components/ErrorState/AppErrorState';
+export { default } from '@/features/error/AppErrorStateFeature';

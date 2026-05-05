@@ -1,0 +1,45 @@
+.footer {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+  backdrop-filter: blur(8px);
+}
+
+.inner {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1152px;
+  padding: 16px;
+  padding-block: 32px;
+}
+
+.divider {
+  margin-bottom: 24px;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brandName {
+  font-weight: 600;
+}
+
+.accent {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+@media (min-width: 600px) {
+  .inner {
+    padding-inline: 24px;
+  }
+
+  .bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

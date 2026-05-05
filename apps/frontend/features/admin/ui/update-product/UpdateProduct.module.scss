@@ -1,11 +1,11 @@
+@use '@/styles/shared' as ds;
+
 .containImage {
-  object-fit: contain;
+  @include ds.object-contain;
 }
 
 .fileUploadGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  @include ds.flex-col($gap: 0.25rem);
 }
 
 .fileInput {
@@ -26,4 +26,151 @@
 
 .fileInput:hover::file-selector-button {
   background: #1565c0;
+}
+
+.desktopCell {
+  display: none !important;
+}
+
+.tabletCell {
+  display: none !important;
+}
+
+.searchForm {
+  @include ds.admin-search-form;
+}
+
+.categorySearchField {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.textSearchField {
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.pageHeader {
+  @include ds.admin-page-header;
+}
+
+.sectionTitle {
+  font-weight: 600 !important;
+}
+
+.shrinkButton {
+  flex-shrink: 0;
+}
+
+.bulkActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.successIcon {
+  color: var(--success, #2e7d32);
+  vertical-align: middle;
+}
+
+.errorIcon {
+  color: var(--error, #d32f2f);
+  vertical-align: middle;
+}
+
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.editButton {
+  color: #1565c0 !important;
+}
+
+.deleteButton {
+  color: #ef5350 !important;
+}
+
+.emptyCell {
+  padding-block: 32px;
+  color: var(--muted-foreground);
+}
+
+.tableWrap {
+  @include ds.admin-table-wrap;
+}
+
+.editDialogContent {
+  display: grid;
+  gap: ds.$spacing-4;
+  padding-top: ds.$spacing-4 !important;
+}
+
+.fullWidthField {
+  @include ds.responsive-full-width-field;
+}
+
+.imageLabel {
+  margin-bottom: ds.$spacing-2 !important;
+  font-weight: 500 !important;
+}
+
+.imageList {
+  @include ds.image-thumb-list;
+}
+
+.imageItem {
+  @include ds.image-thumb-item;
+}
+
+.imageCard {
+  @include ds.image-thumb-card;
+}
+
+.imageMedia {
+  @include ds.image-thumb-media;
+}
+
+.removeImageButton {
+  @include ds.image-thumb-remove($size: auto);
+  padding: 2px !important;
+}
+
+.smallIcon {
+  font-size: 14px !important;
+}
+
+.stackedDialogContent {
+  @include ds.flex-col($gap: ds.$spacing-4);
+  padding-top: ds.$spacing-4 !important;
+}
+
+.dangerTitle {
+  color: #d32f2f;
+}
+
+.dialogContentSpacing {
+  padding-top: ds.$spacing-4 !important;
+}
+
+.centeredActions {
+  justify-content: center !important;
+  padding-bottom: ds.$spacing-4 !important;
+}
+
+@media (min-width: 600px) {
+  .tabletCell {
+    display: table-cell !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .desktopCell {
+    display: table-cell !important;
+  }
+
+  .editDialogContent {
+    grid-template-columns: 1fr 1fr;
+  }
 }

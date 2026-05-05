@@ -73,7 +73,7 @@ export function AddUserModal({
     >
       <DialogTitle
         id="new-user-modal-title"
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        className={styles.title}
       >
         {t('newUserModalTitle')}
         <IconButton size="small" aria-label={t('newUserCancel')} onClick={onClose}>
@@ -82,7 +82,7 @@ export function AddUserModal({
       </DialogTitle>
 
       <form onSubmit={onSubmit}>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+        <DialogContent className={styles.content}>
           <TextField
             type="email"
             required
@@ -156,7 +156,7 @@ export function AddUserModal({
           {addUserSuccess && <Alert severity="success">{addUserSuccess}</Alert>}
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions className={styles.actions}>
           <MuiButton type="button" variant="outlined" onClick={onClose}>
             {t('newUserCancel')}
           </MuiButton>

@@ -6,6 +6,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { SortField, SortDirection } from '@/features/admin/hooks/useAdminUpdateProductsTable';
+import styles from './UpdateProduct.module.scss';
 
 interface UpdateProductTableHeadProps {
   readonly locale: Locale;
@@ -61,7 +62,7 @@ export default function UpdateProductTableHead({
             {t('productTableName')}
           </TableSortLabel>
         </TableCell>
-        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+        <TableCell className={styles.desktopCell}>
           <TableSortLabel
             active={sortField === 'category'}
             direction={sortField === 'category' ? dir : 'asc'}
@@ -79,7 +80,7 @@ export default function UpdateProductTableHead({
             {t('productTableStock')}
           </TableSortLabel>
         </TableCell>
-        <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+        <TableCell align="center" className={styles.tabletCell}>
           <TableSortLabel
             active={sortField === 'isAvailableForPurchase'}
             direction={sortField === 'isAvailableForPurchase' ? dir : 'asc'}

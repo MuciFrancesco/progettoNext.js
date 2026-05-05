@@ -1,0 +1,61 @@
+.banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1400;
+  border-radius: 12px 12px 0 0;
+  padding: 16px;
+  max-width: 900px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.description {
+  margin-bottom: 16px;
+}
+
+.divider {
+  margin-bottom: 16px;
+}
+
+.toggleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.toggleCaption {
+  margin-left: 32px;
+  margin-top: -4px;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: stretch;
+}
+
+.actionButton {
+  flex-grow: 1;
+}
+
+@media (min-width: 600px) {
+  .banner {
+    padding: 24px;
+  }
+
+  .actionRow {
+    justify-content: flex-end;
+  }
+
+  .actionButton {
+    flex-grow: 0;
+  }
+}

@@ -8,17 +8,15 @@ import Box from '@mui/material/Box';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { AdminRoutes } from '@/lib/routes';
+import styles from './UpdateProduct.module.scss';
 
 export function UpdateProductHeader({ locale }: Readonly<{ locale: Locale }>) {
   const t = createTranslator(locale);
 
   return (
-    <Box
-      component="header"
-      sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}
-    >
+    <Box component="header" className={styles.pageHeader}>
       <Box>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <Typography variant="h5" className={styles.sectionTitle}>
           {t('updateProductPageTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -27,11 +25,10 @@ export function UpdateProductHeader({ locale }: Readonly<{ locale: Locale }>) {
       </Box>
       <MuiButton
         variant="contained"
-        className="btn-add"
         component={Link}
         href={AdminRoutes.ADD_PRODUCT}
         startIcon={<AddBoxIcon />}
-        sx={{ flexShrink: 0 }}
+        className={`${styles.shrinkButton} btn-add`}
       >
         {t('navAddProduct')}
       </MuiButton>

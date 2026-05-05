@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
-import ForgotPasswordForm from '@/components/ForgotPasswordForm/ForgotPasswordForm';
+import ForgotPasswordFormContainer from '@/features/auth/ui/ForgotPasswordFormContainer';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import styles from './page.module.scss';
@@ -32,7 +32,7 @@ export default async function ForgotPasswordPage({
           <GlobalPageLoading title={t('loadingInProgress')} subtitle={t('loadingAwaitingServer')} />
         }
       >
-        <ForgotPasswordForm locale={locale} initialEmail={initialEmail} />
+        <ForgotPasswordFormContainer locale={locale} initialEmail={initialEmail} />
       </Suspense>
     </main>
   );

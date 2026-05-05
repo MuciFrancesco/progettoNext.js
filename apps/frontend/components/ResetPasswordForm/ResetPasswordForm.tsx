@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import type { SyntheticEvent } from 'react';
 import Link from 'next/link';
-import { resetPasswordAction } from '@/lib/actions/auth';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -17,14 +17,30 @@ import styles from './ResetPasswordForm.module.scss';
 type ResetPasswordFormProps = {
   readonly locale: Locale;
   readonly token: string | null;
+  readonly password: string;
+  readonly success: boolean;
+  readonly loading: boolean;
+  readonly error: string | null;
+  readonly onPasswordChange: (value: string) => void;
+  readonly onSubmit: () => Promise<void>;
 };
 
-export default function ResetPasswordForm({ locale, token }: ResetPasswordFormProps) {
+export default function ResetPasswordForm({
+  locale,
+  token,
+  password,
+  success,
+  loading,
+  error,
+  onPasswordChange,
+  onSubmit,
+}: Readonly<ResetPasswordFormProps>) {
   const t = createTranslator(locale);
-  const [password, setPassword] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await onSubmit();
+  }
 
   if (!token) {
     return (
@@ -39,20 +55,6 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
         </CardContent>
       </Card>
     );
-  }
-
-  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!password || !token) return;
-    setLoading(true);
-    setError(null);
-    const result = await resetPasswordAction(token, password);
-    setLoading(false);
-    if (result.ok) {
-      setSuccess(true);
-    } else {
-      setError(result.error ?? t('resetPasswordInvalidToken'));
-    }
   }
 
   if (success) {
@@ -74,7 +76,7 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
     <Card variant="outlined" className={styles.card}>
       <CardHeader title={t('resetPasswordTitle')} />
       <CardContent>
-        <form onSubmit={handleSubmit} className={styles.cardContent} noValidate>
+        <Box component="form" onSubmit={handleSubmit} className={styles.cardContent} noValidate>
           <Typography variant="body2" color="text.secondary">
             {t('resetPasswordSubtitle')}
           </Typography>
@@ -91,7 +93,7 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
             placeholder={t('resetPasswordPasswordHint')}
             fullWidth
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => onPasswordChange(event.target.value)}
             required
             autoFocus
           />
@@ -105,7 +107,7 @@ export default function ResetPasswordForm({ locale, token }: ResetPasswordFormPr
           >
             {loading ? '...' : t('resetPasswordSubmit')}
           </MuiButton>
-        </form>
+        </Box>
       </CardContent>
     </Card>
   );
