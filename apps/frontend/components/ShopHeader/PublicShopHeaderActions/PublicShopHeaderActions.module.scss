@@ -2,8 +2,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .actionButton {
-  border-radius: 12px;
+  border-radius: 10px !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.actionButton:hover {
+  border-color: rgba(240, 165, 0, 0.4) !important;
+  background: rgba(240, 165, 0, 0.12) !important;
 }

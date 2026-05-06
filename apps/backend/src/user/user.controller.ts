@@ -116,16 +116,28 @@ export class UserController {
           lastname: true,
         },
       },
-      product: {
+      items: {
         select: {
           id: true,
-          title: true,
-          name: true,
-          description: true,
-          imagePath: true,
-          category: true,
-          stockQuantity: true,
-          isAvailableForPurchase: true,
+          quantity: true,
+          unitPriceInCents: true,
+          lineTotalInCents: true,
+          productTitleSnapshot: true,
+          productImageSnapshot: true,
+          product: {
+            select: {
+              id: true,
+              title: true,
+              name: true,
+              description: true,
+              imagePath: true,
+              imagePaths: true,
+              category: true,
+              priceInCents: true,
+              stockQuantity: true,
+              isAvailableForPurchase: true,
+            },
+          },
         },
       },
     } as const;

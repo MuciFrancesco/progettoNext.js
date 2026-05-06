@@ -16,13 +16,30 @@ export type ProductCatalogCategoryOption = {
   readonly label: string;
 };
 
-export function useProductCatalog(products: BackendProduct[], locale: Locale) {
+type UseProductCatalogOptions = {
+  readonly initialQuery?: string;
+  readonly initialCategory?: ProductCategory | 'ALL';
+};
+
+export function useProductCatalog(
+  products: BackendProduct[],
+  locale: Locale,
+  options: Readonly<UseProductCatalogOptions> = {}
+) {
   const t = useMemo(() => createTranslator(locale), [locale]);
   const { syncWithProducts, syncWithProductStatuses } = useCart();
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState<ProductCategory | 'ALL'>('ALL');
+  const [query, setQuery] = useState(options.initialQuery ?? '');
+  const [category, setCategory] = useState<ProductCategory | 'ALL'>(options.initialCategory ?? 'ALL');
   const [liveProducts, setLiveProducts] = useState(products);
   const liveProductsRef = useRef(products);
+
+  useEffect(() => {
+    setQuery(options.initialQuery ?? '');
+  }, [options.initialQuery]);
+
+  useEffect(() => {
+    setCategory(options.initialCategory ?? 'ALL');
+  }, [options.initialCategory]);
 
   useEffect(() => {
     liveProductsRef.current = liveProducts;
@@ -72,7 +89,7 @@ export function useProductCatalog(products: BackendProduct[], locale: Locale) {
   );
 
   useEffect(() => {
-    void refreshProducts(products.map((product) => product.id));
+    void refreshProducts(products.map((product) => product.id)).catch(() => undefined);
   }, [products, refreshProducts]);
 
   const categoryOptions = useMemo<ProductCatalogCategoryOption[]>(
@@ -98,6 +115,13 @@ export function useProductCatalog(products: BackendProduct[], locale: Locale) {
   return {
     labels: {
       brand: APP_NAME,
+      heroEyebrow: t('homeHeroEyebrow'),
+      heroTitle: t('homeHeroTitle'),
+      heroSubtitle: t('homeHeroSubtitle'),
+      heroPrimaryCta: t('homeHeroPrimaryCta'),
+      heroSecondaryCta: t('homeHeroSecondaryCta'),
+      heroSectionAria: t('homeHeroSectionAria'),
+      quickCategoriesAria: t('homeQuickCategoriesAria'),
       title: t('catalogTitle'),
       subtitle: t('catalogSubtitle'),
       search: t('catalogSearch'),

@@ -1,0 +1,78 @@
+@use '@/styles/shared' as ds;
+
+.containImage {
+  @include ds.object-contain;
+}
+
+.itemCard {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px !important;
+}
+
+.imageFrame {
+  position: relative;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: var(--secondary);
+}
+
+.itemInfo {
+  min-width: 0;
+}
+
+.itemTitle {
+  font-weight: 700 !important;
+}
+
+.mutedText {
+  color: var(--muted-foreground);
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 8px;
+}
+
+.quantityField {
+  width: 100px;
+}
+
+.quantityButton {
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+
+.itemActions {
+  display: flex;
+  grid-column: span 2;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lineTotal {
+  font-weight: 800 !important;
+}
+
+@media (min-width: 600px) {
+  .itemCard {
+    grid-template-columns: 112px 1fr auto;
+  }
+
+  .imageFrame {
+    height: 96px;
+  }
+
+  .itemActions {
+    grid-column: span 1;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 12px;
+  }
+}

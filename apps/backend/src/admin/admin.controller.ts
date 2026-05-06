@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator';
 import { AdminGuard, AdminOrEmployeeGuard, JwtGuard } from 'src/auth/guard';
+import { ProductService } from 'src/product/product.service';
 import { AdminService } from './admin.service';
 import {
   CreateProductDto,
@@ -27,7 +28,10 @@ import {
 @UseGuards(JwtGuard)
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly productService: ProductService
+  ) {}
 
   @Get('users')
   @HttpCode(HttpStatus.OK)
@@ -144,5 +148,12 @@ export class AdminController {
       ? (filter as 'today' | 'week' | 'month' | 'year' | 'all')
       : 'all';
     return this.adminService.listOrdersPaginated(pageNum, limitNum, validFilter);
+  }
+
+  @Patch('reviews/:reviewId/hide')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AdminGuard)
+  hideProductReview(@Param('reviewId') reviewId: string) {
+    return this.productService.hideProductReview(reviewId);
   }
 }

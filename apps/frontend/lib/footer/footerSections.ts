@@ -36,6 +36,37 @@ export function getUserFooterSections(t: TranslateFn): FooterSection[] {
   ];
 }
 
+export function getPublicFooterSections(t: TranslateFn): FooterSection[] {
+  return [
+    {
+      title: t('appName'),
+      items: [
+        { label: t('footerAbout'), href: '/' },
+        { label: t('footerCareers'), href: '/contact' },
+        { label: t('footerSustainability'), href: '/privacy' },
+        { label: t('footerPress'), href: '/contact' },
+      ],
+    },
+    {
+      title: t('footerSupport'),
+      items: [
+        { label: t('footerContact'), href: '/contact' },
+        { label: t('footerFaq'), href: '/contact' },
+        { label: t('footerTrackOrder'), href: UserRoutes.PURCHASE_HISTORY },
+      ],
+    },
+    {
+      title: t('footerShop'),
+      items: [
+        { label: t('footerDeals'), href: '/#catalog' },
+        { label: t('footerNewArrivals'), href: '/#catalog' },
+        { label: t('footerTopRated'), href: '/#catalog' },
+        { label: t('footerCertifiedUsed'), href: '/#catalog' },
+      ],
+    },
+  ];
+}
+
 /** Sezioni Legal e Support condivise tra layout admin e user */
 export function getSharedFooterSections(t: TranslateFn): FooterSection[] {
   return [

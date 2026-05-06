@@ -15,7 +15,9 @@ export interface BackendOrderProduct {
   readonly name: string;
   readonly description: string;
   readonly imagePath: string;
+  readonly imagePaths?: readonly string[];
   readonly category: ProductCategory;
+  readonly priceInCents?: number;
   readonly stockQuantity: number;
   readonly isAvailableForPurchase: boolean;
 }
@@ -33,5 +35,15 @@ export interface BackendOrder {
   readonly totalPriceInCents: number;
   readonly createdAt: string;
   readonly user: BackendOrderUser;
+  readonly items: readonly BackendOrderItem[];
+}
+
+export interface BackendOrderItem {
+  readonly id: string;
+  readonly quantity: number;
+  readonly unitPriceInCents: number;
+  readonly lineTotalInCents: number;
+  readonly productTitleSnapshot: string;
+  readonly productImageSnapshot: string | null;
   readonly product: BackendOrderProduct;
 }

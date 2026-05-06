@@ -1,12 +1,57 @@
 .page {
-  display: flex;
-  min-height: calc(100vh - 64px);
+  display: grid;
+  min-height: calc(100vh - 7rem);
   align-items: center;
-  justify-content: center;
-  padding: 2.5rem 1rem;
+  gap: 2rem;
+  padding: 2rem 1rem 3rem;
+  background:
+    linear-gradient(180deg, rgba(240, 165, 0, 0.08), transparent 28%),
+    var(--background);
+}
+
+.copyBlock {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 32rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.subtitle {
+  margin: 1rem 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.7;
 }
 
 .content {
+  margin-inline: auto;
   width: 100%;
   max-width: 28rem;
+}
+
+@media (min-width: 900px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 28rem);
+    justify-content: center;
+    padding-inline: max(2rem, calc((100vw - 80rem) / 2));
+  }
+
+  .copyBlock,
+  .content {
+    margin-inline: 0;
+  }
 }

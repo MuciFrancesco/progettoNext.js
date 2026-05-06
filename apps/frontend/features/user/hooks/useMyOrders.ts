@@ -7,6 +7,7 @@ import type { BackendOrder, OrderFilter, PaginatedOrdersResponse } from '@/types
 import { getMyOrdersAction } from '@/lib/actions/user';
 import type { FilterOption, OrderSortKey } from '@/features/admin/hooks/useAdminOrders';
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
+import { getOrderProductName } from '@/lib/orders/orderItems';
 
 export function useMyOrders(initialResponse: PaginatedOrdersResponse, locale: Locale) {
   const t = createTranslator(locale);
@@ -80,7 +81,7 @@ export function useMyOrders(initialResponse: PaginatedOrdersResponse, locale: Lo
           cmp = (a.user.lastname ?? '').localeCompare(b.user.lastname ?? '');
           break;
         case 'product':
-          cmp = a.product.name.localeCompare(b.product.name);
+          cmp = getOrderProductName(a).localeCompare(getOrderProductName(b));
           break;
         case 'total':
           cmp = a.totalPriceInCents - b.totalPriceInCents;

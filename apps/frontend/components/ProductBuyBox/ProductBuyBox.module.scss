@@ -1,0 +1,29 @@
+.buyBox {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  padding: 18px;
+  background: var(--mui-palette-background-paper);
+}
+
+.stockRow,
+.deliveryTitle,
+.trustItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.deliveryBox {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--mui-palette-success-main) 7%, transparent);
+}
+
+.deliveryTitle {
+  font-weight: 700;
+}
+
+.trustItem {
+  color: var(--mui-palette-text-secondary);
+}

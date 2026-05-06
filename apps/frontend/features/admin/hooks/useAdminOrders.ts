@@ -6,6 +6,7 @@ import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendOrder, OrderFilter, PaginatedOrdersResponse } from '@/types/api/order';
 import { getAdminOrdersAction } from '@/lib/actions/admin';
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
+import { getOrderProductName } from '@/lib/orders/orderItems';
 
 export type OrderSortKey = 'email' | 'firstName' | 'lastName' | 'product' | 'total' | 'date';
 
@@ -86,7 +87,7 @@ export function useAdminOrders(initialResponse: PaginatedOrdersResponse, locale:
           cmp = (a.user.lastname ?? '').localeCompare(b.user.lastname ?? '');
           break;
         case 'product':
-          cmp = a.product.name.localeCompare(b.product.name);
+          cmp = getOrderProductName(a).localeCompare(getOrderProductName(b));
           break;
         case 'total':
           cmp = a.totalPriceInCents - b.totalPriceInCents;

@@ -70,6 +70,26 @@ function productImagePath(product) {
   return `/uploads/demo/${product.category.toLowerCase()}-${product.id.split('-')[0]}.svg`;
 }
 
+function productBrand(productName) {
+  return productName.split(/\s+/)[0].replace(/[^a-zA-Z0-9']/g, '') || 'ThinkShop';
+}
+
+function productFeatures(product) {
+  return [
+    `${product.name} selezionato per qualita e affidabilita`,
+    `Disponibile nella categoria ${product.category.toLowerCase()}`,
+    'Spedizione rapida e assistenza inclusa',
+  ];
+}
+
+function productSpecifications(product) {
+  return [
+    ['Categoria', product.category],
+    ['Marca', productBrand(product.name)],
+    ['Condizione', 'Nuovo'],
+  ];
+}
+
 async function writeProductPlaceholder(product) {
   const uploadsDir = join(process.cwd(), 'uploads', 'demo');
   await mkdir(uploadsDir, { recursive: true });
@@ -299,29 +319,58 @@ async function main() {
   console.log(`\nInserisco ${PRODUCT_TEMPLATES.length} prodotti...`);
   const productIds = [];
   const productPrices = {};
+  const productSnapshots = {};
 
   for (const p of PRODUCT_TEMPLATES) {
     const id = randomUUID();
     const stock = randInt(5, 200);
     const imagePath = productImagePath({ ...p, id });
+    const brand = productBrand(p.name);
+    const originalPrice = Math.round(p.price * (1 + randInt(10, 35) / 100));
     await writeProductPlaceholder({ ...p, id });
     await client.query(
-      `INSERT INTO products (id, title, name, description, category, "priceInCents", "imagePath", "stock_quantity", "isAvailableForPurchase", "createdAt", "updatedAt")
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,NOW(),NOW())
+      `INSERT INTO products (id, title, name, description, brand, category, "priceInCents", original_price_in_cents, "imagePath", "imagePaths", "stock_quantity", "isAvailableForPurchase", "createdAt", "updatedAt")
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,ARRAY[$9]::text[],$10,true,NOW(),NOW())
        ON CONFLICT DO NOTHING`,
       [
         id,
         p.title,
         p.name,
         `${p.name} — prodotto di qualità nella categoria ${p.category.toLowerCase()}.`,
+        brand,
         p.category,
         p.price,
+        originalPrice,
         imagePath,
         stock,
       ]
     );
+
+    await client.query(
+      `INSERT INTO product_images (id, product_id, url, alt_text, sort_order, is_primary, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,0,true,NOW(),NOW())`,
+      [randomUUID(), id, imagePath, p.title]
+    );
+
+    for (const [index, feature] of productFeatures(p).entries()) {
+      await client.query(
+        `INSERT INTO product_features (id, product_id, text, sort_order, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,NOW(),NOW())`,
+        [randomUUID(), id, feature, index]
+      );
+    }
+
+    for (const [index, [label, value]] of productSpecifications(p).entries()) {
+      await client.query(
+        `INSERT INTO product_specifications (id, product_id, label, value, sort_order, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,NOW(),NOW())`,
+        [randomUUID(), id, label, value, index]
+      );
+    }
+
     productIds.push(id);
     productPrices[id] = p.price;
+    productSnapshots[id] = { title: p.title, imagePath };
   }
   console.log(`  ✓ ${productIds.length} prodotti inseriti`);
 
@@ -388,14 +437,30 @@ async function main() {
       const orderId = randomUUID();
       const productId = productIds[(userIndex * 5 + j) % productIds.length];
       const price = productPrices[productId];
+      const snapshot = productSnapshots[productId];
       const qty = randInt(1, 3);
       const total = price * qty;
       const createdAt = guaranteedOrderDate(userIndex, j);
 
       await client.query(
-        `INSERT INTO orders (id, "userId", "productId", "totalPriceInCents", "createdAt", "updatedAt")
-         VALUES ($1,$2,$3,$4,$5,$5)`,
-        [orderId, userId, productId, total, createdAt]
+        `INSERT INTO orders (id, "userId", status, "totalPriceInCents", "createdAt", "updatedAt")
+         VALUES ($1,$2,'PAID',$3,$4,$4)`,
+        [orderId, userId, total, createdAt]
+      );
+      await client.query(
+        `INSERT INTO order_items (id, order_id, product_id, quantity, unit_price_in_cents, line_total_in_cents, product_title_snapshot, product_image_snapshot, created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [
+          randomUUID(),
+          orderId,
+          productId,
+          qty,
+          price,
+          total,
+          snapshot.title,
+          snapshot.imagePath,
+          createdAt,
+        ]
       );
       ordersInserted++;
     }
@@ -410,14 +475,30 @@ async function main() {
     const userId = pick(userIds);
     const productId = pick(productIds);
     const price = productPrices[productId];
+    const snapshot = productSnapshots[productId];
     const qty = randInt(1, 3);
     const total = price * qty;
     const createdAt = weightedOrderDate();
 
     await client.query(
-      `INSERT INTO orders (id, "userId", "productId", "totalPriceInCents", "createdAt", "updatedAt")
-       VALUES ($1,$2,$3,$4,$5,$5)`,
-      [orderId, userId, productId, total, createdAt]
+      `INSERT INTO orders (id, "userId", status, "totalPriceInCents", "createdAt", "updatedAt")
+       VALUES ($1,$2,'PAID',$3,$4,$4)`,
+      [orderId, userId, total, createdAt]
+    );
+    await client.query(
+      `INSERT INTO order_items (id, order_id, product_id, quantity, unit_price_in_cents, line_total_in_cents, product_title_snapshot, product_image_snapshot, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [
+        randomUUID(),
+        orderId,
+        productId,
+        qty,
+        price,
+        total,
+        snapshot.title,
+        snapshot.imagePath,
+        createdAt,
+      ]
     );
     ordersInserted++;
   }

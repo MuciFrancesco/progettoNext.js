@@ -1,0 +1,56 @@
+.gallery {
+  position: sticky;
+  top: 24px;
+  min-width: 0;
+}
+
+.imageFrame,
+.emptyFrame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  background: var(--mui-palette-background-paper);
+}
+
+.emptyFrame {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.productImage {
+  object-fit: contain;
+  padding: 18px;
+}
+
+.thumbRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 8px;
+}
+
+.thumb,
+.thumbActive {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 6px;
+  background: var(--mui-palette-background-paper);
+}
+
+.thumbActive {
+  border-color: var(--mui-palette-primary-main);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mui-palette-primary-main) 22%, transparent);
+}
+
+@media (max-width: 960px) {
+  .gallery {
+    position: static;
+  }
+}

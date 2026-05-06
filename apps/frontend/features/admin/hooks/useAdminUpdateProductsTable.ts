@@ -33,6 +33,11 @@ export type EditableProduct = {
   description: string;
   imagePath: string;
   imagePaths: string[];
+  brand: string;
+  originalPriceInCents: string;
+  images: NonNullable<BackendProduct['images']>;
+  features: NonNullable<BackendProduct['features']>;
+  specifications: NonNullable<BackendProduct['specifications']>;
   stockQuantity: string;
   isAvailableForPurchase: boolean;
   category: ProductCategory;
@@ -50,6 +55,19 @@ function toEditableProduct(product: BackendProduct): EditableProduct {
     description: product.description,
     imagePath: product.imagePath,
     imagePaths: paths,
+    brand: product.brand ?? '',
+    originalPriceInCents: product.originalPriceInCents ? String(product.originalPriceInCents) : '',
+    images:
+      product.images?.length
+        ? [...product.images]
+        : paths.map((url, index) => ({
+            url,
+            altText: product.title,
+            sortOrder: index,
+            isPrimary: index === 0,
+          })),
+    features: product.features ? [...product.features] : [],
+    specifications: product.specifications ? [...product.specifications] : [],
     stockQuantity: String(product.stockQuantity),
     isAvailableForPurchase: product.isAvailableForPurchase,
     category: product.category,
@@ -388,7 +406,16 @@ export function useAdminUpdateProductsTable(
         setEditDraft((prev) => {
           if (!prev) return null;
           const newPaths = [...prev.imagePaths, res.imagePath].slice(0, MAX_EDIT_IMAGES);
-          return { ...prev, imagePaths: newPaths, imagePath: newPaths[0] ?? '' };
+          const nextImages = [
+            ...prev.images,
+            {
+              url: res.imagePath,
+              altText: prev.title,
+              sortOrder: prev.images.length,
+              isPrimary: prev.images.length === 0,
+            },
+          ].slice(0, MAX_EDIT_IMAGES);
+          return { ...prev, imagePaths: newPaths, imagePath: newPaths[0] ?? '', images: nextImages };
         });
       })
       .catch(() => {
@@ -403,7 +430,14 @@ export function useAdminUpdateProductsTable(
     setEditDraft((prev) => {
       if (!prev) return null;
       const newPaths = prev.imagePaths.filter((_, i) => i !== index);
-      return { ...prev, imagePaths: newPaths, imagePath: newPaths[0] ?? '' };
+      const newImages = prev.images
+        .filter((_, i) => i !== index)
+        .map((image, nextIndex) => ({
+          ...image,
+          sortOrder: nextIndex,
+          isPrimary: nextIndex === 0 ? true : image.isPrimary && index !== 0,
+        }));
+      return { ...prev, imagePaths: newPaths, imagePath: newPaths[0] ?? '', images: newImages };
     });
   };
 
@@ -427,6 +461,15 @@ export function useAdminUpdateProductsTable(
           description: draft.description,
           imagePath: draft.imagePaths[0] ?? draft.imagePath,
           imagePaths: draft.imagePaths,
+          brand: draft.brand,
+          originalPriceInCents: draft.originalPriceInCents
+            ? Number(draft.originalPriceInCents)
+            : undefined,
+          images: draft.images,
+          features: draft.features.filter((feature) => feature.text.trim()),
+          specifications: draft.specifications.filter(
+            (specification) => specification.label.trim() && specification.value.trim()
+          ),
           stockQuantity,
           isAvailableForPurchase: draft.isAvailableForPurchase,
           category: draft.category,
@@ -508,6 +551,10 @@ export function useAdminUpdateProductsTable(
         editDraft.imagePath !== editOriginal.imagePath ||
         editDraft.imagePaths.length !== editOriginal.imagePaths.length ||
         editDraft.imagePaths.some((p, i) => p !== editOriginal.imagePaths[i]) ||
+        editDraft.brand !== editOriginal.brand ||
+        editDraft.originalPriceInCents !== editOriginal.originalPriceInCents ||
+        editDraft.features.length !== editOriginal.features.length ||
+        editDraft.specifications.length !== editOriginal.specifications.length ||
         editDraft.stockQuantity !== editOriginal.stockQuantity ||
         editDraft.isAvailableForPurchase !== editOriginal.isAvailableForPurchase ||
         editDraft.category !== editOriginal.category),

@@ -1,0 +1,12 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(240, 165, 0, 0.08) 0%, transparent 14%),
+    linear-gradient(180deg, #f4f6fa 0%, #eef2f7 100%);
+}
+
+.main {
+  flex: 1;
+}

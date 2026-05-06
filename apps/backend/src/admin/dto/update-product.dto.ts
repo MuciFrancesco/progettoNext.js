@@ -8,8 +8,14 @@ import {
   IsString,
   MaxLength,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ProductCategory } from '@prisma/client';
+import {
+  ProductFeatureInputDto,
+  ProductImageInputDto,
+  ProductSpecificationInputDto,
+} from './create-product.dto';
 
 export class UpdateProductDto {
   @IsString()
@@ -37,11 +43,22 @@ export class UpdateProductDto {
   @IsOptional()
   imagePaths?: string[];
 
+  @IsString()
+  @MaxLength(120)
+  @IsOptional()
+  brand?: string;
+
   @Type(() => Number)
   @IsInt()
   @Min(0)
   @IsOptional()
   priceInCents?: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  originalPriceInCents?: number;
 
   @Type(() => Number)
   @IsInt()
@@ -56,4 +73,22 @@ export class UpdateProductDto {
   @IsEnum(ProductCategory)
   @IsOptional()
   category?: ProductCategory;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductImageInputDto)
+  @IsOptional()
+  images?: ProductImageInputDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductFeatureInputDto)
+  @IsOptional()
+  features?: ProductFeatureInputDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductSpecificationInputDto)
+  @IsOptional()
+  specifications?: ProductSpecificationInputDto[];
 }

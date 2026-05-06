@@ -1,18 +1,27 @@
 .appBar {
   top: 0;
   z-index: 30;
-  background: var(--background);
-  border-bottom: 1px solid var(--border);
-  color: var(--foreground);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+  border-bottom: 1px solid rgba(240, 165, 0, 0.16);
+  color: #ffffff;
+  backdrop-filter: blur(14px);
+}
+
+.headerInner {
+  margin-inline: auto;
+  display: flex;
+  width: 100%;
+  max-width: 80rem;
+  flex-direction: column;
 }
 
 .toolbar {
   width: 100%;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem !important;
   min-height: unset !important;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .logoLink {
@@ -24,26 +33,130 @@
 }
 
 .logoText {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--primary);
+  font-weight: 900 !important;
+  font-size: 1.4rem !important;
+  color: #ffffff;
+  letter-spacing: -0.02em !important;
   user-select: none;
 }
 
 .logoAccent {
-  color: var(--foreground);
+  color: #f0a500;
+}
+
+.homeButton {
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-transform: none !important;
+}
+
+.homeButton:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.searchForm {
+  order: 3;
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  overflow: hidden;
+  border: 2px solid #f0a500;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.searchField {
+  flex: 1;
+}
+
+.searchField :global(.MuiOutlinedInput-root) {
+  border-radius: 0 !important;
+  background: #ffffff;
+}
+
+.searchField :global(.MuiOutlinedInput-notchedOutline) {
+  border: none;
+}
+
+.searchField :global(.MuiInputBase-input) {
+  color: #1a1f2e;
+}
+
+.searchButton {
+  min-width: 3.5rem !important;
+  border-radius: 0 !important;
+  background: #f0a500 !important;
+  color: #0d1117 !important;
+  box-shadow: none !important;
+}
+
+.searchButton:hover {
+  background: #ffb830 !important;
 }
 
 .actionsSlot {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
-@media (min-width: 600px) {
+.subnav {
+  gap: 0.15rem;
+  overflow-x: auto;
+  padding: 0 1rem 0.7rem;
+  scrollbar-width: none;
+}
+
+.subnav::-webkit-scrollbar {
+  display: none;
+}
+
+.subnavItem,
+.subnavItemActive {
+  flex-shrink: 0;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+.subnavItem:hover,
+.subnavItemActive {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.subnavItemActive {
+  color: #f0a500;
+}
+
+.subnavLabel {
+  color: inherit;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
   .toolbar {
-    padding-inline: 24px;
+    padding-inline: 1.5rem !important;
+  }
+
+  .subnav {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .toolbar {
+    flex-wrap: nowrap;
+  }
+
+  .searchForm {
+    order: 0;
+    width: auto;
+    min-width: 20rem;
+    flex: 1;
   }
 }

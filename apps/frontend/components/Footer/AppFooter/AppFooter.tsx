@@ -32,11 +32,11 @@ export function AppFooter({ appName, copyright, sectionsSlot, note }: Readonly<A
               </Box>
             </Typography>
           )}
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" className={styles.metaText}>
             {copyright}
           </Typography>
           {note && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" className={styles.metaText}>
               {note}
             </Typography>
           )}

@@ -4,7 +4,13 @@ export async function fetchProductStatuses(ids: readonly string[]): Promise<Prod
   const uniqueIds = [...new Set(ids.filter(Boolean))];
   if (uniqueIds.length === 0) return [];
 
-  const response = await fetch(`/api/products/status?ids=${encodeURIComponent(uniqueIds.join(','))}`, {
+  const path = `/api/products/status?ids=${encodeURIComponent(uniqueIds.join(','))}`;
+  const url = new URL(
+    path,
+    typeof window === 'undefined' ? 'http://localhost' : window.location.origin
+  ).toString();
+
+  const response = await fetch(url, {
     method: 'GET',
     cache: 'no-store',
   });

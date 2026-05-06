@@ -1,19 +1,14 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import type { CartItem } from '@/providers/CartProvider';
-import { formatCurrency, resolveProductImageSrc } from '@/lib/shop/format';
-import type { Locale } from '@/lib/i18n/translation';
+import { CartItem, type CartItemViewModel } from '@/components/CartItem/CartItem';
+import { CartSummary } from '@/components/CartSummary/CartSummary';
 import styles from './Cart.module.scss';
 
 type CartLabels = {
@@ -30,23 +25,23 @@ type CartLabels = {
 };
 
 type CartProps = {
-  readonly items: CartItem[];
-  readonly totalInCents: number;
+  readonly items: CartItemViewModel[];
+  readonly totalLabel: string;
   readonly hasItems: boolean;
   readonly labels: CartLabels;
-  readonly locale: Locale;
   readonly stockAlerts: ReadonlyArray<{ readonly productId: string; readonly message: string }>;
-  readonly onQuantityChange: (productId: string, quantity: number) => void;
+  readonly quantityWarnings: Readonly<Record<string, string>>;
+  readonly onQuantityChange: (productId: string, quantity: number) => Promise<void> | void;
   readonly onRemove: (productId: string) => void;
 };
 
 export function Cart({
   items,
-  totalInCents,
+  totalLabel,
   hasItems,
   labels,
-  locale,
   stockAlerts,
+  quantityWarnings,
   onQuantityChange,
   onRemove,
 }: Readonly<CartProps>) {
@@ -85,82 +80,18 @@ export function Cart({
         <Box className={styles.contentGrid}>
           <Box className={styles.itemsList}>
             {items.map((item) => (
-              <Paper
-                key={item.product.id}
-                variant="outlined"
-                data-testid={`cart-item-${item.product.id}`}
-                className={styles.itemCard}
-              >
-                <Box className={styles.imageFrame}>
-                  {item.product.imagePath ? (
-                    <Image
-                      src={resolveProductImageSrc(item.product.imagePath)}
-                      alt={item.product.title}
-                      fill
-                      sizes="112px"
-                      className={styles.containImage}
-                      unoptimized
-                    />
-                  ) : null}
-                </Box>
-                <Box className={styles.itemInfo}>
-                  <Typography className={styles.itemTitle}>{item.product.title}</Typography>
-                  <Typography variant="body2" className={styles.mutedText}>
-                    {formatCurrency(item.product.priceInCents, locale)} {labels.unitSuffix}
-                  </Typography>
-                  <TextField
-                    type="number"
-                    label={labels.quantity}
-                    value={item.quantity}
-                    size="small"
-                    onChange={(event) => onQuantityChange(item.product.id, Number(event.target.value))}
-                    slotProps={{
-                      htmlInput: {
-                        min: 1,
-                        max: item.product.stockQuantity,
-                        'data-testid': `cart-qty-${item.product.id}`,
-                      },
-                    }}
-                    className={styles.quantityField}
-                  />
-                </Box>
-                <Box className={styles.itemActions}>
-                  <Typography className={styles.lineTotal}>
-                    {formatCurrency(item.product.priceInCents * item.quantity, locale)}
-                  </Typography>
-                  <IconButton
-                    aria-label={`${labels.remove} ${item.product.title}`}
-                    onClick={() => onRemove(item.product.id)}
-                    data-testid={`cart-remove-${item.product.id}`}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </Paper>
+              <CartItem
+                key={item.productId}
+                item={item}
+                labels={labels}
+                warningMessage={quantityWarnings[item.productId]}
+                onQuantityChange={onQuantityChange}
+                onRemove={onRemove}
+              />
             ))}
           </Box>
 
-          <Paper variant="outlined" className={styles.summary}>
-            <Typography variant="h6" className={styles.summaryTitle}>
-              {labels.total}
-            </Typography>
-            <Box className={styles.summaryRow}>
-              <Typography className={styles.mutedText}>{labels.items}</Typography>
-              <Typography component="strong" className={styles.summaryTotal}>
-                {formatCurrency(totalInCents, locale)}
-              </Typography>
-            </Box>
-            <Button
-              component={Link}
-              href="/checkout"
-              variant="contained"
-              disabled={!hasItems}
-              data-testid="cart-checkout-button"
-              className={styles.checkoutButton}
-            >
-              {labels.checkout}
-            </Button>
-          </Paper>
+          <CartSummary totalLabel={totalLabel} hasItems={hasItems} labels={labels} />
         </Box>
       )}
     </Box>

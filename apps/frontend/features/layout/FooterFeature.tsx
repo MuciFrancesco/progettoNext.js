@@ -22,8 +22,8 @@ export function FooterFeature({
   const sectionsSlot: ReactNode =
     sections.length > 0 ? (
       <Grid container spacing={4} className={styles.sectionsGrid}>
-        {sections.map((section) => (
-          <Grid key={section.title} size={{ xs: 6, sm: 4, lg: 3 }}>
+        {sections.map((section, index) => (
+          <Grid key={`${section.title}-${index}`} size={{ xs: 6, sm: 4, lg: 3 }}>
             <FooterSection title={section.title}>
               {section.items.map((item) => (
                 <FooterLink key={`${item.href}-${item.label}`} href={item.href} label={item.label} />

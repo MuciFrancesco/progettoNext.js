@@ -31,6 +31,71 @@ export class AdminService {
     private readonly bulkStatusStore: BulkStatusStore
   ) {}
 
+  private readonly productSelect: Prisma.ProductSelect = {
+    id: true,
+    title: true,
+    name: true,
+    description: true,
+    brand: true,
+    imagePath: true,
+    imagePaths: true,
+    category: true,
+    priceInCents: true,
+    originalPriceInCents: true,
+    stockQuantity: true,
+    isAvailableForPurchase: true,
+    images: { orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }] },
+    features: { orderBy: { sortOrder: 'asc' } },
+    specifications: { orderBy: { sortOrder: 'asc' } },
+    createdAt: true,
+    updatedAt: true,
+  };
+
+  private normalizeImages(dto: {
+    images?: CreateProductDto['images'];
+    imagePath?: string;
+    imagePaths?: string[];
+  }) {
+    const explicitImages =
+      dto.images?.map((image, index) => ({
+        url: image.url.trim(),
+        altText: image.altText?.trim() || undefined,
+        sortOrder: image.sortOrder ?? index,
+        isPrimary: image.isPrimary ?? false,
+      })) ?? [];
+
+    if (explicitImages.length > 0) {
+      const primaryIndex = Math.max(
+        0,
+        explicitImages.findIndex((image) => image.isPrimary)
+      );
+      return explicitImages.map((image, index) => ({
+        ...image,
+        isPrimary: index === primaryIndex,
+      }));
+    }
+
+    const legacyPaths = dto.imagePaths?.length
+      ? dto.imagePaths
+      : dto.imagePath
+        ? [dto.imagePath]
+        : [];
+
+    return legacyPaths
+      .map((path) => path.trim())
+      .filter(Boolean)
+      .map((url, index) => ({
+        url,
+        altText: undefined,
+        sortOrder: index,
+        isPrimary: index === 0,
+      }));
+  }
+
+  private imagePathsFromImages(images: Array<{ url: string }>) {
+    return images.map((image) => image.url);
+  }
+
   getBulkStatus(): { isBusy: boolean } {
     return { isBusy: this.bulkStatusStore.isBusy() };
   }
@@ -301,18 +366,28 @@ export class AdminService {
           lastname: true,
         },
       },
-      product: {
+      items: {
         select: {
           id: true,
-          title: true,
-          name: true,
-          description: true,
-          imagePath: true,
-          imagePaths: true,
-          category: true,
-          priceInCents: true,
-          stockQuantity: true,
-          isAvailableForPurchase: true,
+          quantity: true,
+          unitPriceInCents: true,
+          lineTotalInCents: true,
+          productTitleSnapshot: true,
+          productImageSnapshot: true,
+          product: {
+            select: {
+              id: true,
+              title: true,
+              name: true,
+              description: true,
+              imagePath: true,
+              imagePaths: true,
+              category: true,
+              priceInCents: true,
+              stockQuantity: true,
+              isAvailableForPurchase: true,
+            },
+          },
         },
       },
     } as const;
@@ -394,8 +469,9 @@ export class AdminService {
   }
 
   async createProduct(dto: CreateProductDto) {
-    // imagePath is the primary image; fall back to first of imagePaths if somehow empty.
-    const primaryImagePath = dto.imagePath?.trim() || dto.imagePaths?.[0]?.trim() || '';
+    const images = this.normalizeImages(dto);
+    const imagePaths = this.imagePathsFromImages(images);
+    const primaryImagePath = images.find((image) => image.isPrimary)?.url ?? imagePaths[0] ?? '';
 
     const similarProducts = await this.checkSimilarProducts({
       title: dto.title,
@@ -416,27 +492,38 @@ export class AdminService {
         title: dto.title.trim(),
         name: dto.name.trim(),
         description: dto.description.trim(),
+        brand: dto.brand?.trim() || undefined,
         imagePath: primaryImagePath,
-        imagePaths: dto.imagePaths ?? (primaryImagePath ? [primaryImagePath] : []),
+        imagePaths,
         priceInCents: dto.priceInCents ?? 0,
+        originalPriceInCents: dto.originalPriceInCents,
         stockQuantity: dto.stockQuantity,
         isAvailableForPurchase: dto.stockQuantity > 0,
         category: dto.category,
+        images: images.length
+          ? {
+              create: images,
+            }
+          : undefined,
+        features: dto.features?.length
+          ? {
+              create: dto.features.map((feature, index) => ({
+                text: feature.text.trim(),
+                sortOrder: feature.sortOrder ?? index,
+              })),
+            }
+          : undefined,
+        specifications: dto.specifications?.length
+          ? {
+              create: dto.specifications.map((specification, index) => ({
+                label: specification.label.trim(),
+                value: specification.value.trim(),
+                sortOrder: specification.sortOrder ?? index,
+              })),
+            }
+          : undefined,
       },
-      select: {
-        id: true,
-        title: true,
-        name: true,
-        description: true,
-        imagePath: true,
-        imagePaths: true,
-        category: true,
-        priceInCents: true,
-        stockQuantity: true,
-        isAvailableForPurchase: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: this.productSelect,
     });
 
     return {
@@ -454,10 +541,15 @@ export class AdminService {
       dto.description === undefined &&
       dto.imagePath === undefined &&
       dto.imagePaths === undefined &&
+      dto.brand === undefined &&
       dto.priceInCents === undefined &&
+      dto.originalPriceInCents === undefined &&
       dto.stockQuantity === undefined &&
       dto.isAvailableForPurchase === undefined &&
-      dto.category === undefined
+      dto.category === undefined &&
+      dto.images === undefined &&
+      dto.features === undefined &&
+      dto.specifications === undefined
     ) {
       throw new BadRequestException('Nessun campo prodotto da aggiornare');
     }
@@ -466,9 +558,11 @@ export class AdminService {
       title?: string;
       name?: string;
       description?: string;
+      brand?: string | null;
       imagePath?: string;
       imagePaths?: string[];
       priceInCents?: number;
+      originalPriceInCents?: number | null;
       stockQuantity?: number;
       isAvailableForPurchase?: boolean;
       category?: ProductCategory;
@@ -479,7 +573,11 @@ export class AdminService {
     if (dto.description !== undefined) data.description = dto.description.trim();
     if (dto.imagePath !== undefined) data.imagePath = dto.imagePath.trim();
     if (dto.imagePaths !== undefined) data.imagePaths = dto.imagePaths;
+    if (dto.brand !== undefined) data.brand = dto.brand.trim() || null;
     if (dto.priceInCents !== undefined) data.priceInCents = dto.priceInCents;
+    if (dto.originalPriceInCents !== undefined) {
+      data.originalPriceInCents = dto.originalPriceInCents;
+    }
     if (dto.stockQuantity !== undefined) {
       data.stockQuantity = dto.stockQuantity;
       if (dto.isAvailableForPurchase === undefined) {
@@ -493,24 +591,56 @@ export class AdminService {
       data.category = dto.category;
     }
 
+    if (dto.images !== undefined) {
+      const images = this.normalizeImages(dto);
+      data.imagePaths = this.imagePathsFromImages(images);
+      data.imagePath = images.find((image) => image.isPrimary)?.url ?? data.imagePaths[0] ?? '';
+    }
+
     try {
-      return await this.prisma.product.update({
-        where: { id: productId },
-        data,
-        select: {
-          id: true,
-          title: true,
-          name: true,
-          description: true,
-          imagePath: true,
-          imagePaths: true,
-          category: true,
-          priceInCents: true,
-          stockQuantity: true,
-          isAvailableForPurchase: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+      return await this.prisma.$transaction(async (tx) => {
+        if (dto.images !== undefined) {
+          const images = this.normalizeImages(dto);
+          await tx.productImage.deleteMany({ where: { productId } });
+          if (images.length > 0) {
+            await tx.productImage.createMany({
+              data: images.map((image) => ({ productId, ...image })),
+            });
+          }
+        }
+
+        if (dto.features !== undefined) {
+          await tx.productFeature.deleteMany({ where: { productId } });
+          if (dto.features.length > 0) {
+            await tx.productFeature.createMany({
+              data: dto.features.map((feature, index) => ({
+                productId,
+                text: feature.text.trim(),
+                sortOrder: feature.sortOrder ?? index,
+              })),
+            });
+          }
+        }
+
+        if (dto.specifications !== undefined) {
+          await tx.productSpecification.deleteMany({ where: { productId } });
+          if (dto.specifications.length > 0) {
+            await tx.productSpecification.createMany({
+              data: dto.specifications.map((specification, index) => ({
+                productId,
+                label: specification.label.trim(),
+                value: specification.value.trim(),
+                sortOrder: specification.sortOrder ?? index,
+              })),
+            });
+          }
+        }
+
+        return tx.product.update({
+          where: { id: productId },
+          data,
+          select: this.productSelect,
+        });
       });
     } catch {
       throw new NotFoundException('Prodotto non trovato');
@@ -520,7 +650,8 @@ export class AdminService {
   async bulkDeleteProducts(ids: string[]): Promise<{ count: number }> {
     return await this.prisma.$transaction(async (tx) => {
       // Order ha onDelete: Restrict — va eliminato prima dei prodotti
-      await tx.order.deleteMany({ where: { productId: { in: ids } } });
+      await tx.orderItem.deleteMany({ where: { productId: { in: ids } } });
+      await tx.order.deleteMany({ where: { items: { none: {} } } });
       const { count } = await tx.product.deleteMany({ where: { id: { in: ids } } });
       return { count };
     });
@@ -535,7 +666,8 @@ export class AdminService {
 
     return await this.prisma.$transaction(async (tx) => {
       // Order ha onDelete: Restrict — va eliminato prima del prodotto
-      await tx.order.deleteMany({ where: { productId } });
+      await tx.orderItem.deleteMany({ where: { productId } });
+      await tx.order.deleteMany({ where: { items: { none: {} } } });
       return await tx.product.delete({
         where: { id: productId },
         select: { id: true, title: true },
@@ -543,4 +675,3 @@ export class AdminService {
     });
   }
 }
-

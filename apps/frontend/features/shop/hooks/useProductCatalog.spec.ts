@@ -28,6 +28,7 @@ function createProduct(
     imagePath: `/${id}.png`,
     imagePaths: [`/${id}.png`],
     category,
+    subcategory: null,
     priceInCents: 1999,
     stockQuantity: 8,
     isAvailableForPurchase: true,
@@ -49,10 +50,15 @@ describe('useProductCatalog', () => {
       items: [],
       totalQuantity: 0,
       totalInCents: 0,
+      stockAlerts: [],
       addItem: vi.fn(),
       updateQuantity: vi.fn(),
       removeItem: vi.fn(),
       syncWithProducts,
+      syncWithProductStatuses: vi.fn(),
+      refreshCartStock: vi.fn(),
+      refreshProductStock: vi.fn(),
+      clearStockAlerts: vi.fn(),
       clearCart: vi.fn(),
     });
   });

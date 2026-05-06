@@ -58,7 +58,7 @@ export async function backendRequest<T>(
   const response = await fetch(`${BACKEND_BASE_URL}${path}`, {
     ...init,
     headers,
-    cache: fetchOverrides?.cache ?? 'no-store',
+    cache: fetchOverrides?.cache ?? (fetchOverrides?.next ? undefined : 'no-store'),
     next: fetchOverrides?.next,
   });
 

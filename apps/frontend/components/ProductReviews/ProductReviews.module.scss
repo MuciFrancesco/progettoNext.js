@@ -1,0 +1,22 @@
+.reviewBox {
+  margin-top: 32px;
+}
+
+.reviewForm {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.reviewList {
+  margin-top: 18px;
+}
+
+.reviewItem {
+  border-bottom: 1px solid var(--mui-palette-divider);
+  padding: 14px 0;
+}
+
+.reviewTitle {
+  font-weight: 700;
+}

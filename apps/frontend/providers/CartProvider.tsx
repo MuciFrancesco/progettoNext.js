@@ -33,6 +33,7 @@ type CartContextValue = {
   readonly syncWithProducts: (products: readonly BackendProduct[]) => void;
   readonly syncWithProductStatuses: (statuses: readonly ProductStatusSnapshot[]) => void;
   readonly refreshCartStock: () => Promise<void>;
+  readonly refreshProductStock: (productId: string) => Promise<ProductStatusSnapshot | undefined>;
   readonly clearStockAlerts: () => void;
   readonly clearCart: () => void;
 };
@@ -143,6 +144,15 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     syncWithProductStatuses(statuses);
   }, [items, syncWithProductStatuses]);
 
+  const refreshProductStock = useCallback(
+    async (productId: string) => {
+      const statuses = await fetchProductStatuses([productId]);
+      syncWithProductStatuses(statuses);
+      return statuses[0];
+    },
+    [syncWithProductStatuses]
+  );
+
   const clearStockAlerts = useCallback(() => {
     setStockAlerts([]);
   }, []);
@@ -166,6 +176,7 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
       syncWithProducts,
       syncWithProductStatuses,
       refreshCartStock,
+      refreshProductStock,
       clearStockAlerts,
       clearCart,
     };
@@ -175,6 +186,7 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     clearStockAlerts,
     items,
     refreshCartStock,
+    refreshProductStock,
     removeItem,
     stockAlerts,
     syncWithProducts,

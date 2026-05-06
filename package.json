@@ -28,6 +28,8 @@
     "e2e:stack": "concurrently -k -n backend,frontend \"npm run start:dev -w apps/backend\" \"npm run dev -w apps/frontend\"",
     "dev:seed": "powershell -ExecutionPolicy Bypass -File scripts\\dev-seed.ps1",
     "dev:full": "powershell -ExecutionPolicy Bypass -File scripts\\dev-full.ps1",
+    "dev:docker": "powershell -ExecutionPolicy Bypass -File scripts\\dev-docker.ps1",
+    "dev:docker:build": "powershell -ExecutionPolicy Bypass -File scripts\\dev-docker.ps1 -Build",
     "dev:stop": "powershell -ExecutionPolicy Bypass -File scripts\\dev-stop.ps1"
   },
   "devDependencies": {

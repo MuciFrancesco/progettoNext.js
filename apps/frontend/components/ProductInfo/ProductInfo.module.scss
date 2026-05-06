@@ -1,0 +1,25 @@
+.content {
+  min-width: 0;
+}
+
+.brand {
+  color: var(--mui-palette-primary-main);
+  font-weight: 700;
+}
+
+.title {
+  margin-top: 6px;
+  line-height: 1.08;
+}
+
+.ratingRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.featureList {
+  padding-left: 18px;
+  margin: 0;
+}

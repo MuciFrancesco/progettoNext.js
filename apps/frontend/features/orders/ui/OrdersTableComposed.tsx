@@ -25,6 +25,7 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import type { BackendOrder, OrderFilter } from '@/types/api/order';
+import { getOrderProductName } from '@/lib/orders/orderItems';
 import type { FilterOption, OrderSortKey } from '@/features/admin/hooks/useAdminOrders';
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 import OrdersTableHead from '@/components/OrdersTable/OrdersTableHead/OrdersTableHead';
@@ -201,21 +202,26 @@ export default function OrdersTableComposed({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    <TableRow>
-                      <TableCell>{selected.product.name}</TableCell>
-                      <TableCell>
-                        <Chip label={t(categoryTranslationKey(selected.product.category))} size="small" />
-                      </TableCell>
-                      <TableCell align="right">
-                        {(selected.totalPriceInCents / 100).toLocaleString(displayLocale, {
-                          style: 'currency',
-                          currency: 'EUR',
-                        })}
-                      </TableCell>
-                    </TableRow>
+                    {selected.items.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>{item.productTitleSnapshot || item.product.name}</TableCell>
+                        <TableCell>
+                          <Chip label={t(categoryTranslationKey(item.product.category))} size="small" />
+                        </TableCell>
+                        <TableCell align="right">
+                          {(item.lineTotalInCents / 100).toLocaleString(displayLocale, {
+                            style: 'currency',
+                            currency: 'EUR',
+                          })}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+              <Typography variant="caption" color="text.secondary">
+                {getOrderProductName(selected)}
+              </Typography>
             </DialogContent>
             <DialogActions>
               <MuiButton onClick={() => setSelected(null)}>{t('ordersTableDetailClose')}</MuiButton>

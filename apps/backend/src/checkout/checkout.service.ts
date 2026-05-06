@@ -9,6 +9,8 @@ type ValidatedCheckout = {
     readonly productId: string;
     readonly quantity: number;
     readonly unitPriceInCents: number;
+    readonly title: string;
+    readonly imagePath: string | null;
   }>;
 };
 
@@ -30,6 +32,9 @@ export class CheckoutService {
       where: { id: { in: [...quantities.keys()] } },
       select: {
         id: true,
+        title: true,
+        imagePath: true,
+        imagePaths: true,
         priceInCents: true,
         stockQuantity: true,
         isAvailableForPurchase: true,
@@ -49,6 +54,8 @@ export class CheckoutService {
         productId: product.id,
         quantity,
         unitPriceInCents: product.priceInCents,
+        title: product.title,
+        imagePath: product.imagePaths[0] ?? product.imagePath ?? null,
       };
     });
 
@@ -85,31 +92,36 @@ export class CheckoutService {
   async captureOrder(userId: string, items: CheckoutItemDto[]) {
     const checkout = await this.validateItems(items);
 
-    const orders = await this.prisma.$transaction(async (tx) => {
-      const created: Array<{ id: string; totalPriceInCents: number; createdAt: Date }> = [];
+    const order = await this.prisma.$transaction(async (tx) => {
       for (const item of checkout.items) {
         await tx.product.update({
           where: { id: item.productId },
           data: { stockQuantity: { decrement: item.quantity } },
         });
-
-        created.push(
-          await tx.order.create({
-            data: {
-              userId,
-              productId: item.productId,
-              totalPriceInCents: item.unitPriceInCents * item.quantity,
-            },
-            select: { id: true, totalPriceInCents: true, createdAt: true },
-          })
-        );
       }
 
-      return created;
+      return tx.order.create({
+        data: {
+          userId,
+          status: 'PAID',
+          totalPriceInCents: checkout.totalInCents,
+          items: {
+            create: checkout.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPriceInCents: item.unitPriceInCents,
+              lineTotalInCents: item.unitPriceInCents * item.quantity,
+              productTitleSnapshot: item.title,
+              productImageSnapshot: item.imagePath,
+            })),
+          },
+        },
+        select: { id: true, totalPriceInCents: true, createdAt: true },
+      });
     });
 
     return {
-      orders,
+      order,
       totalInCents: checkout.totalInCents,
     };
   }

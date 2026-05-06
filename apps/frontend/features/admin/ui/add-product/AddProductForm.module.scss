@@ -76,6 +76,19 @@
   @include ds.flex-row($gap: ds.$spacing-3);
 }
 
+.inlineFields {
+  display: grid;
+  gap: ds.$spacing-2;
+  margin-bottom: ds.$spacing-2;
+}
+
+@media (min-width: 700px) {
+  .inlineFields {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center;
+  }
+}
+
 @media (min-width: 900px) {
   .formGrid {
     grid-template-columns: 1fr 1fr;

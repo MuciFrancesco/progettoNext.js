@@ -3,11 +3,9 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { getCurrentSession, redirectByRole } from '@/lib/auth/session';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
-import { getLanguageOptions } from '@/lib/i18n/translator';
 import AuthForms from '@/features/auth/components/AuthForms/AuthForms';
-import LocaleSwitcher from '@/components/LocaleSwitcher/LocaleSwitcher';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
-import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader/DashboardHeader';
+import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
 import styles from './page.module.scss';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,22 +35,17 @@ export default async function LoginPage({ searchParams }: Readonly<LoginPageProp
 
   return (
     <>
-      <DashboardHeader
-        logoHref="/login"
-        rightSlot={
-          <LocaleSwitcher
-            currentLocale={locale}
-            label={t('languageLabel')}
-            options={getLanguageOptions(locale)}
-            testIdPrefix="login-locale-switcher"
-          />
-        }
-      />
+      <PublicShopHeader />
 
       <main
         data-testid="login-page"
         className={styles.page}
       >
+        <section className={styles.copyBlock}>
+          <p className={styles.eyebrow}>{t('appName')}</p>
+          <h1 className={styles.title}>{t('authTitle')}</h1>
+          <p className={styles.subtitle}>{t('authSubtitle')}</p>
+        </section>
         <div className={styles.content} data-testid="login-content">
           <Suspense
             fallback={

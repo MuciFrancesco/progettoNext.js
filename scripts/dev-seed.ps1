@@ -1,11 +1,11 @@
 $root = Split-Path $PSScriptRoot -Parent
 Set-Location $root
 
-Write-Host "`n[seed-demo] Inserisco dati demo (prodotti, utenti, ordini)..." -ForegroundColor Cyan
-docker-compose exec -w /app/apps/backend backend node scripts/seed-demo-data.mjs
+Write-Host "`n[seed-thinkshop] Inserisco dati ThinkShop (prodotti, gallery, recensioni, ordini multi-prodotto)..." -ForegroundColor Cyan
+docker-compose exec -w /app/apps/backend backend node scripts/seed-thinkshop-data.mjs
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "db:seed:demo fallito"
+    Write-Error "db:seed:thinkshop fallito"
     exit 1
 }
 
-Write-Host "`nSeed demo completato." -ForegroundColor Green
+Write-Host "`nSeed ThinkShop completato." -ForegroundColor Green

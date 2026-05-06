@@ -169,6 +169,24 @@ export default function AddProductForm({
           onChange={(e) => setDraft({ ...draft, name: e.target.value })}
         />
         <TextField
+          label="Brand"
+          fullWidth
+          value={draft.brand ?? ''}
+          onChange={(e) => setDraft({ ...draft, brand: e.target.value })}
+        />
+        <TextField
+          label="Prezzo originale"
+          type="number"
+          slotProps={{ htmlInput: { min: 0 } }}
+          value={draft.originalPriceInCents ?? ''}
+          onChange={(e) =>
+            setDraft({
+              ...draft,
+              originalPriceInCents: e.target.value ? Number(e.target.value) : undefined,
+            })
+          }
+        />
+        <TextField
           label={`${t('productFieldDescription')} *`}
           fullWidth
           multiline
@@ -271,6 +289,106 @@ export default function AddProductForm({
             ))}
           </Select>
         </FormControl>
+        <Box className={styles.fullWidthField}>
+          <Typography variant="body2" className={styles.imageLabel}>
+            Feature
+          </Typography>
+          {(draft.features ?? []).map((feature, index) => (
+            <Box key={String(index)} className={styles.inlineFields}>
+              <TextField
+                fullWidth
+                value={feature.text}
+                label={`Feature ${index + 1}`}
+                onChange={(event) => {
+                  const features = [...(draft.features ?? [])];
+                  features[index] = { ...feature, text: event.target.value };
+                  setDraft({ ...draft, features });
+                }}
+              />
+              <MuiButton
+                variant="outlined"
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    features: (draft.features ?? [])
+                      .filter((_, featureIndex) => featureIndex !== index)
+                      .map((item, nextIndex) => ({ ...item, sortOrder: nextIndex })),
+                  })
+                }
+              >
+                Rimuovi
+              </MuiButton>
+            </Box>
+          ))}
+          <MuiButton
+            variant="outlined"
+            onClick={() =>
+              setDraft({
+                ...draft,
+                features: [
+                  ...(draft.features ?? []),
+                  { text: '', sortOrder: draft.features?.length ?? 0 },
+                ],
+              })
+            }
+          >
+            Aggiungi feature
+          </MuiButton>
+        </Box>
+        <Box className={styles.fullWidthField}>
+          <Typography variant="body2" className={styles.imageLabel}>
+            Specifiche
+          </Typography>
+          {(draft.specifications ?? []).map((specification, index) => (
+            <Box key={String(index)} className={styles.inlineFields}>
+              <TextField
+                value={specification.label}
+                label="Chiave"
+                onChange={(event) => {
+                  const specifications = [...(draft.specifications ?? [])];
+                  specifications[index] = { ...specification, label: event.target.value };
+                  setDraft({ ...draft, specifications });
+                }}
+              />
+              <TextField
+                value={specification.value}
+                label="Valore"
+                onChange={(event) => {
+                  const specifications = [...(draft.specifications ?? [])];
+                  specifications[index] = { ...specification, value: event.target.value };
+                  setDraft({ ...draft, specifications });
+                }}
+              />
+              <MuiButton
+                variant="outlined"
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    specifications: (draft.specifications ?? [])
+                      .filter((_, specificationIndex) => specificationIndex !== index)
+                      .map((item, nextIndex) => ({ ...item, sortOrder: nextIndex })),
+                  })
+                }
+              >
+                Rimuovi
+              </MuiButton>
+            </Box>
+          ))}
+          <MuiButton
+            variant="outlined"
+            onClick={() =>
+              setDraft({
+                ...draft,
+                specifications: [
+                  ...(draft.specifications ?? []),
+                  { label: '', value: '', sortOrder: draft.specifications?.length ?? 0 },
+                ],
+              })
+            }
+          >
+            Aggiungi specifica
+          </MuiButton>
+        </Box>
       </Box>
       <MuiButton
         variant="contained"

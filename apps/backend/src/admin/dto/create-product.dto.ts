@@ -9,8 +9,59 @@ import {
   IsString,
   MaxLength,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { ProductCategory } from '@prisma/client';
+
+export class ProductImageInputDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  url!: string;
+
+  @IsString()
+  @MaxLength(180)
+  @IsOptional()
+  altText?: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  sortOrder!: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isPrimary?: boolean;
+}
+
+export class ProductFeatureInputDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  text!: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  sortOrder!: number;
+}
+
+export class ProductSpecificationInputDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  label!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  value!: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  sortOrder!: number;
+}
 
 export class CreateProductDto {
   @IsString()
@@ -38,11 +89,22 @@ export class CreateProductDto {
   @IsOptional()
   imagePaths?: string[];
 
+  @IsString()
+  @MaxLength(120)
+  @IsOptional()
+  brand?: string;
+
   @Type(() => Number)
   @IsInt()
   @Min(0)
   @IsOptional()
   priceInCents?: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  originalPriceInCents?: number;
 
   @Type(() => Number)
   @IsInt()
@@ -56,4 +118,22 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   forceConfirm?: boolean;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductImageInputDto)
+  @IsOptional()
+  images?: ProductImageInputDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductFeatureInputDto)
+  @IsOptional()
+  features?: ProductFeatureInputDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductSpecificationInputDto)
+  @IsOptional()
+  specifications?: ProductSpecificationInputDto[];
 }

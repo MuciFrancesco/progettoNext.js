@@ -1,5 +1,12 @@
 .button {
-  border-radius: 12px;
-  color: var(--foreground);
-  border-color: var(--border);
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  font-weight: 700 !important;
+}
+
+.button:hover {
+  border-color: rgba(240, 165, 0, 0.4) !important;
+  background: rgba(240, 165, 0, 0.12) !important;
 }

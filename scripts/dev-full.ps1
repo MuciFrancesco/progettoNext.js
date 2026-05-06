@@ -1,6 +1,22 @@
 $root = Split-Path $PSScriptRoot -Parent
 Set-Location $root
 
+function Test-DockerDaemon {
+  docker version --format '{{.Server.Version}}' *> $null
+  return $LASTEXITCODE -eq 0
+}
+
+Write-Host "`n[-1] Verifico Docker Desktop..." -ForegroundColor Cyan
+if (-not (Test-DockerDaemon)) {
+  Write-Error @"
+Docker non e raggiungibile. Avvia Docker Desktop e aspetta che l'engine Linux sia pronto, poi rilancia:
+  npm run dev:full
+
+Dettaglio: il daemon Docker non risponde su npipe:////./pipe/dockerDesktopLinuxEngine.
+"@
+  exit 1
+}
+
 Write-Host "`n[0] Build TypeScript frontend (type-check + Next.js build)..." -ForegroundColor Cyan
 Set-Location "$root/apps/frontend"
 npm run build

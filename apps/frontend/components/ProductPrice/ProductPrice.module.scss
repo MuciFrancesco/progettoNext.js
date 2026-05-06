@@ -1,0 +1,15 @@
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.price {
+  font-weight: 800;
+}
+
+.originalPrice {
+  color: var(--mui-palette-text-secondary);
+  text-decoration: line-through;
+}
