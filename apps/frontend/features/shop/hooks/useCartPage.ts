@@ -2,7 +2,7 @@
 import { useCallback, useState } from 'react';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/store/CartContext';
 
 export function useCartPage(locale: Locale) {
   const t = createTranslator(locale);
@@ -36,10 +36,12 @@ export function useCartPage(locale: Locale) {
         return;
       }
 
-      const status = await cart.refreshProductStock(productId).catch(() => undefined);
+      const status = await cart.refreshItemStock(productId).catch(() => undefined);
       const maxQuantity = Math.max(
         0,
-        status?.isAvailableForPurchase === false ? 0 : status?.stockQuantity ?? item.product.stockQuantity
+        status?.isAvailableForPurchase === false
+          ? 0
+          : (status?.stockQuantity ?? item.product.stockQuantity)
       );
 
       if (maxQuantity <= 0) {

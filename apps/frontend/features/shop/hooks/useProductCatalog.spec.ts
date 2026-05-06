@@ -2,11 +2,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { APP_NAME } from '@/lib/constants';
 import { createTranslator } from '@/lib/i18n/translator';
-import { useCart } from '@/providers/CartProvider';
+
+import { useCart } from '@/store/CartContext';
 import type { BackendProduct } from '@/types/api/product';
 import { useProductCatalog } from './useProductCatalog';
 
-vi.mock('@/providers/CartProvider', () => ({
+vi.mock('@/store/CartContext', () => ({
   useCart: vi.fn(),
 }));
 
@@ -51,15 +52,16 @@ describe('useProductCatalog', () => {
       totalQuantity: 0,
       totalInCents: 0,
       stockAlerts: [],
+      isLoaded: true,
       addItem: vi.fn(),
       updateQuantity: vi.fn(),
       removeItem: vi.fn(),
-      syncWithProducts,
-      syncWithProductStatuses: vi.fn(),
-      refreshCartStock: vi.fn(),
-      refreshProductStock: vi.fn(),
-      clearStockAlerts: vi.fn(),
       clearCart: vi.fn(),
+      clearAlerts: vi.fn(),
+      syncWithProducts,
+      syncWithStatuses: vi.fn(),
+      refreshItemStock: vi.fn(),
+      refreshAllStock: vi.fn(),
     });
   });
 

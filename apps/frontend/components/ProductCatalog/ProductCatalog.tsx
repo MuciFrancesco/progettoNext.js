@@ -77,9 +77,10 @@ type ProductCatalogProps = {
   readonly subcategories: ProductCatalogSubcategory[];
   readonly onQueryChange: (value: string) => void;
   readonly onCategoryChange: (value: ProductCategory | 'ALL') => void;
-  readonly onRefreshProduct: (productId: string) => Promise<BackendProduct | undefined>;
   readonly onPreviousHero: () => void;
   readonly onNextHero: () => void;
+  /** Slot per il componente AddToCartButton (connesso al context) per ogni card */
+  readonly cartActionSlot?: (card: ProductCardViewModel) => ReactNode;
 };
 
 export function ProductCatalog({
@@ -93,9 +94,9 @@ export function ProductCatalog({
   subcategories,
   onQueryChange,
   onCategoryChange,
-  onRefreshProduct,
   onPreviousHero,
   onNextHero,
+  cartActionSlot,
 }: Readonly<ProductCatalogProps>) {
   return (
     <Box component="section" data-testid="product-catalog" className={styles.pageSection}>
@@ -263,7 +264,7 @@ export function ProductCatalog({
               key={card.product.id}
               card={card}
               labels={labels}
-              onRefreshProduct={onRefreshProduct}
+              cartActionSlot={cartActionSlot?.(card)}
             />
           ))}
         </Box>

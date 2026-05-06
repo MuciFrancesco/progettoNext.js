@@ -10,7 +10,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import type { CartItem } from '@/providers/CartProvider';
+import type { CartItem } from '@/store/CartContext';
 import type { Locale } from '@/lib/i18n/translation';
 import { formatCurrency } from '@/lib/shop/format';
 import styles from './Checkout.module.scss';
@@ -60,11 +60,7 @@ export function Checkout({
   const isError = status === 'error';
 
   return (
-    <Box
-      component="section"
-      data-testid="checkout-page"
-      className={styles.pageLayout}
-    >
+    <Box component="section" data-testid="checkout-page" className={styles.pageLayout}>
       {/* ── Payment panel ── */}
       <Paper variant="outlined" className={styles.panel}>
         <Typography variant="h5" component="h1" className={styles.title}>
@@ -127,7 +123,8 @@ export function Checkout({
                 ) : (
                   <>
                     <Typography variant="body2" color="text.secondary">
-                      Verrai reindirizzato alla finestra PayPal per completare il pagamento in sicurezza.
+                      Verrai reindirizzato alla finestra PayPal per completare il pagamento in
+                      sicurezza.
                     </Typography>
                     <Button
                       variant="contained"

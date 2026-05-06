@@ -5,7 +5,6 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type { BackendProduct } from '@/types/api/product';
-import { AddToCartButton } from '@/components/AddToCartButton/AddToCartButton';
 import styles from './ProductCard.module.scss';
 
 export type ProductCardViewModel = {
@@ -29,10 +28,10 @@ type ProductCardLabels = {
 type ProductCardProps = {
   readonly card: ProductCardViewModel;
   readonly labels: ProductCardLabels;
-  readonly onRefreshProduct: (productId: string) => Promise<BackendProduct | undefined>;
+  readonly cartActionSlot?: React.ReactNode;
 };
 
-export function ProductCard({ card, labels, onRefreshProduct }: Readonly<ProductCardProps>) {
+export function ProductCard({ card, labels, cartActionSlot }: Readonly<ProductCardProps>) {
   const { product } = card;
 
   return (
@@ -83,15 +82,7 @@ export function ProductCard({ card, labels, onRefreshProduct }: Readonly<Product
             {card.stockLabel}
           </Typography>
         </Box>
-        <AddToCartButton
-          product={product}
-          addLabel={labels.addToCart}
-          decreaseLabel={labels.decreaseQuantity}
-          increaseLabel={labels.increaseQuantity}
-          removeLabel={labels.removeFromCart}
-          unavailableLabel={labels.unavailable}
-          onRefreshProduct={onRefreshProduct}
-        />
+        {cartActionSlot}
       </Box>
     </Paper>
   );

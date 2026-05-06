@@ -12,6 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { CartBadgeLink } from '@/components/CartBadgeLink/CartBadgeLink';
+import { useCart } from '@/store/CartContext';
 import type { ReactNode } from 'react';
 import styles from './PublicShopHeaderShell.module.scss';
 
@@ -49,12 +50,10 @@ export function PublicShopHeaderShell({
   onCategorySelect,
   actionsSlot,
 }: Readonly<PublicShopHeaderShellProps>) {
+  const { totalQuantity } = useCart();
+
   return (
-    <AppBar
-      position="sticky"
-      elevation={0}
-      className={styles.appBar}
-    >
+    <AppBar position="sticky" elevation={0} className={styles.appBar}>
       <Box className={styles.headerInner}>
         <Toolbar className={styles.toolbar}>
           <Box aria-label={appName} className={styles.logoLink}>
@@ -102,7 +101,7 @@ export function PublicShopHeaderShell({
           </Box>
 
           <Box className={styles.actionsSlot}>
-            <CartBadgeLink label={cartLabel} />
+            <CartBadgeLink label={cartLabel} totalQuantity={totalQuantity} />
             {actionsSlot}
           </Box>
         </Toolbar>

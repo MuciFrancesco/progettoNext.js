@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/store/CartContext';
 import type { CardBrand } from '@/features/shop/helpers/cardPayment';
 
 type CheckoutStatus = 'idle' | 'loading' | 'ready' | 'processing' | 'paypal-open' | 'error';
@@ -46,7 +46,10 @@ export function useCheckoutPage(locale: Locale) {
     })
       .then(async (res) => {
         if (!res.ok) {
-          const err = (await res.json().catch(() => null)) as { code?: unknown; message?: unknown } | null;
+          const err = (await res.json().catch(() => null)) as {
+            code?: unknown;
+            message?: unknown;
+          } | null;
           if (err?.code === 'INVALID_CART') {
             clearCart();
             router.replace('/cart');

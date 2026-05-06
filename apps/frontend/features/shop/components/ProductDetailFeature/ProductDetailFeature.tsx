@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { formatCurrency } from '@/lib/shop/format';
 import type { BackendProduct, ProductReview } from '@/types/api/product';
+import { useCart } from '@/store/CartContext';
 import { AddToCartButton } from '@/components/AddToCartButton/AddToCartButton';
 import { ProductBuyBox } from '@/components/ProductBuyBox/ProductBuyBox';
 import { ProductGallery } from '@/components/ProductGallery/ProductGallery';
@@ -26,6 +27,30 @@ type ProductDetailFeatureProps = {
 export function ProductDetailFeature({ product, reviews, locale }: ProductDetailFeatureProps) {
   const t = createTranslator(locale);
   const reviewState = useProductReviews(product.id, reviews);
+  const { items, addItem, updateQuantity, removeItem } = useCart();
+  const cartItem = items.find((i) => i.product.id === product.id);
+  const quantity = cartItem?.quantity ?? 0;
+
+  const handleAdd = useCallback(() => addItem(product), [addItem, product]);
+  const handleDecrease = useCallback(
+    (productId: string) => {
+      const current = items.find((i) => i.product.id === productId);
+      if (current && current.quantity <= 1) {
+        removeItem(productId);
+      } else {
+        updateQuantity(productId, (current?.quantity ?? 1) - 1);
+      }
+    },
+    [items, removeItem, updateQuantity]
+  );
+  const handleIncrease = useCallback(
+    (productId: string, maxStock: number) => {
+      const current = items.find((i) => i.product.id === productId);
+      updateQuantity(productId, Math.min((current?.quantity ?? 0) + 1, maxStock));
+    },
+    [items, updateQuantity]
+  );
+
   const images = product.images?.length
     ? product.images
     : product.imagePaths.map((url, index) => ({
@@ -40,10 +65,7 @@ export function ProductDetailFeature({ product, reviews, locale }: ProductDetail
     sortedImages.findIndex((image) => image.isPrimary)
   );
   const [activeImageIndex, setActiveImageIndex] = useState(initialImageIndex);
-  const boundedActiveImageIndex = Math.min(
-    activeImageIndex,
-    Math.max(sortedImages.length - 1, 0)
-  );
+  const boundedActiveImageIndex = Math.min(activeImageIndex, Math.max(sortedImages.length - 1, 0));
   const activeImage = sortedImages[boundedActiveImageIndex];
   const sortedFeatures = [...(product.features ?? [])].sort(
     (first, second) => first.sortOrder - second.sortOrder
@@ -122,11 +144,16 @@ export function ProductDetailFeature({ product, reviews, locale }: ProductDetail
           action={
             <AddToCartButton
               product={product}
+              quantity={quantity}
               addLabel={t('cartAddItem')}
               decreaseLabel={t('cartDecreaseQuantity')}
               increaseLabel={t('cartIncreaseQuantity')}
               removeLabel={t('cartRemoveItem')}
               unavailableLabel={t('productUnavailable')}
+              onAdd={handleAdd}
+              onDecrease={handleDecrease}
+              onIncrease={handleIncrease}
+              onRemove={removeItem}
             />
           }
           labels={{

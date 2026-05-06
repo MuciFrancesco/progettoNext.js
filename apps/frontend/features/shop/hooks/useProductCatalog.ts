@@ -7,9 +7,8 @@ import type { Locale } from '@/lib/i18n/translation';
 import type { BackendProduct, ProductCategory } from '@/types/api/product';
 import { PRODUCT_CATEGORIES } from '@/types/api/product';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/store/CartContext';
 import { APP_NAME } from '@/lib/constants';
-import { mergeProductsWithStatuses } from '@/providers/cart-stock';
 
 export type ProductCatalogCategoryOption = {
   readonly value: ProductCategory | 'ALL';
@@ -27,9 +26,11 @@ export function useProductCatalog(
   options: Readonly<UseProductCatalogOptions> = {}
 ) {
   const t = useMemo(() => createTranslator(locale), [locale]);
-  const { syncWithProducts, syncWithProductStatuses } = useCart();
+  const { syncWithProducts, syncWithStatuses } = useCart();
   const [query, setQuery] = useState(options.initialQuery ?? '');
-  const [category, setCategory] = useState<ProductCategory | 'ALL'>(options.initialCategory ?? 'ALL');
+  const [category, setCategory] = useState<ProductCategory | 'ALL'>(
+    options.initialCategory ?? 'ALL'
+  );
   const [liveProducts, setLiveProducts] = useState(products);
   const liveProductsRef = useRef(products);
 
@@ -58,14 +59,22 @@ export function useProductCatalog(
 
       const statuses = await fetchProductStatuses(targetIds);
       setLiveProducts((current) => {
-        const merged = mergeProductsWithStatuses(current, statuses);
+        const merged = current.map((product) => {
+          const status = statuses.find((s) => s.id === product.id);
+          if (!status) return product;
+          return {
+            ...product,
+            stockQuantity: status.stockQuantity,
+            isAvailableForPurchase: status.isAvailableForPurchase,
+          };
+        });
         liveProductsRef.current = merged;
         return merged;
       });
-      syncWithProductStatuses(statuses);
+      syncWithStatuses(statuses);
       return statuses;
     },
-    [syncWithProductStatuses]
+    [syncWithStatuses]
   );
 
   const refreshProduct = useCallback(
@@ -77,15 +86,23 @@ export function useProductCatalog(
 
       let nextProduct: BackendProduct | undefined;
       setLiveProducts((current) => {
-        const merged = mergeProductsWithStatuses(current, statuses);
+        const merged = current.map((product) => {
+          const status = statuses.find((s) => s.id === product.id);
+          if (!status) return product;
+          return {
+            ...product,
+            stockQuantity: status.stockQuantity,
+            isAvailableForPurchase: status.isAvailableForPurchase,
+          };
+        });
         liveProductsRef.current = merged;
         nextProduct = merged.find((item) => item.id === productId);
         return merged;
       });
-      syncWithProductStatuses(statuses);
+      syncWithStatuses(statuses);
       return nextProduct;
     },
-    [syncWithProductStatuses]
+    [syncWithStatuses]
   );
 
   useEffect(() => {

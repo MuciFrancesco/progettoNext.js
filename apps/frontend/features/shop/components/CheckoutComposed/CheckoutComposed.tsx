@@ -3,7 +3,7 @@
 import { Checkout } from '@/components/Checkout/Checkout';
 import { CardPaymentForm } from '@/components/Checkout/CardPaymentForm';
 import type { CardBrand } from '@/features/shop/helpers/cardPayment';
-import type { CartItem } from '@/providers/CartProvider';
+import type { CartItem } from '@/store/CartContext';
 import type { Locale } from '@/lib/i18n/translation';
 import type { PaymentMethod } from '@/features/shop/hooks/useCheckoutPage';
 

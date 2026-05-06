@@ -4,16 +4,14 @@ import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link';
-import { useCart } from '@/providers/CartProvider';
 import styles from './CartBadgeLink.module.scss';
 
 type CartBadgeLinkProps = {
   readonly label: string;
+  readonly totalQuantity: number;
 };
 
-export function CartBadgeLink({ label }: Readonly<CartBadgeLinkProps>) {
-  const { totalQuantity } = useCart();
-
+export function CartBadgeLink({ label, totalQuantity }: Readonly<CartBadgeLinkProps>) {
   return (
     <Button
       component={Link}

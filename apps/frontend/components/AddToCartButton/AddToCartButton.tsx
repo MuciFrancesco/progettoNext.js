@@ -9,68 +9,58 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { BackendProduct } from '@/types/api/product';
-import { useCart } from '@/providers/CartProvider';
 import styles from './AddToCartButton.module.scss';
 
 type AddToCartButtonProps = {
   readonly product: BackendProduct;
+  readonly quantity: number;
   readonly addLabel: string;
   readonly decreaseLabel: string;
   readonly increaseLabel: string;
   readonly removeLabel: string;
   readonly unavailableLabel: string;
-  readonly onRefreshProduct?: (productId: string) => Promise<BackendProduct | undefined>;
+  readonly onAdd: (product: BackendProduct) => void;
+  readonly onDecrease: (productId: string) => void;
+  readonly onIncrease: (productId: string, maxStock: number) => void;
+  readonly onRemove: (productId: string) => void;
 };
 
 export function AddToCartButton({
   product,
+  quantity,
   addLabel,
   decreaseLabel,
   increaseLabel,
   removeLabel,
   unavailableLabel,
-  onRefreshProduct,
+  onAdd,
+  onDecrease,
+  onIncrease,
+  onRemove,
 }: Readonly<AddToCartButtonProps>) {
-  const { addItem, items, removeItem, updateQuantity } = useCart();
   const disabled = !product.isAvailableForPurchase || product.stockQuantity <= 0;
-  const cartItem = items.find((item) => item.product.id === product.id);
 
-  const handleAdd = async () => {
-    const latestProduct = onRefreshProduct ? await onRefreshProduct(product.id) : product;
-    if (!latestProduct || !latestProduct.isAvailableForPurchase || latestProduct.stockQuantity <= 0) {
-      return;
-    }
-    addItem(latestProduct);
-  };
-
-  if (cartItem) {
-    const canIncrease = cartItem.quantity < product.stockQuantity;
-
-    const handleIncrease = async () => {
-      const latestProduct = onRefreshProduct ? await onRefreshProduct(product.id) : product;
-      if (!latestProduct || latestProduct.stockQuantity <= 0) {
-        return;
-      }
-      updateQuantity(product.id, Math.min(cartItem.quantity + 1, latestProduct.stockQuantity));
-    };
+  // Item già nel carrello → mostra controlli quantità
+  if (quantity > 0) {
+    const canIncrease = quantity < product.stockQuantity;
 
     return (
       <Box data-testid={`cart-controls-${product.id}`} className={styles.controlsGrid}>
         <IconButton
           aria-label={decreaseLabel}
-          onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
+          onClick={() => onDecrease(product.id)}
           data-testid={`decrease-cart-${product.id}`}
           className={styles.iconButton}
         >
           <RemoveIcon fontSize="small" />
         </IconButton>
         <Box className={styles.quantityBox}>
-          <Typography className={styles.quantityValue}>{cartItem.quantity}</Typography>
+          <Typography className={styles.quantityValue}>{quantity}</Typography>
         </Box>
         <IconButton
           aria-label={increaseLabel}
           disabled={!canIncrease}
-          onClick={() => void handleIncrease()}
+          onClick={() => onIncrease(product.id, product.stockQuantity)}
           data-testid={`increase-cart-${product.id}`}
           className={styles.iconButton}
         >
@@ -78,7 +68,7 @@ export function AddToCartButton({
         </IconButton>
         <IconButton
           aria-label={removeLabel}
-          onClick={() => removeItem(product.id)}
+          onClick={() => onRemove(product.id)}
           data-testid={`remove-cart-${product.id}`}
           className={styles.iconButton}
         >
@@ -88,13 +78,14 @@ export function AddToCartButton({
     );
   }
 
+  // Item non nel carrello → mostra bottone "Aggiungi"
   return (
     <Button
       type="button"
       variant="contained"
       startIcon={<AddShoppingCartIcon />}
       disabled={disabled}
-      onClick={() => void handleAdd()}
+      onClick={() => onAdd(product)}
       data-testid={`add-to-cart-${product.id}`}
       className={styles.addButton}
     >

@@ -65,9 +65,45 @@ export const termsLiabilityItemKeys = [
   'termsS8Item3',
 ] as const satisfies readonly TranslationKey[];
 
-export function translatePolicyItems(
-  t: Translator,
-  keys: readonly TranslationKey[]
-): ReactNode[] {
+export function translatePolicyItems(t: Translator, keys: readonly TranslationKey[]): ReactNode[] {
   return keys.map((key) => t(key));
 }
+
+// ─────────────────────────────────────────────
+// Terms of Service – dichiarative section config
+// ─────────────────────────────────────────────
+
+export interface TermsSectionConfig {
+  readonly titleKey: TranslationKey;
+  readonly bodyKey?: TranslationKey;
+  readonly list?: {
+    readonly keys: readonly TranslationKey[];
+    readonly ordered: boolean;
+  };
+}
+
+export const termsSections = [
+  { titleKey: 'termsS1Title', bodyKey: 'termsS1Body' },
+  { titleKey: 'termsS2Title', bodyKey: 'termsS2Body' },
+  {
+    titleKey: 'termsS3Title',
+    bodyKey: 'termsS3Body',
+    list: { keys: termsUseItemKeys, ordered: false },
+  },
+  { titleKey: 'termsS4Title', bodyKey: 'termsS4Body' },
+  {
+    titleKey: 'termsS5Title',
+    list: { keys: termsOrderItemKeys, ordered: true },
+  },
+  { titleKey: 'termsS6Title', bodyKey: 'termsS6Body' },
+  { titleKey: 'termsS7Title', bodyKey: 'termsS7Body' },
+  {
+    titleKey: 'termsS8Title',
+    bodyKey: 'termsS8Body',
+    list: { keys: termsLiabilityItemKeys, ordered: false },
+  },
+  { titleKey: 'termsS9Title', bodyKey: 'termsS9Body' },
+  { titleKey: 'termsS10Title', bodyKey: 'termsS10Body' },
+  { titleKey: 'termsS11Title', bodyKey: 'termsS11Body' },
+  { titleKey: 'termsS12Title', bodyKey: 'termsS12Body' },
+] as const satisfies readonly TermsSectionConfig[];

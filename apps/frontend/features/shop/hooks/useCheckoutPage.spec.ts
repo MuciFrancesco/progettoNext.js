@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTranslator } from '@/lib/i18n/translator';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/store/CartContext';
 import { useRouter } from 'next/navigation';
 import { useCheckoutPage } from './useCheckoutPage';
 
@@ -9,7 +9,7 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-vi.mock('@/providers/CartProvider', () => ({
+vi.mock('@/store/CartContext', () => ({
   useCart: vi.fn(),
 }));
 
@@ -41,11 +41,17 @@ function mockCart(items = [{ product: baseProduct, quantity: 2 }]) {
     items,
     totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
     totalInCents: items.reduce((sum, item) => sum + item.product.priceInCents * item.quantity, 0),
+    stockAlerts: [],
+    isLoaded: true,
     addItem: vi.fn(),
     updateQuantity: vi.fn(),
     removeItem: vi.fn(),
-    syncWithProducts: vi.fn(),
     clearCart,
+    clearAlerts: vi.fn(),
+    syncWithProducts: vi.fn(),
+    syncWithStatuses: vi.fn(),
+    refreshItemStock: vi.fn(),
+    refreshAllStock: vi.fn(),
   });
 }
 
