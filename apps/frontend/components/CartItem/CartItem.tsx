@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { useEffect, useState } from 'react';
 import styles from './CartItem.module.scss';
 
 export type CartItemViewModel = {
@@ -32,31 +31,25 @@ type CartItemProps = {
   readonly item: CartItemViewModel;
   readonly labels: CartItemLabels;
   readonly warningMessage?: string;
-  readonly onQuantityChange: (productId: string, quantity: number) => Promise<void> | void;
-  readonly onRemove: (productId: string) => void;
+  readonly draftQuantity: string;
+  readonly onDraftChange: (value: string) => void;
+  readonly onDraftBlur: () => void;
+  readonly onDecrease: () => void;
+  readonly onIncrease: () => void;
+  readonly onRemove: () => void;
 };
 
 export function CartItem({
   item,
   labels,
   warningMessage,
-  onQuantityChange,
+  draftQuantity,
+  onDraftChange,
+  onDraftBlur,
+  onDecrease,
+  onIncrease,
   onRemove,
 }: Readonly<CartItemProps>) {
-  const [draftQuantity, setDraftQuantity] = useState(String(item.quantity));
-
-  useEffect(() => {
-    setDraftQuantity(String(item.quantity));
-  }, [item.quantity]);
-
-  const commitQuantity = (quantity: number) => {
-    if (!Number.isFinite(quantity)) {
-      setDraftQuantity(String(item.quantity));
-      return;
-    }
-    void onQuantityChange(item.productId, quantity);
-  };
-
   return (
     <Paper
       variant="outlined"
@@ -80,16 +73,11 @@ export function CartItem({
         <Typography variant="body2" className={styles.mutedText}>
           {item.unitPriceLabel}
         </Typography>
-        <Tooltip
-          title={warningMessage ?? ''}
-          open={Boolean(warningMessage)}
-          placement="top"
-          arrow
-        >
+        <Tooltip title={warningMessage ?? ''} open={Boolean(warningMessage)} placement="top" arrow>
           <Box className={styles.quantityControls}>
             <IconButton
               aria-label={labels.decreaseQuantity ?? 'decrease'}
-              onClick={() => commitQuantity(item.quantity - 1)}
+              onClick={onDecrease}
               className={styles.quantityButton}
             >
               <RemoveIcon fontSize="small" />
@@ -99,11 +87,8 @@ export function CartItem({
               label={labels.quantity}
               value={draftQuantity}
               size="small"
-              onChange={(event) => {
-                setDraftQuantity(event.target.value);
-                commitQuantity(Number(event.target.value));
-              }}
-              onBlur={() => commitQuantity(Number(draftQuantity))}
+              onChange={(event) => onDraftChange(event.target.value)}
+              onBlur={onDraftBlur}
               slotProps={{
                 htmlInput: {
                   min: 1,
@@ -115,7 +100,7 @@ export function CartItem({
             />
             <IconButton
               aria-label={labels.increaseQuantity ?? 'increase'}
-              onClick={() => commitQuantity(item.quantity + 1)}
+              onClick={onIncrease}
               className={styles.quantityButton}
             >
               <AddIcon fontSize="small" />
@@ -127,7 +112,7 @@ export function CartItem({
         <Typography className={styles.lineTotal}>{item.lineTotalLabel}</Typography>
         <IconButton
           aria-label={`${labels.remove} ${item.title}`}
-          onClick={() => onRemove(item.productId)}
+          onClick={onRemove}
           data-testid={`cart-remove-${item.productId}`}
         >
           <DeleteIcon />

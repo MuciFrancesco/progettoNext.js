@@ -1,0 +1,19 @@
+.subtitle {
+  margin-bottom: 8px !important;
+}
+
+.detailTable {
+  margin-bottom: 16px !important;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.price {
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+}

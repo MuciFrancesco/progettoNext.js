@@ -5,7 +5,7 @@ import type { PaginatedOrdersResponse } from '@/types/api/order';
 import type { Locale } from '@/lib/i18n/translation';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
 import { useMyOrders } from '@/features/user/hooks/useMyOrders';
-import OrdersTableComposed from '@/features/orders/ui/OrdersTableComposed';
+import OrdersTableComposed from '@/features/orders/OrdersTableComposed';
 
 interface MyOrdersTableProps {
   readonly initialResponse: PaginatedOrdersResponse;

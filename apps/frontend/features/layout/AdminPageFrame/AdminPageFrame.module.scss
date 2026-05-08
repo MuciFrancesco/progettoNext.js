@@ -1,0 +1,17 @@
+@use '@/styles/shared' as ds;
+
+.signoutForm {
+  display: contents;
+}
+
+.shell {
+  @include ds.app-shell;
+}
+
+.rightControls {
+  @include ds.flex-row($gap: ds.$spacing-2);
+}
+
+.main {
+  @include ds.constrained-main;
+}

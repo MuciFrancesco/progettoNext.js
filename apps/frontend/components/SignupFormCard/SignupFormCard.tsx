@@ -77,7 +77,14 @@ export function SignupFormCard({
             )}
             helperText={
               (formik.touched.firstName || formik.submitCount > 0) && formik.errors.firstName ? (
-                <span data-testid="signup-firstname-error">{formik.errors.firstName}</span>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
+                  data-testid="signup-firstname-error"
+                >
+                  {formik.errors.firstName}
+                </Typography>
               ) : undefined
             }
           />
@@ -98,7 +105,14 @@ export function SignupFormCard({
             )}
             helperText={
               (formik.touched.lastName || formik.submitCount > 0) && formik.errors.lastName ? (
-                <span data-testid="signup-lastname-error">{formik.errors.lastName}</span>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
+                  data-testid="signup-lastname-error"
+                >
+                  {formik.errors.lastName}
+                </Typography>
               ) : undefined
             }
           />
@@ -117,7 +131,14 @@ export function SignupFormCard({
             error={Boolean((formik.touched.email || formik.submitCount > 0) && formik.errors.email)}
             helperText={
               (formik.touched.email || formik.submitCount > 0) && formik.errors.email ? (
-                <span data-testid="signup-email-error">{formik.errors.email}</span>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
+                  data-testid="signup-email-error"
+                >
+                  {formik.errors.email}
+                </Typography>
               ) : undefined
             }
           />
@@ -142,13 +163,16 @@ export function SignupFormCard({
             error={showPasswordError}
             helperText={
               showPasswordError ? (
-                <span
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
                   data-testid="signup-password-error"
                   data-validation-state={passwordState}
                   role="alert"
                 >
                   {passwordError ?? t('validationPasswordWeak')}
-                </span>
+                </Typography>
               ) : undefined
             }
           />
@@ -164,7 +188,7 @@ export function SignupFormCard({
             {t('signupSubmit')}
           </MuiButton>
 
-          <div className={styles.dividerSpacer} />
+          <Box className={styles.dividerSpacer} />
 
           <Divider>
             <Typography variant="subtitle2" color="text.secondary">
@@ -172,7 +196,7 @@ export function SignupFormCard({
             </Typography>
           </Divider>
 
-          <div className={styles.socialButtons}>
+          <Box className={styles.socialButtons}>
             <MuiButton
               component="a"
               href={`${resolvedBackendBaseUrl}/auth/google`}
@@ -203,7 +227,7 @@ export function SignupFormCard({
             >
               Apple
             </MuiButton>
-          </div>
+          </Box>
         </Box>
       </CardContent>
     </Card>

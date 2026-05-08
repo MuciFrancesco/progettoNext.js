@@ -2,6 +2,7 @@
 
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { usePathname } from 'next/navigation';
 import { DashboardHeader } from '@/components/DashboardHeader/DashboardHeader/DashboardHeader';
 import { NavChip } from '@/components/DashboardHeader/NavChip/NavChip';
 import { NavDrawer } from '@/components/DashboardHeader/NavDrawer/NavDrawer';
@@ -23,6 +24,7 @@ export function DashboardHeaderComposed({
   rightSlot,
   logoHref = '/dashboard',
 }: Readonly<DashboardHeaderComposedProps>) {
+  const pathname = usePathname();
   const isWide = useMediaQuery('(min-width: 1350px)');
   const hasNav = Boolean(links && links.length > 0);
 
@@ -33,13 +35,9 @@ export function DashboardHeaderComposed({
       rightSlot={rightSlot}
       inlineNavSlot={
         isWide && hasNav ? (
-          <Box
-            component="nav"
-            aria-label={navAriaLabel}
-            className={styles.inlineNav}
-          >
+          <Box component="nav" aria-label={navAriaLabel} className={styles.inlineNav}>
             {links!.map((link) => (
-              <NavChip key={link.href} link={link} />
+              <NavChip key={link.href} link={link} isActive={pathname === link.href} />
             ))}
           </Box>
         ) : null

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Box from '@mui/material/Box';
-import { FooterFeature } from '@/features/layout/FooterFeature';
+import { FooterFeature } from '@/features/footer/FooterFeature';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { getTranslator } from '@/lib/i18n/locale';
 import { APP_NAME } from '@/lib/constants';

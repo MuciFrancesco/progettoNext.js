@@ -1,0 +1,9 @@
+@use '@/styles/shared' as ds;
+
+.shell {
+  @include ds.app-shell;
+}
+
+.main {
+  @include ds.constrained-main;
+}

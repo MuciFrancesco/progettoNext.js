@@ -1,0 +1,25 @@
+.filterGroup {
+  margin-bottom: 8px;
+
+  :global(.MuiToggleButton-root) {
+    padding: 6px 20px;
+    text-transform: none;
+    font-weight: 500;
+    border: 1px solid var(--border);
+
+    &:not(:first-of-type) {
+      border-left: 1px solid var(--border);
+      margin-left: 0;
+    }
+  }
+
+  :global(.MuiToggleButton-root.Mui-selected) {
+    background-color: var(--primary) !important;
+    color: white !important;
+
+    &:hover {
+      background-color: var(--primary) !important;
+      opacity: 0.9;
+    }
+  }
+}

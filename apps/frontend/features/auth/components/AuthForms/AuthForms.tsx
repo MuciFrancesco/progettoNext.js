@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuthForm } from '@/features/auth/hooks/useAuthForm';
 import { AuthHeader } from '@/components/AuthHeader/AuthHeader';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
+import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import Popup from '@/components/ui/popup';
 import styles from './AuthForms.module.scss';
 
@@ -39,6 +40,7 @@ export default function AuthForms({ locale }: Readonly<AuthFormsProps>) {
   } = useAuthForm(locale, initialMode);
 
   const isSigninMode = activeMode === 'signin';
+  const isSubmitting = signinFormik.isSubmitting || signupFormik.isSubmitting;
 
   return (
     <div data-testid="auth-root" className={styles.root}>
@@ -46,22 +48,26 @@ export default function AuthForms({ locale }: Readonly<AuthFormsProps>) {
 
       {serverError ? <Popup message={serverError} type="error" /> : null}
 
-      <Suspense fallback={<ComponentLoading label={t('loadingInProgress')} />}>
-        {isSigninMode ? (
-          <SigninFormCard
-            locale={locale}
-            formik={signinFormik}
-            remainingAttempts={remainingAttempts}
-            isBlocked={isBlocked}
-          />
-        ) : (
-          <SignupFormCard
-            locale={locale}
-            formik={signupFormik}
-            passwordState={signupPasswordState}
-          />
-        )}
-      </Suspense>
+      {isSubmitting ? (
+        <GlobalPageLoading title={t('loadingInProgress')} subtitle={t('loadingAwaitingServer')} />
+      ) : (
+        <Suspense fallback={<ComponentLoading label={t('loadingInProgress')} />}>
+          {isSigninMode ? (
+            <SigninFormCard
+              locale={locale}
+              formik={signinFormik}
+              remainingAttempts={remainingAttempts}
+              isBlocked={isBlocked}
+            />
+          ) : (
+            <SignupFormCard
+              locale={locale}
+              formik={signupFormik}
+              passwordState={signupPasswordState}
+            />
+          )}
+        </Suspense>
+      )}
     </div>
   );
 }

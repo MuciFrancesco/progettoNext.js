@@ -11,8 +11,6 @@ import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { CartBadgeLink } from '@/components/CartBadgeLink/CartBadgeLink';
-import { useCart } from '@/store/CartContext';
 import type { ReactNode } from 'react';
 import styles from './PublicShopHeaderShell.module.scss';
 
@@ -34,6 +32,7 @@ type PublicShopHeaderShellProps = {
   readonly onSearchSubmit: () => void;
   readonly onCategorySelect: (slug: string) => void;
   readonly actionsSlot?: ReactNode;
+  readonly cartSlot?: ReactNode;
 };
 
 export function PublicShopHeaderShell({
@@ -49,9 +48,8 @@ export function PublicShopHeaderShell({
   onSearchSubmit,
   onCategorySelect,
   actionsSlot,
+  cartSlot,
 }: Readonly<PublicShopHeaderShellProps>) {
-  const { totalQuantity } = useCart();
-
   return (
     <AppBar position="sticky" elevation={0} className={styles.appBar}>
       <Box className={styles.headerInner}>
@@ -101,7 +99,7 @@ export function PublicShopHeaderShell({
           </Box>
 
           <Box className={styles.actionsSlot}>
-            <CartBadgeLink label={cartLabel} totalQuantity={totalQuantity} />
+            {cartSlot}
             {actionsSlot}
           </Box>
         </Toolbar>

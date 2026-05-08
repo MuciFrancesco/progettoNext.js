@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
-import ResetPasswordFormContainer from '@/features/auth/ui/ResetPasswordFormContainer';
+import ResetPasswordFormContainer from '@/features/auth/components/ResetPasswordFormContainer/ResetPasswordFormContainer';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import styles from './page.module.scss';
 
@@ -23,10 +23,7 @@ export default async function ResetPasswordPage({
   const token = params?.token ?? null;
 
   return (
-    <main
-      data-testid="reset-password-page"
-      className={styles.page}
-    >
+    <main data-testid="reset-password-page" className={styles.page}>
       <Suspense
         fallback={
           <GlobalPageLoading title={t('loadingInProgress')} subtitle={t('loadingAwaitingServer')} />

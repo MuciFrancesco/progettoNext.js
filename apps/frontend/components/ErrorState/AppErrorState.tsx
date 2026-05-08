@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -16,14 +15,7 @@ type AppErrorStateProps = Readonly<{
   locale: Locale;
 }>;
 
-export default function AppErrorState({ error, reset, locale }: AppErrorStateProps) {
-
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(error);
-    }
-  }, [error]);
-
+export default function AppErrorState({ reset, locale }: AppErrorStateProps) {
   return (
     <main className={styles.page}>
       <Typography variant="overline" color="text.secondary">

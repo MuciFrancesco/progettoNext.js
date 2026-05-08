@@ -124,10 +124,7 @@ function UserCards({
   cardImageAltLabel,
 }: Readonly<UserCardsProps>) {
   return (
-    <div
-      data-testid="admin-users-grid"
-      className={styles.grid}
-    >
+    <Box data-testid="admin-users-grid" className={styles.grid}>
       {users.map((user, index) => {
         const fullName = [user.firstname, user.secondname, user.lastname]
           .filter(Boolean)
@@ -148,7 +145,7 @@ function UserCards({
           />
         );
       })}
-    </div>
+    </Box>
   );
 }
 

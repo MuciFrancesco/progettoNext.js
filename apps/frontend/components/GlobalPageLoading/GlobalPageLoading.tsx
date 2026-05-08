@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import styles from './GlobalPageLoading.module.scss';
 
 type GlobalPageLoadingProps = {
@@ -7,12 +9,14 @@ type GlobalPageLoadingProps = {
 
 export function GlobalPageLoading({ title, subtitle }: Readonly<GlobalPageLoadingProps>) {
   return (
-    <section className={styles.section}>
-      <div className={styles.spinner} />
-      <div className={styles.textBlock}>
-        <h2 className={styles.title}>{title}</h2>
-        <p className={styles.subtitle}>{subtitle}</p>
-      </div>
-    </section>
+    <Box component="section" className={styles.section}>
+      <Box className={styles.spinner} />
+      <Box className={styles.textBlock}>
+        <Typography variant="h2" className={styles.title}>
+          {title}
+        </Typography>
+        <Typography className={styles.subtitle}>{subtitle}</Typography>
+      </Box>
+    </Box>
   );
 }

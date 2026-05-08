@@ -1,5 +1,6 @@
 'use client';
 
+import Typography from '@mui/material/Typography';
 import { setLocaleAction } from '@/lib/actions/locale';
 import type { Locale } from '@/lib/i18n/translation';
 import { usePathname } from 'next/navigation';
@@ -23,7 +24,9 @@ export default function LocaleSwitcher({
 
   return (
     <label data-testid={`${testIdPrefix}-root`} className="inline-flex items-center gap-2 text-sm">
-      <span data-testid={`${testIdPrefix}-label`}>{label}</span>
+      <Typography component="span" variant="body2" data-testid={`${testIdPrefix}-label`}>
+        {label}
+      </Typography>
       <select
         data-testid={`${testIdPrefix}-select`}
         className="rounded-md border bg-background px-2 py-1 text-foreground"

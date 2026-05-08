@@ -138,6 +138,7 @@ export type Dictionary = {
   readonly notFoundTitle: string;
   readonly notFoundSubtitle: string;
   readonly notFoundBackToLogin: string;
+  readonly notFoundGoHome: string;
   readonly sessionExpiredTitle: string;
   readonly sessionExpiredSubtitle: string;
   readonly sessionExpiredLoginCta: string;
@@ -331,6 +332,7 @@ export type Dictionary = {
   readonly checkoutOrNewCard: string;
   readonly checkoutPaypalOpening: string;
   readonly checkoutPaypalAwait: string;
+  readonly checkoutPaypalRedirectInfo: string;
   readonly checkoutPaypalPopupBlocked: string;
   readonly checkoutProcessing: string;
   readonly checkoutSuccessTitle: string;

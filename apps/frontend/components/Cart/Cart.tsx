@@ -7,8 +7,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import { CartItem, type CartItemViewModel } from '@/components/CartItem/CartItem';
-import { CartSummary } from '@/components/CartSummary/CartSummary';
+import type { ReactNode } from 'react';
 import styles from './Cart.module.scss';
 
 type CartLabels = {
@@ -25,32 +24,15 @@ type CartLabels = {
 };
 
 type CartProps = {
-  readonly items: CartItemViewModel[];
-  readonly totalLabel: string;
   readonly hasItems: boolean;
   readonly labels: CartLabels;
   readonly stockAlerts: ReadonlyArray<{ readonly productId: string; readonly message: string }>;
-  readonly quantityWarnings: Readonly<Record<string, string>>;
-  readonly onQuantityChange: (productId: string, quantity: number) => Promise<void> | void;
-  readonly onRemove: (productId: string) => void;
+  readonly children?: ReactNode;
 };
 
-export function Cart({
-  items,
-  totalLabel,
-  hasItems,
-  labels,
-  stockAlerts,
-  quantityWarnings,
-  onQuantityChange,
-  onRemove,
-}: Readonly<CartProps>) {
+export function Cart({ hasItems, labels, stockAlerts, children }: Readonly<CartProps>) {
   return (
-    <Box
-      component="section"
-      data-testid="cart-page"
-      className={styles.page}
-    >
+    <Box component="section" data-testid="cart-page" className={styles.page}>
       <Box className={styles.header}>
         <Typography component="h1" variant="h3" className={styles.title}>
           {labels.title}
@@ -78,20 +60,7 @@ export function Cart({
         </Paper>
       ) : (
         <Box className={styles.contentGrid}>
-          <Box className={styles.itemsList}>
-            {items.map((item) => (
-              <CartItem
-                key={item.productId}
-                item={item}
-                labels={labels}
-                warningMessage={quantityWarnings[item.productId]}
-                onQuantityChange={onQuantityChange}
-                onRemove={onRemove}
-              />
-            ))}
-          </Box>
-
-          <CartSummary totalLabel={totalLabel} hasItems={hasItems} labels={labels} />
+          <Box className={styles.itemsList}>{children}</Box>
         </Box>
       )}
     </Box>

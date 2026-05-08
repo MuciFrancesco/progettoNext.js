@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { notFound } from 'next/navigation';
 import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
 import { ProductCatalogFeature } from '@/features/shop/components/ProductCatalogFeature/ProductCatalogFeature';
-import { FooterFeature } from '@/features/layout/FooterFeature';
+import { FooterFeature } from '@/features/footer/FooterFeature';
 import { APP_NAME } from '@/lib/constants';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { getCategoryCatalog, listCatalogNavigation } from '@/lib/api/products';

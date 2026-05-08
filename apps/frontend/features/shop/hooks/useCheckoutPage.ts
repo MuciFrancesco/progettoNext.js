@@ -182,6 +182,9 @@ export function useCheckoutPage(locale: Locale) {
     total: t('cartTotal'),
     paypalOpening: t('checkoutPaypalOpening'),
     paypalAwait: t('checkoutPaypalAwait'),
+    paypalRedirectInfo: t('checkoutPaypalRedirectInfo'),
+    processing: t('checkoutProcessing'),
+    loading: t('loadingInProgress'),
   };
 
   return {

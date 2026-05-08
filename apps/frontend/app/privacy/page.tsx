@@ -3,7 +3,7 @@ import { PrivacyFeature } from '@/features/privacy/PrivacyFeature';
 import { getTranslator } from '@/lib/i18n/locale';
 import { Suspense } from 'react';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
-import { PublicPageFrame } from '@/features/layout/PublicPageFrame';
+import { PublicPageFrame } from '@/features/layout/PublicPageFrame/PublicPageFrame';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',

@@ -1,0 +1,46 @@
+.card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 24px !important;
+  border-radius: 8px !important;
+  border-color: var(--border) !important;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: white;
+  flex-shrink: 0;
+}
+
+.caption {
+  display: block;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-weight: 500 !important;
+}
+
+.amount {
+  display: block;
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+  line-height: 1.2 !important;
+}
+
+.amountSecondary {
+  display: block;
+  font-weight: 600 !important;
+  color: var(--muted-foreground, #6b7280) !important;
+  line-height: 1.2 !important;
+  font-size: 1rem !important;
+}
+
+.divider {
+  margin: 6px 0 !important;
+}

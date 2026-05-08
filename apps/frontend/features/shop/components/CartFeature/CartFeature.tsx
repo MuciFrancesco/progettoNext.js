@@ -1,32 +1,45 @@
 'use client';
 
 import { Cart } from '@/components/Cart/Cart';
+import { CartItem } from '@/components/CartItem/CartItem';
+import { CartSummary } from '@/components/CartSummary/CartSummary';
 import type { Locale } from '@/lib/i18n/translation';
-import { formatCurrency, resolveProductImageSrc } from '@/lib/shop/format';
+import { formatCurrency } from '@/lib/shop/format';
 import { useCartPage } from '@/features/shop/hooks/useCartPage';
+import { useCartDraftQuantities } from '@/features/shop/hooks/useCartDraftQuantities';
+import { mapCartItemsToViewModels } from '@/features/shop/helpers/mapCartItems';
 
 export function CartFeature({ locale }: Readonly<{ locale: Locale }>) {
   const cart = useCartPage(locale);
-  const items = cart.items.map((item) => ({
-    productId: item.product.id,
-    title: item.product.title,
-    imageSrc: resolveProductImageSrc(item.product.imagePath),
-    quantity: item.quantity,
-    maxQuantity: item.product.stockQuantity,
-    unitPriceLabel: `${formatCurrency(item.product.priceInCents, cart.locale)} ${cart.labels.unitSuffix}`,
-    lineTotalLabel: formatCurrency(item.product.priceInCents * item.quantity, cart.locale),
-  }));
+  const { draftQuantities, handleDraftChange, handleCommit, handleDraftBlur } =
+    useCartDraftQuantities(cart.updateQuantityWithStockCheck);
+
+  const items = mapCartItemsToViewModels(cart.items, {
+    locale: cart.locale,
+    unitSuffix: cart.labels.unitSuffix,
+  });
 
   return (
-    <Cart
-      items={items}
-      totalLabel={formatCurrency(cart.totalInCents, cart.locale)}
-      hasItems={cart.hasItems}
-      labels={cart.labels}
-      stockAlerts={cart.stockAlerts}
-      quantityWarnings={cart.quantityWarnings}
-      onQuantityChange={cart.updateQuantityWithStockCheck}
-      onRemove={cart.removeItem}
-    />
+    <Cart hasItems={cart.hasItems} labels={cart.labels} stockAlerts={cart.stockAlerts}>
+      {items.map((item) => (
+        <CartItem
+          key={item.productId}
+          item={item}
+          labels={cart.labels}
+          warningMessage={cart.quantityWarnings[item.productId]}
+          draftQuantity={draftQuantities[item.productId] ?? String(item.quantity)}
+          onDraftChange={(value) => handleDraftChange(item.productId, value)}
+          onDraftBlur={() => handleDraftBlur(item.productId, item.quantity)}
+          onDecrease={() => handleCommit(item.productId, item.quantity - 1)}
+          onIncrease={() => handleCommit(item.productId, item.quantity + 1)}
+          onRemove={() => cart.removeItem(item.productId)}
+        />
+      ))}
+      <CartSummary
+        totalLabel={formatCurrency(cart.totalInCents, cart.locale)}
+        hasItems={cart.hasItems}
+        labels={cart.labels}
+      />
+    </Cart>
   );
 }

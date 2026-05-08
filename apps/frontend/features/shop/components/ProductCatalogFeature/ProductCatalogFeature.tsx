@@ -1,25 +1,26 @@
 'use client';
 
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import DevicesIcon from '@mui/icons-material/Devices';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
-import SpaIcon from '@mui/icons-material/Spa';
-import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
-import WeekendIcon from '@mui/icons-material/Weekend';
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ProductCatalog } from '@/components/ProductCatalog/ProductCatalog';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { ProductCatalogHero } from '@/components/ProductCatalog/ProductCatalogHero';
+import { ProductCatalogQuickNav } from '@/components/ProductCatalog/ProductCatalogQuickNav';
+import { ProductCatalogHeader } from '@/components/ProductCatalog/ProductCatalogHeader';
+import { ProductCatalogSubcategories } from '@/components/ProductCatalog/ProductCatalogSubcategories';
+import { ProductCatalogFilters } from '@/components/ProductCatalog/ProductCatalogFilters';
+import catalogStyles from '@/components/ProductCatalog/ProductCatalog.module.scss';
+import { ProductCard } from '@/components/ProductCard/ProductCard';
 import { AddToCartButton } from '@/components/AddToCartButton/AddToCartButton';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { formatCurrency, resolveProductImageSrc } from '@/lib/shop/format';
-import { createTranslator } from '@/lib/i18n/translator';
 import type { Locale } from '@/lib/i18n/translation';
-import type { BackendProduct, CatalogHeroSlide, CatalogSubcategory } from '@/types/api/product';
-import type { ProductCategory } from '@/types/api/product';
-import { useCart } from '@/store/CartContext';
-import { useProductCatalog } from '@/features/shop/hooks/useProductCatalog';
+import type {
+  BackendProduct,
+  CatalogHeroSlide,
+  CatalogSubcategory,
+  ProductCategory,
+} from '@/types/api/product';
+import { useCatalogPage } from '@/features/shop/hooks/useCatalogPage';
 
 type ProductCatalogFeatureProps = {
   readonly products: BackendProduct[];
@@ -38,163 +39,112 @@ type ProductCatalogFeatureProps = {
   readonly selectedSubcategorySlug?: string;
 };
 
-export function ProductCatalogFeature({
-  products,
-  locale,
-  initialQuery,
-  initialCategory,
-  heroSlides,
-  catalogTitle,
-  catalogSubtitle,
-  quickCategories: quickCategoriesFromBackend,
-  subcategories = [],
-  selectedSubcategorySlug,
-}: Readonly<ProductCatalogFeatureProps>) {
-  const catalog = useProductCatalog(products, locale, { initialQuery, initialCategory });
-  const { items, addItem, updateQuantity, removeItem } = useCart();
-  const t = createTranslator(catalog.locale);
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
-
-  // Build cart action slot per card
-  const cartActionSlot = useCallback(
-    (card: { product: BackendProduct }) => {
-      const product = card.product;
-      const cartItem = items.find((i) => i.product.id === product.id);
-      const quantity = cartItem?.quantity ?? 0;
-
-      return (
-        <AddToCartButton
-          product={product}
-          quantity={quantity}
-          addLabel={t('cartAddItem')}
-          decreaseLabel={t('cartDecreaseQuantity')}
-          increaseLabel={t('cartIncreaseQuantity')}
-          removeLabel={t('cartRemoveItem')}
-          unavailableLabel={t('productUnavailable')}
-          onAdd={addItem}
-          onDecrease={(productId) => {
-            const current = items.find((i) => i.product.id === productId);
-            if (current && current.quantity <= 1) {
-              removeItem(productId);
-            } else {
-              updateQuantity(productId, (current?.quantity ?? 1) - 1);
-            }
-          }}
-          onIncrease={(productId, maxStock) => {
-            const current = items.find((i) => i.product.id === productId);
-            updateQuantity(productId, Math.min((current?.quantity ?? 0) + 1, maxStock));
-          }}
-          onRemove={removeItem}
-        />
-      );
-    },
-    [items, addItem, updateQuantity, removeItem, t]
-  );
-
-  const safeHeroSlides = useMemo(
-    () =>
-      heroSlides.length > 0
-        ? heroSlides
-        : [
-            {
-              category: 'OTHER' as ProductCategory,
-              slug: 'altro',
-              label: t('appName'),
-              title: catalog.labels.heroTitle,
-              subtitle: catalog.labels.heroSubtitle,
-              imagePath: '/uploads/thinkshop/heroes/altro.svg',
-            },
-          ],
-    [catalog.labels.heroSubtitle, catalog.labels.heroTitle, heroSlides, t]
-  );
-
-  useEffect(() => {
-    setActiveHeroIndex(0);
-  }, [safeHeroSlides.length]);
-
-  useEffect(() => {
-    if (safeHeroSlides.length <= 1) return;
-    const timer = window.setInterval(() => {
-      setActiveHeroIndex((current) => (current + 1) % safeHeroSlides.length);
-    }, 7000);
-    return () => window.clearInterval(timer);
-  }, [safeHeroSlides.length]);
-
-  const quickCategoryIcons: Record<ProductCategory, ReactNode> = {
-    TECHNOLOGY: <DevicesIcon fontSize="small" />,
-    HOME: <WeekendIcon fontSize="small" />,
-    CLOTHING: <CheckroomIcon fontSize="small" />,
-    SPORTS: <SportsBasketballIcon fontSize="small" />,
-    BOOKS: <MenuBookIcon fontSize="small" />,
-    FOOD: <RestaurantIcon fontSize="small" />,
-    BEAUTY: <SpaIcon fontSize="small" />,
-    TOYS: <SmartToyIcon fontSize="small" />,
-    OTHER: <AutoAwesomeIcon fontSize="small" />,
-  };
-  const cards = catalog.filteredProducts.map((product) => ({
-    product,
-    href: `/product/${product.id}`,
-    imageSrc: resolveProductImageSrc(product.imagePath),
-    categoryLabel: t(categoryTranslationKey(product.category)),
-    priceLabel: formatCurrency(product.priceInCents, catalog.locale),
-    stockLabel: `${catalog.labels.stock}: ${product.stockQuantity}`,
-  }));
-  const quickCategories = (
-    quickCategoriesFromBackend?.length
-      ? quickCategoriesFromBackend
-      : catalog.categoryOptions
-          .filter(
-            (option): option is { value: ProductCategory; label: string } => option.value !== 'ALL'
-          )
-          .map((option) => ({
-            category: option.value,
-            slug: option.value.toLowerCase(),
-            label: option.label,
-          }))
-  ).map((option) => ({
-    value: option.category,
-    label: option.label,
-    href: `/categoria/${option.slug}`,
-    icon: quickCategoryIcons[option.category],
-  }));
-  const activeHero = safeHeroSlides[activeHeroIndex] ?? safeHeroSlides[0];
+export function ProductCatalogFeature(props: Readonly<ProductCatalogFeatureProps>) {
+  const {
+    catalog,
+    t,
+    activeHero,
+    quickCategories,
+    heroData,
+    mappedSubcategories,
+    labels,
+    getCartQuantity,
+    onCartAdd,
+    handleDecrease,
+    handleIncrease,
+    onCartRemove,
+  } = useCatalogPage({
+    products: props.products,
+    locale: props.locale,
+    initialQuery: props.initialQuery,
+    initialCategory: props.initialCategory,
+    heroSlides: props.heroSlides,
+    catalogTitle: props.catalogTitle,
+    catalogSubtitle: props.catalogSubtitle,
+    quickCategoriesFromBackend: props.quickCategories,
+    subcategories: props.subcategories,
+    selectedSubcategorySlug: props.selectedSubcategorySlug,
+  });
 
   return (
-    <ProductCatalog
-      cards={cards}
-      query={catalog.query}
-      category={catalog.category}
-      categoryOptions={catalog.categoryOptions}
-      labels={{
-        ...catalog.labels,
-        title: catalogTitle ?? catalog.labels.title,
-        subtitle: catalogSubtitle ?? catalog.labels.subtitle,
-      }}
-      hero={{
-        title: activeHero.title,
-        subtitle: activeHero.subtitle,
-        eyebrow: activeHero.label,
-        imageSrc: resolveProductImageSrc(activeHero.imagePath),
-        slideLabel: `${activeHeroIndex + 1}/${safeHeroSlides.length}`,
-      }}
-      quickCategories={quickCategories}
-      subcategories={subcategories.map((subcategory) => ({
-        slug: subcategory.slug,
-        label: subcategory.label,
-        href:
-          selectedSubcategorySlug === subcategory.slug ? '#' : `?subcategory=${subcategory.slug}`,
-        isActive: selectedSubcategorySlug === subcategory.slug,
-        productCount: subcategory.productCount,
-      }))}
-      onQueryChange={catalog.setQuery}
-      onCategoryChange={catalog.setCategory}
-      onPreviousHero={() =>
-        setActiveHeroIndex(
-          (current) => (current - 1 + safeHeroSlides.length) % safeHeroSlides.length
-        )
-      }
-      onNextHero={() => setActiveHeroIndex((current) => (current + 1) % safeHeroSlides.length)}
-      cartActionSlot={cartActionSlot}
-    />
+    <Box component="section" data-testid="product-catalog" className={catalogStyles.pageSection}>
+      <ProductCatalogHero
+        imageSrc={heroData.imageSrc}
+        eyebrow={heroData.eyebrow}
+        title={heroData.title}
+        subtitle={heroData.subtitle}
+        slideLabel={heroData.slideLabel}
+        primaryCta={labels.heroPrimaryCta}
+        secondaryCta={labels.heroSecondaryCta}
+        ariaLabel={labels.heroSectionAria}
+        onPrevious={activeHero.goToPrevious}
+        onNext={activeHero.goToNext}
+        data-testid="home-page"
+      />
+
+      <ProductCatalogQuickNav
+        items={quickCategories}
+        activeCategory={catalog.category}
+        ariaLabel={labels.quickCategoriesAria}
+      />
+
+      <ProductCatalogHeader
+        brand={labels.brand}
+        title={labels.title}
+        subtitle={labels.subtitle}
+        searchLabel={labels.search}
+        query={catalog.query}
+        onQueryChange={catalog.setQuery}
+      />
+
+      <ProductCatalogSubcategories
+        items={mappedSubcategories}
+        ariaLabel={labels.quickCategoriesAria}
+      />
+
+      <ProductCatalogFilters
+        options={catalog.categoryOptions}
+        activeCategory={catalog.category}
+        onCategoryChange={catalog.setCategory}
+      />
+
+      {catalog.filteredProducts.length === 0 ? (
+        <Paper variant="outlined" className={catalogStyles.emptyState}>
+          <Typography>{labels.empty}</Typography>
+        </Paper>
+      ) : (
+        <Box className={catalogStyles.productGrid}>
+          {catalog.filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              card={{
+                product,
+                href: `/product/${product.id}`,
+                imageSrc: resolveProductImageSrc(product.imagePath),
+                categoryLabel: t(categoryTranslationKey(product.category)),
+                priceLabel: formatCurrency(product.priceInCents, catalog.locale),
+                stockLabel: `${catalog.labels.stock}: ${product.stockQuantity}`,
+              }}
+              labels={catalog.labels}
+              cartActionSlot={
+                <AddToCartButton
+                  product={product}
+                  quantity={getCartQuantity(product.id)}
+                  addLabel={t('cartAddItem')}
+                  decreaseLabel={t('cartDecreaseQuantity')}
+                  increaseLabel={t('cartIncreaseQuantity')}
+                  removeLabel={t('cartRemoveItem')}
+                  unavailableLabel={t('productUnavailable')}
+                  onAdd={onCartAdd}
+                  onDecrease={handleDecrease}
+                  onIncrease={handleIncrease}
+                  onRemove={onCartRemove}
+                />
+              }
+            />
+          ))}
+        </Box>
+      )}
+    </Box>
   );
 }

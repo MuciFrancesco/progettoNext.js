@@ -6,6 +6,8 @@ import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { getOrderPrimaryItem, getOrderProductName } from '@/lib/orders/orderItems';
 import type { BackendOrder } from '@/types/api/order';
+import { formatCurrency } from '@/lib/shop/format';
+import { toDisplayLocale } from '@/utils/format';
 import styles from './OrdersTableBody.module.scss';
 
 interface OrdersTableBodyProps {
@@ -35,22 +37,26 @@ export default function OrdersTableBody({ orders, onRowClick, locale }: OrdersTa
         const primaryItem = getOrderPrimaryItem(order);
 
         return (
-          <TableRow key={order.id} hover onClick={() => onRowClick(order)} className={styles.clickableRow}>
+          <TableRow
+            key={order.id}
+            hover
+            onClick={() => onRowClick(order)}
+            className={styles.clickableRow}
+          >
             <TableCell className={styles.mutedSmallCell}>{order.user.email}</TableCell>
             <TableCell>{order.user.firstname ?? '-'}</TableCell>
             <TableCell>{order.user.lastname ?? '-'}</TableCell>
-            <TableCell className={styles.productCell}>{getOrderProductName(order) || '-'}</TableCell>
+            <TableCell className={styles.productCell}>
+              {getOrderProductName(order) || '-'}
+            </TableCell>
             <TableCell className={styles.desktopCell}>
               {primaryItem ? t(categoryTranslationKey(primaryItem.product.category)) : '-'}
             </TableCell>
             <TableCell align="right" className={styles.totalCell}>
-              {(order.totalPriceInCents / 100).toLocaleString('it-IT', {
-                style: 'currency',
-                currency: 'EUR',
-              })}
+              {formatCurrency(order.totalPriceInCents, locale)}
             </TableCell>
             <TableCell align="right" className={styles.dateCell}>
-              {new Date(order.createdAt).toLocaleDateString('it-IT')}
+              {new Date(order.createdAt).toLocaleDateString(toDisplayLocale(locale))}
             </TableCell>
           </TableRow>
         );

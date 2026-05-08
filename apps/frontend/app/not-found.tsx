@@ -1,11 +1,10 @@
-import Link from 'next/link';
 import { cookies } from 'next/headers';
 import AutoRedirect from '@/components/utils/AutoRedirect';
 import { SESSION_EXPIRED_COOKIE_NAME } from '@/lib/auth/session';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { translate } from '@/lib/i18n/translator';
-import { BackToPreviousButton } from '@/components/ui/BackToPreviousButton';
-import styles from './not-found.module.scss';
+import { PublicPageFrame } from '@/features/layout/PublicPageFrame/PublicPageFrame';
+import { NotFoundFeature } from '@/features/not-found/NotFoundFeature';
 
 export default async function NotFound() {
   const cookieStore = await cookies();
@@ -13,26 +12,17 @@ export default async function NotFound() {
   const locale = await getCurrentLocale();
 
   return (
-    <main className={styles.page}>
+    <PublicPageFrame>
       {fromExpiredSession ? <AutoRedirect href="/login?mode=signin" /> : null}
-      <h1 className={styles.title}>{translate(locale, 'notFoundTitle')}</h1>
-      <p className={styles.subtitle}>
-        {translate(locale, 'notFoundSubtitle')}
-      </p>
-      {fromExpiredSession ? (
-        <Link
-          href="/login?mode=signin"
-          className={styles.action}
-        >
-          {translate(locale, 'sessionExpiredLoginCta')}
-        </Link>
-      ) : (
-        <BackToPreviousButton
-          label={translate(locale, 'notFoundBackToLogin')}
-          fallbackHref="/login?mode=signin"
-          className={styles.action}
-        />
-      )}
-    </main>
+
+      <NotFoundFeature
+        title={translate(locale, 'notFoundTitle')}
+        subtitle={translate(locale, 'notFoundSubtitle')}
+        homeLabel={translate(locale, 'notFoundGoHome')}
+        backLabel={translate(locale, 'notFoundBackToLogin')}
+        fromExpiredSession={fromExpiredSession}
+        expiredCtaLabel={translate(locale, 'sessionExpiredLoginCta')}
+      />
+    </PublicPageFrame>
   );
 }

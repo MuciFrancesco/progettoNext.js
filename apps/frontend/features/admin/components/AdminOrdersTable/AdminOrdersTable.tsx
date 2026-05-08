@@ -5,7 +5,7 @@ import type { PaginatedOrdersResponse } from '@/types/api/order';
 import type { Locale } from '@/lib/i18n/translation';
 import { ComponentLoading } from '@/components/ComponentLoading/ComponentLoading';
 import { useAdminOrders } from '@/features/admin/hooks/useAdminOrders';
-import OrdersTableComposed from '@/features/orders/ui/OrdersTableComposed';
+import OrdersTableComposed from '@/features/orders/OrdersTableComposed';
 
 interface AdminOrdersTableProps {
   readonly initialResponse: PaginatedOrdersResponse;

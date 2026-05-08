@@ -78,7 +78,6 @@ export function AddToCartButton({
     );
   }
 
-  // Item non nel carrello → mostra bottone "Aggiungi"
   return (
     <Button
       type="button"

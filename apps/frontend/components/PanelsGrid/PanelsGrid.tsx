@@ -37,12 +37,12 @@ export function PanelsGrid({ panels }: Readonly<PanelsGridProps>) {
             data-testid={panel.testId}
             className={clsx(styles.row, isActive && styles.rowActive)}
           >
-            {/* Icona */}
+            {/* Icon */}
             <Box className={clsx(styles.rowIcon, isActive && styles.rowIconActive)}>
               {panel.icon}
             </Box>
 
-            {/* Titolo */}
+            {/* Title */}
             <Typography
               variant="body2"
               className={clsx(styles.rowTitle, isActive && styles.rowTitleActive)}
@@ -50,7 +50,7 @@ export function PanelsGrid({ panels }: Readonly<PanelsGridProps>) {
               {panel.title}
             </Typography>
 
-            {/* Freccia */}
+            {/* Arrow */}
             <ArrowForwardIcon
               className={clsx(styles.rowArrow, isActive && styles.rowArrowActive)}
             />

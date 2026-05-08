@@ -1,13 +1,11 @@
 'use client';
 
-import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
 import { formatCurrency } from '@/lib/shop/format';
 import type { BackendProduct, ProductReview } from '@/types/api/product';
-import { useCart } from '@/store/CartContext';
 import { AddToCartButton } from '@/components/AddToCartButton/AddToCartButton';
 import { ProductBuyBox } from '@/components/ProductBuyBox/ProductBuyBox';
 import { ProductGallery } from '@/components/ProductGallery/ProductGallery';
@@ -15,7 +13,7 @@ import { ProductInfo } from '@/components/ProductInfo/ProductInfo';
 import { ProductPrice } from '@/components/ProductPrice/ProductPrice';
 import { ProductRating } from '@/components/ProductRating/ProductRating';
 import { ProductReviews } from '@/components/ProductReviews/ProductReviews';
-import { useProductReviews } from '@/features/shop/hooks/useProductReviews';
+import { useProductDetail } from '@/features/shop/hooks/useProductDetail';
 import styles from './ProductDetailFeature.module.scss';
 
 type ProductDetailFeatureProps = {
@@ -26,66 +24,27 @@ type ProductDetailFeatureProps = {
 
 export function ProductDetailFeature({ product, reviews, locale }: ProductDetailFeatureProps) {
   const t = createTranslator(locale);
-  const reviewState = useProductReviews(product.id, reviews);
-  const { items, addItem, updateQuantity, removeItem } = useCart();
-  const cartItem = items.find((i) => i.product.id === product.id);
-  const quantity = cartItem?.quantity ?? 0;
-
-  const handleAdd = useCallback(() => addItem(product), [addItem, product]);
-  const handleDecrease = useCallback(
-    (productId: string) => {
-      const current = items.find((i) => i.product.id === productId);
-      if (current && current.quantity <= 1) {
-        removeItem(productId);
-      } else {
-        updateQuantity(productId, (current?.quantity ?? 1) - 1);
-      }
-    },
-    [items, removeItem, updateQuantity]
-  );
-  const handleIncrease = useCallback(
-    (productId: string, maxStock: number) => {
-      const current = items.find((i) => i.product.id === productId);
-      updateQuantity(productId, Math.min((current?.quantity ?? 0) + 1, maxStock));
-    },
-    [items, updateQuantity]
-  );
-
-  const images = product.images?.length
-    ? product.images
-    : product.imagePaths.map((url, index) => ({
-        url,
-        altText: product.title,
-        sortOrder: index,
-        isPrimary: index === 0,
-      }));
-  const sortedImages = [...images].sort((first, second) => first.sortOrder - second.sortOrder);
-  const initialImageIndex = Math.max(
-    0,
-    sortedImages.findIndex((image) => image.isPrimary)
-  );
-  const [activeImageIndex, setActiveImageIndex] = useState(initialImageIndex);
-  const boundedActiveImageIndex = Math.min(activeImageIndex, Math.max(sortedImages.length - 1, 0));
-  const activeImage = sortedImages[boundedActiveImageIndex];
-  const sortedFeatures = [...(product.features ?? [])].sort(
-    (first, second) => first.sortOrder - second.sortOrder
-  );
-  const sortedSpecifications = [...(product.specifications ?? [])].sort(
-    (first, second) => first.sortOrder - second.sortOrder
-  );
-  const [rating, setRating] = useState<number | null>(5);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-
-  function submitReview() {
-    reviewState.submitReviewTransition({
-      rating: rating ?? 5,
-      title,
-      body,
-    });
-    setTitle('');
-    setBody('');
-  }
+  const {
+    reviewState,
+    quantity,
+    sortedImages,
+    activeImage,
+    boundedActiveImageIndex,
+    setActiveImageIndex,
+    sortedFeatures,
+    sortedSpecifications,
+    rating,
+    setRating,
+    title,
+    setTitle,
+    body,
+    setBody,
+    handleAdd,
+    handleDecrease,
+    handleIncrease,
+    removeItem,
+    submitReview,
+  } = useProductDetail(product, reviews);
 
   return (
     <Box component="main" className={styles.page}>

@@ -83,7 +83,16 @@ export default function ForgotPasswordForm({
               onBlur={onEmailBlur}
               error={!!emailError}
               helperText={
-                emailError ? <span data-testid="forgot-password-email-error">{emailError}</span> : undefined
+                emailError ? (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="error"
+                    data-testid="forgot-password-email-error"
+                  >
+                    {emailError}
+                  </Typography>
+                ) : undefined
               }
               autoFocus={!initialEmail}
             />

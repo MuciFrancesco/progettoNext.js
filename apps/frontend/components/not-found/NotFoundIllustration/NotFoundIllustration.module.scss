@@ -1,0 +1,48 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+}
+
+.bgCircle {
+  fill: var(--muted);
+  opacity: 0.3;
+}
+
+.digit {
+  fill: var(--foreground);
+  opacity: 0.12;
+}
+
+.zeroRing {
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+.zeroBreak {
+  color: var(--destructive, #d32f2f);
+  opacity: 0.8;
+}
+
+.questionMark {
+  fill: var(--muted-foreground);
+  opacity: 0.5;
+}
+
+.dot {
+  fill: var(--muted-foreground);
+  opacity: 0.25;
+}
+
+.wavyLine {
+  color: var(--primary);
+  opacity: 0.2;
+}

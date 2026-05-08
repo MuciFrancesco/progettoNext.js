@@ -1,5 +1,7 @@
+import { toDisplayLocale } from '@/utils/format';
+
 export function formatCurrency(valueInCents: number, locale: string): string {
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(toDisplayLocale(locale), {
     style: 'currency',
     currency: 'EUR',
   }).format(valueInCents / 100);

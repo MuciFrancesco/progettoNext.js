@@ -82,7 +82,14 @@ export function SigninFormCard({
             error={Boolean(formik.touched.email && formik.errors.email)}
             helperText={
               formik.touched.email && formik.errors.email ? (
-                <span data-testid="signin-email-error">{formik.errors.email}</span>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
+                  data-testid="signin-email-error"
+                >
+                  {formik.errors.email}
+                </Typography>
               ) : undefined
             }
           />
@@ -102,7 +109,14 @@ export function SigninFormCard({
             error={Boolean(formik.touched.password && formik.errors.password)}
             helperText={
               formik.touched.password && formik.errors.password ? (
-                <span data-testid="signin-password-error">{formik.errors.password}</span>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="error"
+                  data-testid="signin-password-error"
+                >
+                  {formik.errors.password}
+                </Typography>
               ) : undefined
             }
           />

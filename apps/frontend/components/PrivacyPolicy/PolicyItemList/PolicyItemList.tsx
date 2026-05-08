@@ -8,10 +8,6 @@ interface PolicyItemListProps {
   readonly ordered?: boolean;
 }
 
-/**
- * Renders a styled ul/ol list of policy items.
- * Keeps containers clean by extracting all li boilerplate here.
- */
 export function PolicyItemList({ items, ordered = false }: PolicyItemListProps) {
   return (
     <Box
