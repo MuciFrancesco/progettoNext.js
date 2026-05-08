@@ -1,3 +1,5 @@
+'use client';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -23,7 +25,7 @@ export function NotFoundTextBlock({
 }: Readonly<NotFoundTextBlockProps>) {
   return (
     <Box className={styles.container}>
-      <Typography variant="h1" className={styles.title} data-testid="not-found-title">
+      <Typography variant="h2" className={styles.title} data-testid="not-found-title">
         {title}
       </Typography>
 

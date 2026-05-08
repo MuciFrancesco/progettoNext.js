@@ -1,0 +1,108 @@
+@use '@/styles/shared' as ds;
+
+// ─── Body Container ────────────────────────────────────────────────────
+.body {
+  @include ds.flex-col($gap: 12px);
+  padding: $spacing-4;
+  flex: 1;
+
+  @include ds.sm {
+    padding: $spacing-5;
+  }
+
+  @include ds.md {
+    padding: $spacing-6;
+  }
+}
+
+// ─── Title ────────────────────────────────────────────────────────
+.title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--foreground);
+  word-break: break-word;
+
+  @include ds.sm {
+    font-size: 1.25rem;
+  }
+}
+
+// ─── Subtitle ────────────────────────────────────────────────────
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+// ─── Content ────────────────────────────────────────────────────
+.content {
+  @include ds.flex-col($gap: 8px);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--foreground);
+
+  p {
+    margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+
+  ul,
+  ol {
+    margin: 8px 0;
+    padding-left: $spacing-6;
+
+    li {
+      margin-bottom: 4px;
+      color: var(--foreground);
+    }
+  }
+}
+
+// ─── Link Styling ────────────────────────────────────────────────────
+.link {
+  @include ds.primary-text-link;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    gap: 6px; // Slight spacing increase on hover
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+// ─── Actions Container ────────────────────────────────────────────────
+.actions {
+  @include ds.flex-row($gap: 8px, $align: center, $justify: flex-start);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+
+  @include ds.sm {
+    gap: 12px;
+  }
+
+  button,
+  a {
+    flex: 1;
+    min-width: 0;
+
+    @include ds.sm {
+      flex: none;
+    }
+  }
+}

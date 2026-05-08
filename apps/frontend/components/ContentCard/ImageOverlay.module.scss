@@ -1,0 +1,80 @@
+@use '@/styles/shared' as ds;
+
+// ─── Image Overlay Container ────────────────────────────────────────
+.imageOverlayContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Image Styling ────────────────────────────────────────────────────
+.image {
+  @include ds.object-contain;
+  display: block;
+}
+
+// ─── Overlay Positioning ────────────────────────────────────────────────
+.overlay {
+  position: absolute;
+  z-index: 10;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: $spacing-4;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  text-align: center;
+
+  @include ds.sm {
+    max-width: 85%;
+  }
+
+  @include ds.md {
+    max-width: 80%;
+  }
+}
+
+// ─── Position Variants ────────────────────────────────────────────────
+.top-left {
+  top: $spacing-4;
+  left: $spacing-4;
+  transform: translateX(0);
+}
+
+.top-right {
+  top: $spacing-4;
+  right: $spacing-4;
+  transform: translateX(0);
+}
+
+.bottom-left {
+  bottom: $spacing-4;
+  left: $spacing-4;
+  transform: translateX(0);
+}
+
+.bottom-right {
+  bottom: $spacing-4;
+  right: $spacing-4;
+  transform: translateX(0);
+}
+
+.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+}
+
+// ─── Hover Effects ────────────────────────────────────────────────────
+.imageOverlayContainer:hover .overlay {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+}

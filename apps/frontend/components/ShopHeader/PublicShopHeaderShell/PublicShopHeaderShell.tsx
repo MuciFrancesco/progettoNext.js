@@ -54,51 +54,58 @@ export function PublicShopHeaderShell({
     <AppBar position="sticky" elevation={0} className={styles.appBar}>
       <Box className={styles.headerInner}>
         <Toolbar className={styles.toolbar}>
-          <Box aria-label={appName} className={styles.logoLink}>
-            <Typography component="span" className={styles.logoText}>
-              Think
-              <Box component="span" className={styles.logoAccent}>
-                Shop
-              </Box>
-            </Typography>
+          {/* Left: logo */}
+          <Box className={styles.toolbarLeft}>
+            <Box aria-label={appName} className={styles.logoLink}>
+              <Typography component="span" className={styles.logoText}>
+                Think
+                <Box component="span" className={styles.logoAccent}>
+                  Shop
+                </Box>
+              </Typography>
+            </Box>
           </Box>
 
-          <Button
-            component={Link}
-            href="/"
-            startIcon={<HomeIcon fontSize="small" />}
-            className={styles.homeButton}
-          >
-            {homeLabel}
-          </Button>
-
-          <Box
-            component="form"
-            className={styles.searchForm}
-            onSubmit={(event) => {
-              event.preventDefault();
-              onSearchSubmit();
-            }}
-          >
-            <TextField
-              value={searchValue}
-              onChange={(event) => onSearchValueChange(event.target.value)}
-              placeholder={searchLabel}
-              size="small"
-              fullWidth
-              className={styles.searchField}
-            />
+          {/* Center: home + search */}
+          <Box className={styles.toolbarCenter}>
             <Button
-              type="submit"
-              variant="contained"
-              aria-label={searchLabel}
-              className={styles.searchButton}
+              component={Link}
+              href="/"
+              startIcon={<HomeIcon fontSize="small" />}
+              className={styles.homeButton}
             >
-              <SearchIcon fontSize="small" />
+              {homeLabel}
             </Button>
+
+            <Box
+              component="form"
+              className={styles.searchForm}
+              onSubmit={(event) => {
+                event.preventDefault();
+                onSearchSubmit();
+              }}
+            >
+              <TextField
+                value={searchValue}
+                onChange={(event) => onSearchValueChange(event.target.value)}
+                placeholder={searchLabel}
+                size="small"
+                fullWidth
+                className={styles.searchField}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                aria-label={searchLabel}
+                className={styles.searchButton}
+              >
+                <SearchIcon fontSize="small" />
+              </Button>
+            </Box>
           </Box>
 
-          <Box className={styles.actionsSlot}>
+          {/* Right: cart + auth actions */}
+          <Box className={styles.toolbarRight}>
             {cartSlot}
             {actionsSlot}
           </Box>

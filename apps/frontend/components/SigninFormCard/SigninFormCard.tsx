@@ -27,6 +27,9 @@ type SigninFormCardProps = {
   readonly formik: ReturnType<typeof useFormik<SigninFormValues>>;
   readonly remainingAttempts?: number;
   readonly isBlocked?: boolean;
+  readonly backendBaseUrl: string;
+  readonly forgotPasswordHref: string;
+  readonly showWarning: boolean;
 };
 
 export function SigninFormCard({
@@ -34,14 +37,11 @@ export function SigninFormCard({
   formik,
   remainingAttempts,
   isBlocked,
+  backendBaseUrl,
+  forgotPasswordHref,
+  showWarning,
 }: Readonly<SigninFormCardProps>) {
   const t = createTranslator(locale);
-  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3333';
-  const showWarning =
-    remainingAttempts !== undefined && remainingAttempts > 0 && remainingAttempts <= 2;
-  const forgotPasswordHref = formik.values.email
-    ? '/forgot-password?email=' + encodeURIComponent(formik.values.email)
-    : '/forgot-password';
 
   return (
     <Card variant="outlined">

@@ -5,8 +5,8 @@ import MapIcon from '@mui/icons-material/Map';
 import styles from './ContactMapPlaceholder.module.scss';
 
 interface ContactMapPlaceholderProps {
-  address: string;
-  caption: string;
+  readonly address: string;
+  readonly caption: string;
 }
 
 export function ContactMapPlaceholder({ address, caption }: ContactMapPlaceholderProps) {

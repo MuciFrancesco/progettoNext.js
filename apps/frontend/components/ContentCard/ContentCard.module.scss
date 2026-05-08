@@ -1,0 +1,57 @@
+@use '@/styles/shared' as ds;
+
+// ─── Content Card Container ────────────────────────────────────────
+// Always occupies 1/3 of screen on desktop (3-column grid)
+// Responsive to 2 columns on tablet, 1 column on mobile
+
+.contentCard {
+  @include ds.card-outlined;
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: default;
+
+  // Responsive behavior: container handles grid, this handles card itself
+  flex: 1;
+  min-width: 280px; // Minimum usable width on mobile
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  &[role='button'] {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ─── Variants ────────────────────────────────────────────────────────
+.outlined {
+  border: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.elevated {
+  background: linear-gradient(
+    135deg,
+    var(--card) 0%,
+    color-mix(in oklch, var(--card) 95%, var(--primary) 5%) 100%
+  );
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}

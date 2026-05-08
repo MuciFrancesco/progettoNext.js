@@ -17,7 +17,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaApple } from 'react-icons/fa';
 
 type SignupFormCardExtraProps = {
-  readonly backendBaseUrl?: string;
+  readonly backendBaseUrl: string;
 };
 
 type SignupFormValues = {
@@ -40,14 +40,13 @@ export function SignupFormCard({
   backendBaseUrl,
 }: Readonly<SignupFormCardProps>) {
   const t = createTranslator(locale);
-  const resolvedBackendBaseUrl =
-    backendBaseUrl ?? process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3333';
   const hasTypedPassword = passwordState !== 'idle';
   const weakPasswordHint = passwordState === 'weak';
   const passwordError = formik.errors.password;
   const showPasswordError =
     weakPasswordHint ||
     ((formik.touched.password || formik.submitCount > 0 || hasTypedPassword) && !!passwordError);
+  // Note: backendBaseUrl is now provided via props from the container (AuthForms)
 
   return (
     <Card variant="outlined">
@@ -199,7 +198,7 @@ export function SignupFormCard({
           <Box className={styles.socialButtons}>
             <MuiButton
               component="a"
-              href={`${resolvedBackendBaseUrl}/auth/google`}
+              href={`${backendBaseUrl}/auth/google`}
               variant="outlined"
               fullWidth
               data-testid="signup-google-button"
@@ -209,7 +208,7 @@ export function SignupFormCard({
             </MuiButton>
             <MuiButton
               component="a"
-              href={`${resolvedBackendBaseUrl}/auth/facebook`}
+              href={`${backendBaseUrl}/auth/facebook`}
               variant="outlined"
               fullWidth
               data-testid="signup-facebook-button"
@@ -219,7 +218,7 @@ export function SignupFormCard({
             </MuiButton>
             <MuiButton
               component="a"
-              href={`${resolvedBackendBaseUrl}/auth/apple`}
+              href={`${backendBaseUrl}/auth/apple`}
               variant="outlined"
               fullWidth
               data-testid="signup-apple-button"

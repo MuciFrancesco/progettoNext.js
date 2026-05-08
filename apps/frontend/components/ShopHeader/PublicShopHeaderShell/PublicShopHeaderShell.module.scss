@@ -21,7 +21,30 @@
   padding: 0.85rem 1rem !important;
   min-height: unset !important;
   align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.toolbarCenter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
   flex-wrap: wrap;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .logoLink {
@@ -56,14 +79,14 @@
 }
 
 .searchForm {
-  order: 3;
   display: flex;
-  width: 100%;
+  flex: 1;
   align-items: stretch;
   overflow: hidden;
   border: 2px solid #f0a500;
   border-radius: 10px;
   background: #ffffff;
+  min-width: 12rem;
 }
 
 .searchField {
@@ -93,15 +116,6 @@
 
 .searchButton:hover {
   background: #ffb830 !important;
-}
-
-.actionsSlot {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
-  flex-wrap: wrap;
 }
 
 .subnav {
@@ -149,14 +163,11 @@
 }
 
 @media (min-width: 900px) {
-  .toolbar {
+  .toolbarCenter {
     flex-wrap: nowrap;
   }
 
   .searchForm {
-    order: 0;
-    width: auto;
     min-width: 20rem;
-    flex: 1;
   }
 }
