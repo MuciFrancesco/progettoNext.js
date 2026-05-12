@@ -1,0 +1,67 @@
+@use '@/styles/shared' as ds;
+
+.shell {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.main {
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+  max-width: 80rem;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 1rem 3rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-weight: 800 !important;
+}
+
+.title {
+  font-weight: 850 !important;
+}
+
+.subtitle {
+  max-width: 44rem;
+  color: var(--muted-foreground);
+  line-height: 1.7 !important;
+}
+
+.emptyState {
+  padding: 1.5rem;
+  border-radius: 8px !important;
+}
+
+.sectionTitle {
+  font-weight: 800 !important;
+}
+
+.productGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .main {
+    padding-inline: 1.5rem;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .productGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -85,9 +85,15 @@ describe('AdminService', () => {
         imagePaths: ['/phone-primary.png', '/phone-side.png'],
         priceInCents: 99900,
         originalPriceInCents: 119900,
+        isInSale: true,
+        salePriceInCents: 79900,
+        saleDiscountPercent: 20,
         stockQuantity: 10,
+        isAvailableForPurchase: false,
         category: ProductCategory.TECHNOLOGY,
         brand: 'Acme',
+        isAvailableForPurchase: false,
+        isRebuyable: true,
         images: [
           { url: '/phone-primary.png', altText: 'Frontale', sortOrder: 0, isPrimary: true },
           { url: '/phone-side.png', altText: 'Laterale', sortOrder: 1 },
@@ -101,7 +107,11 @@ describe('AdminService', () => {
     expect(prismaMock.product.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         brand: 'Acme',
+        isRebuyable: true,
         originalPriceInCents: 119900,
+        isInSale: true,
+        salePriceInCents: 79900,
+        saleDiscountPercent: 20,
         imagePath: '/phone-primary.png',
         imagePaths: ['/phone-primary.png', '/phone-side.png'],
         images: { create: expect.arrayContaining([expect.objectContaining({ isPrimary: true })]) },
@@ -128,7 +138,10 @@ describe('AdminService', () => {
 
     await service.updateProduct('product-1', {
       brand: 'Acme',
+      isRebuyable: true,
       originalPriceInCents: 129900,
+      isInSale: true,
+      salePriceInCents: 99900,
       images: [{ url: '/new.png', altText: 'Nuova', sortOrder: 0, isPrimary: true }],
       features: [{ text: 'Nuova feature', sortOrder: 0 }],
       specifications: [{ label: 'Display', value: '6.7 AMOLED', sortOrder: 0 }],
@@ -144,7 +157,11 @@ describe('AdminService', () => {
       where: { id: 'product-1' },
       data: expect.objectContaining({
         brand: 'Acme',
+        isRebuyable: true,
         originalPriceInCents: 129900,
+        isInSale: true,
+        salePriceInCents: 99900,
+        saleDiscountPercent: 23,
         imagePath: '/new.png',
         imagePaths: ['/new.png'],
       }),

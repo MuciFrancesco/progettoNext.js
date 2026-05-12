@@ -14,6 +14,41 @@
   background: var(--mui-palette-background-paper);
 }
 
+.imageFrame {
+  width: 100%;
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.zoomHint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.imageCount {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.72);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .emptyFrame {
   display: grid;
   place-items: center;
@@ -26,6 +61,57 @@
   padding: 18px;
 }
 
+.lightboxContent {
+  padding: 0 !important;
+  background: var(--mui-palette-background-paper);
+}
+
+.lightboxToolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 0;
+}
+
+.lightboxCounter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--mui-palette-text-secondary);
+  background: var(--mui-palette-action-hover);
+  font-weight: 700;
+}
+
+.lightboxFrame {
+  position: relative;
+  min-height: min(82vh, 760px);
+}
+
+.lightboxImage {
+  object-fit: contain;
+  padding: 24px;
+}
+
+.lightboxNavButton {
+  position: absolute !important;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  color: #fff !important;
+  background: rgba(15, 23, 42, 0.72) !important;
+  transform: translateY(-50%);
+}
+
+.lightboxPrevious {
+  left: 18px;
+}
+
+.lightboxNext {
+  right: 18px;
+}
+
 .thumbRow {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
@@ -33,7 +119,9 @@
 }
 
 .thumb,
-.thumbActive {
+.thumbActive,
+.lightboxThumb,
+.lightboxThumbActive {
   position: relative;
   aspect-ratio: 1 / 1;
   min-width: 0;
@@ -44,13 +132,31 @@
   background: var(--mui-palette-background-paper);
 }
 
-.thumbActive {
+.thumbActive,
+.lightboxThumbActive {
   border-color: var(--mui-palette-primary-main);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--mui-palette-primary-main) 22%, transparent);
+}
+
+.lightboxThumbRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 72px));
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px 16px;
 }
 
 @media (max-width: 960px) {
   .gallery {
     position: static;
+  }
+
+  .lightboxFrame {
+    min-height: min(70vh, 620px);
+  }
+
+  .lightboxNavButton {
+    width: 40px;
+    height: 40px;
   }
 }

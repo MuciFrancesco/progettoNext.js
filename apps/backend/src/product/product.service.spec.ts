@@ -136,3 +136,31 @@ describe('ProductService catalog navigation', () => {
     });
   });
 });
+
+describe('ProductService product search', () => {
+  it('matches public search against brand and subcategory label', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const count = jest.fn().mockResolvedValue(0);
+    const prisma = {
+      $transaction: jest.fn((operations: unknown[]) => Promise.all(operations)),
+      product: {
+        findMany,
+        count,
+      },
+    };
+    const service = new ProductService(prisma as never);
+
+    await service.listProducts({ q: 'sound', page: 1, limit: 10 });
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          OR: expect.arrayContaining([
+            { brand: { contains: 'sound', mode: 'insensitive' } },
+            { subcategory: { label: { contains: 'sound', mode: 'insensitive' } } },
+          ]),
+        }),
+      }),
+    );
+  });
+});

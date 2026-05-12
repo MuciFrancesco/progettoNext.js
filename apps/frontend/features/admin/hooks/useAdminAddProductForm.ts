@@ -21,6 +21,8 @@ const initialDraft: CreateProductInput = {
   specifications: [],
   brand: '',
   stockQuantity: 0,
+  isAvailableForPurchase: true,
+  isRebuyable: false,
   category: 'OTHER',
 };
 
@@ -152,6 +154,8 @@ export function useAdminAddProductForm(locale: Locale) {
         originalPriceInCents: draft.originalPriceInCents,
         priceInCents: draft.priceInCents,
         stockQuantity: Number(draft.stockQuantity),
+        isAvailableForPurchase: draft.isAvailableForPurchase ?? true,
+        isRebuyable: draft.isRebuyable ?? false,
         category: draft.category,
       };
 

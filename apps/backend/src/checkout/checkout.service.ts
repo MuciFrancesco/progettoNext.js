@@ -36,6 +36,8 @@ export class CheckoutService {
         imagePath: true,
         imagePaths: true,
         priceInCents: true,
+        isInSale: true,
+        salePriceInCents: true,
         stockQuantity: true,
         isAvailableForPurchase: true,
       },
@@ -53,7 +55,8 @@ export class CheckoutService {
       return {
         productId: product.id,
         quantity,
-        unitPriceInCents: product.priceInCents,
+        unitPriceInCents:
+          product.isInSale && product.salePriceInCents ? product.salePriceInCents : product.priceInCents,
         title: product.title,
         imagePath: product.imagePaths[0] ?? product.imagePath ?? null,
       };

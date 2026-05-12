@@ -4,6 +4,7 @@ import { APP_NAME } from '@/lib/constants';
 import { getCurrentLocale } from '@/lib/i18n/locale';
 import { MuiThemeProvider } from '@/providers/MuiThemeProvider';
 import { CartProvider } from '@/store/CartContext';
+import { WishlistProvider } from '@/store/WishlistContext';
 import { LocaleProvider } from '@/store/LocaleContext';
 import './globals.css';
 
@@ -40,7 +41,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body className="min-h-full flex flex-col">
         <MuiThemeProvider>
           <LocaleProvider initialLocale={locale}>
-            <CartProvider>{children}</CartProvider>
+            <CartProvider>
+              <WishlistProvider>{children}</WishlistProvider>
+            </CartProvider>
           </LocaleProvider>
         </MuiThemeProvider>
       </body>

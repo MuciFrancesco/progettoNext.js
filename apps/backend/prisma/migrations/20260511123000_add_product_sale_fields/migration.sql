@@ -1,0 +1,4 @@
+ALTER TABLE products
+ADD COLUMN IF NOT EXISTS "is_in_sale" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN IF NOT EXISTS "sale_price_in_cents" INTEGER,
+ADD COLUMN IF NOT EXISTS "sale_discount_percent" INTEGER;

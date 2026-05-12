@@ -9,16 +9,24 @@
   grid-template-columns: 88px 1fr;
   align-items: center;
   gap: 16px;
-  padding: 16px;
+  padding: 14px;
+  border-color: color-mix(in oklch, var(--border) 78%, transparent) !important;
   border-radius: 8px !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92)),
+    var(--card) !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.07);
 }
 
 .imageFrame {
   position: relative;
-  height: 80px;
+  display: block;
+  height: 86px;
   overflow: hidden;
-  border-radius: 4px;
-  background-color: var(--secondary);
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.95), transparent 34%),
+    var(--secondary);
 }
 
 .itemInfo {
@@ -26,11 +34,20 @@
 }
 
 .itemTitle {
+  display: inline-block;
+  color: inherit;
   font-weight: 700 !important;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
 }
 
 .mutedText {
   color: var(--muted-foreground);
+  margin-top: 3px !important;
 }
 
 .quantityControls {
@@ -46,7 +63,8 @@
 
 .quantityButton {
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
+  border-radius: 7px !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
 }
 
 .itemActions {
@@ -54,6 +72,24 @@
   grid-column: span 2;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.itemButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.saveForLaterBtn {
+  font-size: 0.75rem !important;
+  color: var(--muted-foreground) !important;
+  text-transform: none !important;
+  padding: 2px 6px !important;
+
+  &:hover {
+    color: var(--primary) !important;
+  }
 }
 
 .lineTotal {
@@ -63,6 +99,7 @@
 @media (min-width: 600px) {
   .itemCard {
     grid-template-columns: 112px 1fr auto;
+    padding: 16px;
   }
 
   .imageFrame {

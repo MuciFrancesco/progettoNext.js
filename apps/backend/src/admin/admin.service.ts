@@ -42,8 +42,12 @@ export class AdminService {
     category: true,
     priceInCents: true,
     originalPriceInCents: true,
+    isInSale: true,
+    salePriceInCents: true,
+    saleDiscountPercent: true,
     stockQuantity: true,
     isAvailableForPurchase: true,
+    isRebuyable: true,
     images: { orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }] },
     features: { orderBy: { sortOrder: 'asc' } },
     specifications: { orderBy: { sortOrder: 'asc' } },
@@ -96,6 +100,54 @@ export class AdminService {
     return images.map((image) => image.url);
   }
 
+  private resolveSaleData(
+    dto: Pick<
+      CreateProductDto,
+      'isInSale' | 'priceInCents' | 'salePriceInCents' | 'saleDiscountPercent'
+    >,
+    currentPriceInCents = 0
+  ): {
+    isInSale?: boolean;
+    salePriceInCents?: number | null;
+    saleDiscountPercent?: number | null;
+  } {
+    if (dto.isInSale === false) {
+      return { isInSale: false, salePriceInCents: null, saleDiscountPercent: null };
+    }
+
+    const hasSaleInput =
+      dto.isInSale === true ||
+      dto.salePriceInCents !== undefined ||
+      dto.saleDiscountPercent !== undefined;
+    if (!hasSaleInput) return {};
+
+    const basePrice = dto.priceInCents ?? currentPriceInCents;
+    let salePrice = dto.salePriceInCents ?? undefined;
+    let percent = dto.saleDiscountPercent ?? undefined;
+
+    if (salePrice !== undefined && salePrice !== null && basePrice > 0) {
+      percent = Math.round(((basePrice - salePrice) / basePrice) * 100);
+    } else if (percent !== undefined && percent !== null && basePrice > 0) {
+      salePrice = Math.round(basePrice * (100 - percent) / 100);
+    }
+
+    if (
+      !basePrice ||
+      salePrice === undefined ||
+      salePrice === null ||
+      percent === undefined ||
+      percent === null ||
+      salePrice <= 0 ||
+      salePrice >= basePrice ||
+      percent <= 0 ||
+      percent >= 100
+    ) {
+      throw new BadRequestException('Sconto prodotto non valido');
+    }
+
+    return { isInSale: true, salePriceInCents: salePrice, saleDiscountPercent: percent };
+  }
+
   getBulkStatus(): { isBusy: boolean } {
     return { isBusy: this.bulkStatusStore.isBusy() };
   }
@@ -121,6 +173,7 @@ export class AdminService {
       priceInCents: true,
       stockQuantity: true,
       isAvailableForPurchase: true,
+      isRebuyable: true,
       createdAt: true,
       updatedAt: true,
     } as const;
@@ -314,6 +367,7 @@ export class AdminService {
       priceInCents: true,
       stockQuantity: true,
       isAvailableForPurchase: true,
+      isRebuyable: true,
       createdAt: true,
       updatedAt: true,
     } as const;
@@ -386,6 +440,7 @@ export class AdminService {
               priceInCents: true,
               stockQuantity: true,
               isAvailableForPurchase: true,
+              isRebuyable: true,
             },
           },
         },
@@ -497,8 +552,10 @@ export class AdminService {
         imagePaths,
         priceInCents: dto.priceInCents ?? 0,
         originalPriceInCents: dto.originalPriceInCents,
+        ...this.resolveSaleData(dto, dto.priceInCents ?? 0),
         stockQuantity: dto.stockQuantity,
-        isAvailableForPurchase: dto.stockQuantity > 0,
+        isAvailableForPurchase: dto.isAvailableForPurchase ?? dto.stockQuantity > 0,
+        isRebuyable: dto.isRebuyable ?? false,
         category: dto.category,
         images: images.length
           ? {
@@ -544,8 +601,12 @@ export class AdminService {
       dto.brand === undefined &&
       dto.priceInCents === undefined &&
       dto.originalPriceInCents === undefined &&
+      dto.isInSale === undefined &&
+      dto.salePriceInCents === undefined &&
+      dto.saleDiscountPercent === undefined &&
       dto.stockQuantity === undefined &&
       dto.isAvailableForPurchase === undefined &&
+      dto.isRebuyable === undefined &&
       dto.category === undefined &&
       dto.images === undefined &&
       dto.features === undefined &&
@@ -563,8 +624,12 @@ export class AdminService {
       imagePaths?: string[];
       priceInCents?: number;
       originalPriceInCents?: number | null;
+      isInSale?: boolean;
+      salePriceInCents?: number | null;
+      saleDiscountPercent?: number | null;
       stockQuantity?: number;
       isAvailableForPurchase?: boolean;
+      isRebuyable?: boolean;
       category?: ProductCategory;
     } = {};
 
@@ -578,6 +643,18 @@ export class AdminService {
     if (dto.originalPriceInCents !== undefined) {
       data.originalPriceInCents = dto.originalPriceInCents;
     }
+    if (
+      dto.isInSale !== undefined ||
+      dto.salePriceInCents !== undefined ||
+      dto.saleDiscountPercent !== undefined
+    ) {
+      const currentProduct = await this.prisma.product.findUnique({
+        where: { id: productId },
+        select: { priceInCents: true },
+      });
+      if (!currentProduct) throw new NotFoundException('Prodotto non trovato');
+      Object.assign(data, this.resolveSaleData(dto, currentProduct.priceInCents));
+    }
     if (dto.stockQuantity !== undefined) {
       data.stockQuantity = dto.stockQuantity;
       if (dto.isAvailableForPurchase === undefined) {
@@ -586,6 +663,9 @@ export class AdminService {
     }
     if (dto.isAvailableForPurchase !== undefined) {
       data.isAvailableForPurchase = dto.isAvailableForPurchase;
+    }
+    if (dto.isRebuyable !== undefined) {
+      data.isRebuyable = dto.isRebuyable;
     }
     if (dto.category !== undefined) {
       data.category = dto.category;

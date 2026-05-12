@@ -1,5 +1,7 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
@@ -25,6 +27,7 @@ type CartItemLabels = {
   readonly decreaseQuantity?: string;
   readonly increaseQuantity?: string;
   readonly remove: string;
+  readonly saveForLater?: string;
 };
 
 type CartItemProps = {
@@ -37,6 +40,7 @@ type CartItemProps = {
   readonly onDecrease: () => void;
   readonly onIncrease: () => void;
   readonly onRemove: () => void;
+  readonly onSaveForLater?: () => void;
 };
 
 export function CartItem({
@@ -49,6 +53,7 @@ export function CartItem({
   onDecrease,
   onIncrease,
   onRemove,
+  onSaveForLater,
 }: Readonly<CartItemProps>) {
   return (
     <Paper
@@ -56,7 +61,7 @@ export function CartItem({
       data-testid={`cart-item-${item.productId}`}
       className={styles.itemCard}
     >
-      <Box className={styles.imageFrame}>
+      <Box component={Link} href={`/product/${item.productId}`} className={styles.imageFrame}>
         {item.imageSrc ? (
           <Image
             src={item.imageSrc}
@@ -69,7 +74,13 @@ export function CartItem({
         ) : null}
       </Box>
       <Box className={styles.itemInfo}>
-        <Typography className={styles.itemTitle}>{item.title}</Typography>
+        <Typography
+          component={Link}
+          href={`/product/${item.productId}`}
+          className={styles.itemTitle}
+        >
+          {item.title}
+        </Typography>
         <Typography variant="body2" className={styles.mutedText}>
           {item.unitPriceLabel}
         </Typography>
@@ -110,13 +121,26 @@ export function CartItem({
       </Box>
       <Box className={styles.itemActions}>
         <Typography className={styles.lineTotal}>{item.lineTotalLabel}</Typography>
-        <IconButton
-          aria-label={`${labels.remove} ${item.title}`}
-          onClick={onRemove}
-          data-testid={`cart-remove-${item.productId}`}
-        >
-          <DeleteIcon />
-        </IconButton>
+        <Box className={styles.itemButtons}>
+          {onSaveForLater && labels.saveForLater && (
+            <Button
+              variant="text"
+              size="small"
+              onClick={onSaveForLater}
+              className={styles.saveForLaterBtn}
+              data-testid={`cart-save-later-${item.productId}`}
+            >
+              {labels.saveForLater}
+            </Button>
+          )}
+          <IconButton
+            aria-label={`${labels.remove} ${item.title}`}
+            onClick={onRemove}
+            data-testid={`cart-remove-${item.productId}`}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
       </Box>
     </Paper>
   );

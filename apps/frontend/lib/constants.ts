@@ -14,3 +14,6 @@ export const PRODUCT_IMAGE_ACCEPT = PRODUCT_IMAGE_ACCEPTED_MIME_TYPES.join(',');
 export const PRODUCT_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const LOCALE_COOKIE_NAME = 'locale';
+
+export const RECENTLY_VIEWED_KEY = 'thinkshop-recently-viewed';
+export const RECENTLY_VIEWED_MAX = 20;

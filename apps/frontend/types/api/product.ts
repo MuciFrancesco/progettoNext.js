@@ -24,6 +24,9 @@ export interface BackendProduct {
   readonly subcategory: ProductSubcategory | null;
   readonly priceInCents: number;
   readonly originalPriceInCents: number | null;
+  readonly isInSale: boolean;
+  readonly salePriceInCents: number | null;
+  readonly saleDiscountPercent: number | null;
   readonly averageRating?: number;
   readonly reviewCount?: number;
   readonly images?: readonly ProductImage[];
@@ -31,6 +34,7 @@ export interface BackendProduct {
   readonly specifications?: readonly ProductSpecification[];
   readonly stockQuantity: number;
   readonly isAvailableForPurchase: boolean;
+  readonly isRebuyable: boolean;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -130,7 +134,12 @@ export interface CreateProductInput {
   readonly brand?: string;
   readonly priceInCents?: number;
   readonly originalPriceInCents?: number;
+  readonly isInSale?: boolean;
+  readonly salePriceInCents?: number | null;
+  readonly saleDiscountPercent?: number | null;
   readonly stockQuantity: number;
+  readonly isAvailableForPurchase?: boolean;
+  readonly isRebuyable?: boolean;
   readonly category: ProductCategory;
   readonly images?: readonly ProductImage[];
   readonly features?: readonly ProductFeature[];
@@ -146,8 +155,12 @@ export interface UpdateProductInput {
   readonly brand?: string;
   readonly priceInCents?: number;
   readonly originalPriceInCents?: number;
+  readonly isInSale?: boolean;
+  readonly salePriceInCents?: number | null;
+  readonly saleDiscountPercent?: number | null;
   readonly stockQuantity?: number;
   readonly isAvailableForPurchase?: boolean;
+  readonly isRebuyable?: boolean;
   readonly category?: ProductCategory;
   readonly images?: readonly ProductImage[];
   readonly features?: readonly ProductFeature[];

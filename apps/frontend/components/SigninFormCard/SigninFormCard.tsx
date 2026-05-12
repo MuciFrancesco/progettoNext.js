@@ -62,7 +62,7 @@ export function SigninFormCard({
 
           {showWarning && !isBlocked && (
             <Alert severity="warning" data-testid="signin-warning-alert" role="alert">
-              {t('attemptsWarning', { attempts: remainingAttempts })}
+              {t('attemptsWarning', { attempts: remainingAttempts ?? 0 })}
             </Alert>
           )}
 

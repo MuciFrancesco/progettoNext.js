@@ -3,7 +3,7 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -17,11 +17,13 @@ type AddToCartButtonProps = {
   readonly addLabel: string;
   readonly decreaseLabel: string;
   readonly increaseLabel: string;
+  readonly quantityLabel: string;
   readonly removeLabel: string;
   readonly unavailableLabel: string;
   readonly onAdd: (product: BackendProduct) => void;
   readonly onDecrease: (productId: string) => void;
   readonly onIncrease: (productId: string, maxStock: number) => void;
+  readonly onQuantityChange: (productId: string, quantity: number, maxStock: number) => void;
   readonly onRemove: (productId: string) => void;
 };
 
@@ -31,11 +33,13 @@ export function AddToCartButton({
   addLabel,
   decreaseLabel,
   increaseLabel,
+  quantityLabel,
   removeLabel,
   unavailableLabel,
   onAdd,
   onDecrease,
   onIncrease,
+  onQuantityChange,
   onRemove,
 }: Readonly<AddToCartButtonProps>) {
   const disabled = !product.isAvailableForPurchase || product.stockQuantity <= 0;
@@ -54,9 +58,26 @@ export function AddToCartButton({
         >
           <RemoveIcon fontSize="small" />
         </IconButton>
-        <Box className={styles.quantityBox}>
-          <Typography className={styles.quantityValue}>{quantity}</Typography>
-        </Box>
+        <TextField
+          type="number"
+          value={quantity}
+          size="small"
+          className={styles.quantityField}
+          onChange={(event) => {
+            if (event.target.value === '') return;
+            onQuantityChange(product.id, Number(event.target.value), product.stockQuantity);
+          }}
+          slotProps={{
+            htmlInput: {
+              min: 1,
+              max: product.stockQuantity,
+              step: 1,
+              inputMode: 'numeric',
+              'aria-label': quantityLabel,
+              'data-testid': `cart-quantity-${product.id}`,
+            },
+          }}
+        />
         <IconButton
           aria-label={increaseLabel}
           disabled={!canIncrease}

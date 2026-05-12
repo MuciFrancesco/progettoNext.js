@@ -31,6 +31,12 @@ export function useProductDetail(product: BackendProduct, reviews: readonly Prod
     },
     [items, updateQuantity]
   );
+  const handleQuantityChange = useCallback(
+    (productId: string, nextQuantity: number, maxStock: number) => {
+      updateQuantity(productId, Math.min(Math.max(Math.round(nextQuantity), 0), maxStock));
+    },
+    [updateQuantity]
+  );
 
   const images = product.images?.length
     ? product.images
@@ -79,6 +85,7 @@ export function useProductDetail(product: BackendProduct, reviews: readonly Prod
     handleAdd,
     handleDecrease,
     handleIncrease,
+    handleQuantityChange,
     removeItem,
     submitReview,
   };

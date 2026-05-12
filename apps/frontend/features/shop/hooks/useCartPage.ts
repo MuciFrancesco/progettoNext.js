@@ -89,6 +89,7 @@ export function useCartPage(locale: Locale) {
       checkout: t('cartCheckout'),
       unitSuffix: t('cartUnitSuffix'),
       maxStockReached: t('cartStockMaxReached'),
+      saveForLater: t('wishlistSaveLabel'),
     },
   };
 }

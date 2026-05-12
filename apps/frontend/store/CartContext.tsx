@@ -15,6 +15,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { BackendProduct, ProductStatusSnapshot } from '@/types/api/product';
+import { getEffectivePriceInCents } from '@/lib/shop/pricing';
 import { productsService } from '@/services/products';
 import { CART_STORAGE_KEY } from '@/utils/constants';
 
@@ -324,7 +325,7 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
   const value = useMemo<CartContextValue>(() => {
     const totalQuantity = state.items.reduce((sum, item) => sum + item.quantity, 0);
     const totalInCents = state.items.reduce(
-      (sum, item) => sum + item.product.priceInCents * item.quantity,
+      (sum, item) => sum + getEffectivePriceInCents(item.product) * item.quantity,
       0
     );
     return {

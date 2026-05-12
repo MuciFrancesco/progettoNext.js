@@ -292,6 +292,31 @@ function UpdateProduct({
               disabled={isPending}
             />
             <TextField
+              label={t('productFieldBrand')}
+              fullWidth
+              value={editDraft.brand}
+              onChange={(e) => updateEditDraft({ brand: e.target.value })}
+              disabled={isPending}
+            />
+            <TextField
+              label={t('productFieldOriginalPrice')}
+              type="number"
+              slotProps={{ htmlInput: { min: 0 } }}
+              fullWidth
+              value={editDraft.originalPriceInCents}
+              onChange={(e) => updateEditDraft({ originalPriceInCents: e.target.value })}
+              disabled={isPending}
+            />
+            <TextField
+              label={t('productFieldRegularPrice')}
+              type="number"
+              slotProps={{ htmlInput: { min: 0 } }}
+              fullWidth
+              value={editDraft.priceInCents}
+              onChange={(e) => updateEditDraft({ priceInCents: e.target.value })}
+              disabled={isPending}
+            />
+            <TextField
               label={t('productFieldDescription')}
               fullWidth
               multiline
@@ -398,6 +423,192 @@ function UpdateProduct({
               }
               label={t('productFieldAvailableForPurchase')}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={editDraft.isRebuyable}
+                  onChange={(e) => updateEditDraft({ isRebuyable: e.target.checked })}
+                  disabled={isPending}
+                />
+              }
+              label={t('productFieldRebuyable')}
+            />
+            <Box className={styles.fullWidthField}>
+              <Typography variant="body2" className={styles.imageLabel}>
+                {t('productSaleAdminTitle')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" className={styles.fieldHelp}>
+                {t('productSaleAdminHelp')}
+              </Typography>
+              <Box className={styles.saleGrid}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={editDraft.isInSale}
+                      onChange={(e) => updateEditDraft({ isInSale: e.target.checked })}
+                      disabled={isPending}
+                    />
+                  }
+                  label={t('productFieldInSale')}
+                />
+                <TextField
+                  label={t('productFieldSalePrice')}
+                  type="number"
+                  slotProps={{ htmlInput: { min: 0 } }}
+                  value={editDraft.salePriceInCents}
+                  onChange={(e) => updateEditDraft({ salePriceInCents: e.target.value })}
+                  disabled={isPending || !editDraft.isInSale}
+                />
+                <TextField
+                  label={t('productFieldSalePercent')}
+                  type="number"
+                  slotProps={{ htmlInput: { min: 0, max: 100 } }}
+                  value={editDraft.saleDiscountPercent}
+                  onChange={(e) => updateEditDraft({ saleDiscountPercent: e.target.value })}
+                  disabled={isPending || !editDraft.isInSale}
+                />
+              </Box>
+            </Box>
+            <Box className={styles.fullWidthField}>
+              <Typography variant="body2" className={styles.imageLabel}>
+                {t('productFeaturesAdminTitle')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" className={styles.fieldHelp}>
+                {t('productFeaturesAdminHelp')}
+              </Typography>
+              {editDraft.features.map((feature, index) => (
+                <Box key={feature.id ?? String(index)} className={styles.inlineFields}>
+                  <TextField
+                    fullWidth
+                    value={feature.text}
+                    label={`${t('productFeatureItemLabel')} ${index + 1}`}
+                    disabled={isPending}
+                    onChange={(event) => {
+                      const features = [...editDraft.features];
+                      features[index] = { ...feature, text: event.target.value };
+                      updateEditDraft({ features });
+                    }}
+                  />
+                  <MuiButton
+                    variant="outlined"
+                    color="inherit"
+                    disabled={isPending}
+                    onClick={() =>
+                      updateEditDraft({
+                        features: editDraft.features
+                          .filter((_, featureIndex) => featureIndex !== index)
+                          .map((item, nextIndex) => ({ ...item, sortOrder: nextIndex })),
+                      })
+                    }
+                  >
+                    Rimuovi
+                  </MuiButton>
+                </Box>
+              ))}
+              <MuiButton
+                variant="outlined"
+                disabled={isPending}
+                onClick={() =>
+                  updateEditDraft({
+                    features: [
+                      ...editDraft.features,
+                      { text: '', sortOrder: editDraft.features.length },
+                    ],
+                  })
+                }
+              >
+                {t('productFeatureAddButton')}
+              </MuiButton>
+              {editDraft.features.length > 0 ? (
+                <Box className={styles.previewPanel}>
+                  <Typography variant="body2" className={styles.previewTitle}>
+                    {t('productFeaturesPreviewTitle')}
+                  </Typography>
+                  <Box className={styles.previewGrid}>
+                    {editDraft.features.map((feature, index) => (
+                      <Box key={feature.id ?? String(index)} className={styles.previewItem}>
+                        {feature.text.trim() || t('productFeatureEmptyPreview')}
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              ) : null}
+            </Box>
+            <Box className={styles.fullWidthField}>
+              <Typography variant="body2" className={styles.imageLabel}>
+                {t('productSpecsAdminTitle')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" className={styles.fieldHelp}>
+                {t('productSpecsAdminHelp')}
+              </Typography>
+              {editDraft.specifications.map((specification, index) => (
+                <Box key={specification.id ?? String(index)} className={styles.inlineFields}>
+                  <TextField
+                    value={specification.label}
+                    label={t('productSpecNameLabel')}
+                    disabled={isPending}
+                    onChange={(event) => {
+                      const specifications = [...editDraft.specifications];
+                      specifications[index] = { ...specification, label: event.target.value };
+                      updateEditDraft({ specifications });
+                    }}
+                  />
+                  <TextField
+                    value={specification.value}
+                    label={t('productSpecValueLabel')}
+                    disabled={isPending}
+                    onChange={(event) => {
+                      const specifications = [...editDraft.specifications];
+                      specifications[index] = { ...specification, value: event.target.value };
+                      updateEditDraft({ specifications });
+                    }}
+                  />
+                  <MuiButton
+                    variant="outlined"
+                    color="inherit"
+                    disabled={isPending}
+                    onClick={() =>
+                      updateEditDraft({
+                        specifications: editDraft.specifications
+                          .filter((_, specificationIndex) => specificationIndex !== index)
+                          .map((item, nextIndex) => ({ ...item, sortOrder: nextIndex })),
+                      })
+                    }
+                  >
+                    Rimuovi
+                  </MuiButton>
+                </Box>
+              ))}
+              <MuiButton
+                variant="outlined"
+                disabled={isPending}
+                onClick={() =>
+                  updateEditDraft({
+                    specifications: [
+                      ...editDraft.specifications,
+                      { label: '', value: '', sortOrder: editDraft.specifications.length },
+                    ],
+                  })
+                }
+              >
+                {t('productSpecAddButton')}
+              </MuiButton>
+              {editDraft.specifications.length > 0 ? (
+                <Box className={styles.previewPanel}>
+                  <Typography variant="body2" className={styles.previewTitle}>
+                    {t('productSpecsPreviewTitle')}
+                  </Typography>
+                  <Box className={styles.previewGrid}>
+                    {editDraft.specifications.map((specification, index) => (
+                      <Box key={specification.id ?? String(index)} className={styles.previewItem}>
+                        <strong>{specification.label.trim() || t('productSpecNameLabel')}</strong>
+                        <span>{specification.value.trim() || t('productSpecEmptyPreview')}</span>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              ) : null}
+            </Box>
           </DialogContent>
         )}
         <DialogActions>

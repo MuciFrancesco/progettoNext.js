@@ -89,6 +89,8 @@ export default function UpdateProductTableHead({
             {t('productTableAvailable')}
           </TableSortLabel>
         </TableCell>
+        <TableCell align="right">{t('productTableEffectivePrice')}</TableCell>
+        <TableCell align="center">{t('productTableDiscount')}</TableCell>
         <TableCell align="right">{t('productTableActions')}</TableCell>
       </TableRow>
     </TableHead>

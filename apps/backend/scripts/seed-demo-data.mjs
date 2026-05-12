@@ -310,10 +310,21 @@ const LAST_NAMES = [
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
+async function ensureProductSchema(client) {
+  await client.query(
+    `ALTER TABLE products
+     ADD COLUMN IF NOT EXISTS "is_rebuyable" BOOLEAN NOT NULL DEFAULT false,
+     ADD COLUMN IF NOT EXISTS "is_in_sale" BOOLEAN NOT NULL DEFAULT false,
+     ADD COLUMN IF NOT EXISTS "sale_price_in_cents" INTEGER,
+     ADD COLUMN IF NOT EXISTS "sale_discount_percent" INTEGER`
+  );
+}
+
 async function main() {
   const client = new Client({ connectionString: databaseUrl });
   await client.connect();
   console.log('Connesso al DB.');
+  await ensureProductSchema(client);
 
   // 1. Prodotti ────────────────────────────────────────────────────────────────
   console.log(`\nInserisco ${PRODUCT_TEMPLATES.length} prodotti...`);
@@ -329,8 +340,8 @@ async function main() {
     const originalPrice = Math.round(p.price * (1 + randInt(10, 35) / 100));
     await writeProductPlaceholder({ ...p, id });
     await client.query(
-      `INSERT INTO products (id, title, name, description, brand, category, "priceInCents", original_price_in_cents, "imagePath", "imagePaths", "stock_quantity", "isAvailableForPurchase", "createdAt", "updatedAt")
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,ARRAY[$9]::text[],$10,true,NOW(),NOW())
+      `INSERT INTO products (id, title, name, description, brand, category, "priceInCents", original_price_in_cents, "imagePath", "imagePaths", "stock_quantity", "isAvailableForPurchase", "is_rebuyable", "createdAt", "updatedAt")
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,ARRAY[$9]::text[],$10,true,$11,NOW(),NOW())
        ON CONFLICT DO NOTHING`,
       [
         id,
@@ -343,6 +354,7 @@ async function main() {
         originalPrice,
         imagePath,
         stock,
+        true,
       ]
     );
 

@@ -31,16 +31,29 @@ function createOrder(
       secondname: null,
       lastname,
     },
-    product: {
-      id: `${id}-product`,
-      title: productName,
-      name: productName,
-      description: `${productName} description`,
-      imagePath: `/${id}.png`,
-      category: 'TECHNOLOGY',
-      stockQuantity: 10,
-      isAvailableForPurchase: true,
-    },
+    items: [
+      {
+        id: `${id}-item`,
+        quantity: 1,
+        unitPriceInCents: totalPriceInCents,
+        lineTotalInCents: totalPriceInCents,
+        productTitleSnapshot: productName,
+        productImageSnapshot: `/${id}.png`,
+        product: {
+          id: `${id}-product`,
+          title: productName,
+          name: productName,
+          description: `${productName} description`,
+          imagePath: `/${id}.png`,
+          imagePaths: [`/${id}.png`],
+          category: 'TECHNOLOGY',
+          priceInCents: totalPriceInCents,
+          stockQuantity: 10,
+          isAvailableForPurchase: true,
+          isRebuyable: false,
+        },
+      },
+    ],
   };
 }
 

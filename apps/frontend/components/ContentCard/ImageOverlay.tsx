@@ -1,7 +1,6 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import styles from './ImageOverlay.module.scss';

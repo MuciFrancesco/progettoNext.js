@@ -4,6 +4,7 @@ import { useAdminUpdateProductsTable } from './useAdminUpdateProductsTable';
 import {
   getAdminProductsAction,
   getAdminProductsBulkStatusAction,
+  updateProductAction,
 } from '@/lib/actions/admin';
 import type { PaginatedProductsResponse } from '@/types/api/product';
 
@@ -19,6 +20,7 @@ vi.mock('@/lib/actions/admin', () => ({
 
 const mockedGetAdminProductsAction = vi.mocked(getAdminProductsAction);
 const mockedGetAdminProductsBulkStatusAction = vi.mocked(getAdminProductsBulkStatusAction);
+const mockedUpdateProductAction = vi.mocked(updateProductAction);
 
 const initialResponse: PaginatedProductsResponse = {
   data: [
@@ -29,12 +31,19 @@ const initialResponse: PaginatedProductsResponse = {
       description: 'Wireless mouse',
       imagePath: '/mouse.png',
       imagePaths: ['/mouse.png'],
+      brand: null,
+      subcategory: null,
       priceInCents: 1999,
+      originalPriceInCents: null,
+      isInSale: false,
+      salePriceInCents: null,
+      saleDiscountPercent: null,
       createdAt: '2026-05-01T10:00:00.000Z',
       updatedAt: '2026-05-01T10:00:00.000Z',
       category: 'TECHNOLOGY',
       stockQuantity: 5,
       isAvailableForPurchase: true,
+      isRebuyable: false,
     },
     {
       id: 'p2',
@@ -43,12 +52,19 @@ const initialResponse: PaginatedProductsResponse = {
       description: 'Tech book',
       imagePath: '/book.png',
       imagePaths: ['/book.png'],
+      brand: null,
+      subcategory: null,
       priceInCents: 1299,
+      originalPriceInCents: null,
+      isInSale: false,
+      salePriceInCents: null,
+      saleDiscountPercent: null,
       createdAt: '2026-05-01T10:00:00.000Z',
       updatedAt: '2026-05-01T10:00:00.000Z',
       category: 'BOOKS',
       stockQuantity: 3,
       isAvailableForPurchase: true,
+      isRebuyable: true,
     },
     {
       id: 'p3',
@@ -57,12 +73,19 @@ const initialResponse: PaginatedProductsResponse = {
       description: 'Fiction',
       imagePath: '/novel.png',
       imagePaths: ['/novel.png'],
+      brand: null,
+      subcategory: null,
       priceInCents: 899,
+      originalPriceInCents: null,
+      isInSale: false,
+      salePriceInCents: null,
+      saleDiscountPercent: null,
       createdAt: '2026-05-01T10:00:00.000Z',
       updatedAt: '2026-05-01T10:00:00.000Z',
       category: 'BOOKS',
       stockQuantity: 7,
       isAvailableForPurchase: false,
+      isRebuyable: false,
     },
   ],
   total: 3,
@@ -72,7 +95,9 @@ describe('useAdminUpdateProductsTable', () => {
   beforeEach(() => {
     mockedGetAdminProductsAction.mockReset();
     mockedGetAdminProductsBulkStatusAction.mockReset();
+    mockedUpdateProductAction.mockReset();
     mockedGetAdminProductsBulkStatusAction.mockResolvedValue({ isBusy: false });
+    mockedUpdateProductAction.mockResolvedValue(initialResponse.data[0]!);
   });
 
   it('submits the active search filters with the default page size', async () => {
@@ -133,5 +158,173 @@ describe('useAdminUpdateProductsTable', () => {
     });
 
     expect(Array.from(result.current.selectedIds).sort()).toEqual(['p2', 'p3']);
+  });
+
+  it('marks the edit draft dirty and submits isRebuyable changes', async () => {
+    const { result } = renderHook(() => useAdminUpdateProductsTable(initialResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+    });
+
+    expect(result.current.editDraft?.isRebuyable).toBe(false);
+
+    act(() => {
+      result.current.updateEditDraft({ isRebuyable: true });
+    });
+
+    expect(result.current.isDirty).toBe(true);
+
+    await act(async () => {
+      result.current.save();
+    });
+
+    await waitFor(() => {
+      expect(mockedUpdateProductAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          productId: 'p1',
+          isRebuyable: true,
+        })
+      );
+    });
+  });
+
+  it('marks the edit draft dirty and submits feature and specification text changes', async () => {
+    const responseWithRelations: PaginatedProductsResponse = {
+      data: [
+        {
+          ...initialResponse.data[0]!,
+          features: [{ id: 'feature-1', text: 'Vecchio punto', sortOrder: 0 }],
+          specifications: [{ id: 'spec-1', label: 'RAM', value: '8GB', sortOrder: 0 }],
+        },
+      ],
+      total: 1,
+    };
+    const { result } = renderHook(() => useAdminUpdateProductsTable(responseWithRelations, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+    });
+
+    act(() => {
+      result.current.updateEditDraft({
+        features: [{ id: 'feature-1', text: 'Nuovo punto', sortOrder: 0 }],
+        specifications: [{ id: 'spec-1', label: 'RAM', value: '16GB', sortOrder: 0 }],
+      });
+    });
+
+    expect(result.current.isDirty).toBe(true);
+
+    await act(async () => {
+      result.current.save();
+    });
+
+    await waitFor(() => {
+      expect(mockedUpdateProductAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          productId: 'p1',
+          features: [{ id: 'feature-1', text: 'Nuovo punto', sortOrder: 0 }],
+          specifications: [{ id: 'spec-1', label: 'RAM', value: '16GB', sortOrder: 0 }],
+        })
+      );
+    });
+  });
+
+  it('calculates discount percent from sale price and submits sale fields', async () => {
+    const { result } = renderHook(() => useAdminUpdateProductsTable(initialResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+    });
+
+    act(() => {
+      result.current.updateEditDraft({ isInSale: true });
+      result.current.updateEditDraft({ salePriceInCents: '1599' });
+    });
+
+    expect(result.current.editDraft?.saleDiscountPercent).toBe('20');
+
+    await act(async () => {
+      result.current.save();
+    });
+
+    await waitFor(() => {
+      expect(mockedUpdateProductAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          productId: 'p1',
+          isInSale: true,
+          salePriceInCents: 1599,
+          saleDiscountPercent: 20,
+        })
+      );
+    });
+  });
+
+  it('normalizes missing sale booleans to keep the edit checkbox controlled', () => {
+    const legacyResponse: PaginatedProductsResponse = {
+      data: [
+        {
+          ...initialResponse.data[0]!,
+          isInSale: undefined as unknown as boolean,
+          isAvailableForPurchase: undefined as unknown as boolean,
+          isRebuyable: undefined as unknown as boolean,
+        },
+      ],
+      total: 1,
+    };
+    const { result } = renderHook(() => useAdminUpdateProductsTable(legacyResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+    });
+
+    expect(result.current.editDraft?.isInSale).toBe(false);
+    expect(result.current.editDraft?.isAvailableForPurchase).toBe(false);
+    expect(result.current.editDraft?.isRebuyable).toBe(false);
+  });
+
+  it('keeps sale fields editable when a checked sale product has empty sale values', () => {
+    const { result } = renderHook(() => useAdminUpdateProductsTable(initialResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+      result.current.updateEditDraft({ isInSale: true });
+      result.current.updateEditDraft({ salePriceInCents: '1' });
+      result.current.updateEditDraft({ salePriceInCents: '' });
+    });
+
+    expect(result.current.editDraft?.isInSale).toBe(true);
+    expect(result.current.editDraft?.salePriceInCents).toBe('');
+    expect(result.current.editDraft?.saleDiscountPercent).toBe('');
+  });
+
+  it('calculates sale price from discount percent', () => {
+    const { result } = renderHook(() => useAdminUpdateProductsTable(initialResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+      result.current.updateEditDraft({ isInSale: true });
+      result.current.updateEditDraft({ saleDiscountPercent: '10' });
+    });
+
+    expect(result.current.editDraft?.salePriceInCents).toBe('1799');
+  });
+
+  it('does not submit a sale product without a valid sale discount', async () => {
+    const { result } = renderHook(() => useAdminUpdateProductsTable(initialResponse, 'it'));
+
+    act(() => {
+      result.current.openEditModal('p1');
+      result.current.updateEditDraft({ isInSale: true });
+    });
+
+    await act(async () => {
+      result.current.save();
+    });
+
+    expect(mockedUpdateProductAction).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(result.current.toast?.severity).toBe('error');
+    });
   });
 });

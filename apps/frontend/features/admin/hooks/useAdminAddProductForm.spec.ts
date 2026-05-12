@@ -52,6 +52,8 @@ describe('useAdminAddProductForm retail fields', () => {
         originalPriceInCents: 119900,
         stockQuantity: 4,
         category: 'TECHNOLOGY',
+        isAvailableForPurchase: false,
+        isRebuyable: true,
         features: [{ text: 'Display luminoso', sortOrder: 0 }],
         specifications: [{ label: 'RAM', value: '12GB', sortOrder: 0 }],
       });
@@ -63,6 +65,8 @@ describe('useAdminAddProductForm retail fields', () => {
       expect(mockedCreateProductAction).toHaveBeenCalledWith(
         expect.objectContaining({
           brand: 'Acme',
+          isAvailableForPurchase: false,
+          isRebuyable: true,
           originalPriceInCents: 119900,
           images: [{ url: '/phone.png', altText: 'Telefono', sortOrder: 0, isPrimary: true }],
           features: [{ text: 'Display luminoso', sortOrder: 0 }],
@@ -71,5 +75,11 @@ describe('useAdminAddProductForm retail fields', () => {
         false
       )
     );
+  });
+
+  it('defaults new products to available for purchase', () => {
+    const { result } = renderHook(() => useAdminAddProductForm('it'));
+
+    expect(result.current.draft.isAvailableForPurchase).toBe(true);
   });
 });

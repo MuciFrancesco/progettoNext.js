@@ -7,6 +7,9 @@ import { APP_NAME } from '@/lib/constants';
 import { listCatalogNavigation, listPublicProducts } from '@/lib/api/products';
 import { getPublicFooterSections, getSharedFooterSections } from '@/lib/footer/footerSections';
 import { ProductCatalogFeature } from '@/features/shop/components/ProductCatalogFeature/ProductCatalogFeature';
+import { RecentlyViewedFeature } from '@/features/recently-viewed/RecentlyViewedFeature';
+import { FavoritesFeature } from '@/features/favorites/FavoritesFeature';
+import { RebuyableProductsFeature } from '@/features/rebuyable/RebuyableProductsFeature';
 import { PublicShopHeader } from '@/components/ShopHeader/PublicShopHeader/PublicShopHeader';
 import { PRODUCT_CATEGORIES, type ProductCategory } from '@/types/api/product';
 import styles from './page.module.scss';
@@ -49,7 +52,13 @@ export default async function HomePage({ searchParams }: Readonly<HomePageProps>
             slug: category.slug,
             label: category.label,
           }))}
-        />
+        >
+          <Box className={styles.personalizedGrid}>
+            <RecentlyViewedFeature locale={locale} />
+            <FavoritesFeature locale={locale} />
+            <RebuyableProductsFeature locale={locale} />
+          </Box>
+        </ProductCatalogFeature>
       </Box>
       <FooterFeature
         appName={APP_NAME}

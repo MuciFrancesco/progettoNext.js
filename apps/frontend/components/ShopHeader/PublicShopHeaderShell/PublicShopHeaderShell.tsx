@@ -19,6 +19,16 @@ type HeaderCategoryOption = {
   readonly label: string;
 };
 
+export type HeaderSearchSuggestion = {
+  readonly id: string;
+  readonly title: string;
+  readonly brand: string | null;
+  readonly categoryLabel: string;
+  readonly subcategoryLabel: string | null;
+  readonly imageSrc: string;
+  readonly href: string;
+};
+
 type PublicShopHeaderShellProps = {
   readonly appName: string;
   readonly cartLabel: string;
@@ -31,6 +41,8 @@ type PublicShopHeaderShellProps = {
   readonly onSearchValueChange: (value: string) => void;
   readonly onSearchSubmit: () => void;
   readonly onCategorySelect: (slug: string) => void;
+  readonly searchSuggestions?: readonly HeaderSearchSuggestion[];
+  readonly showSearchSuggestions?: boolean;
   readonly actionsSlot?: ReactNode;
   readonly cartSlot?: ReactNode;
 };
@@ -47,6 +59,8 @@ export function PublicShopHeaderShell({
   onSearchValueChange,
   onSearchSubmit,
   onCategorySelect,
+  searchSuggestions = [],
+  showSearchSuggestions = false,
   actionsSlot,
   cartSlot,
 }: Readonly<PublicShopHeaderShellProps>) {
@@ -79,6 +93,7 @@ export function PublicShopHeaderShell({
 
             <Box
               component="form"
+              role="search"
               className={styles.searchForm}
               onSubmit={(event) => {
                 event.preventDefault();
@@ -93,6 +108,44 @@ export function PublicShopHeaderShell({
                 fullWidth
                 className={styles.searchField}
               />
+              {showSearchSuggestions && searchSuggestions.length > 0 ? (
+                <Box component="ul" className={styles.suggestionMenu}>
+                  {searchSuggestions.map((product) => (
+                    <Box component="li" key={product.id} className={styles.suggestionItem}>
+                      <Link href={product.href} className={styles.suggestionLink}>
+                        {product.imageSrc ? (
+                          <Box
+                            component="img"
+                            src={product.imageSrc}
+                            alt={product.title}
+                            className={styles.suggestionImage}
+                          />
+                        ) : (
+                          <Box className={styles.suggestionImageFallback} aria-hidden="true" />
+                        )}
+                        <Box className={styles.suggestionText}>
+                          <Typography className={styles.suggestionTitle}>{product.title}</Typography>
+                          <Box className={styles.suggestionMeta}>
+                            {product.brand ? (
+                              <Typography component="span" className={styles.suggestionMetaItem}>
+                                {product.brand}
+                              </Typography>
+                            ) : null}
+                            <Typography component="span" className={styles.suggestionMetaItem}>
+                              {product.categoryLabel}
+                            </Typography>
+                            {product.subcategoryLabel ? (
+                              <Typography component="span" className={styles.suggestionMetaItem}>
+                                {product.subcategoryLabel}
+                              </Typography>
+                            ) : null}
+                          </Box>
+                        </Box>
+                      </Link>
+                    </Box>
+                  ))}
+                </Box>
+              ) : null}
               <Button
                 type="submit"
                 variant="contained"

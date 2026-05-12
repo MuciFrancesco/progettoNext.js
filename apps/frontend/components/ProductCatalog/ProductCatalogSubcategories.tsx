@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -17,11 +16,13 @@ type Subcategory = {
 type ProductCatalogSubcategoriesProps = {
   readonly items: Subcategory[];
   readonly ariaLabel: string;
+  readonly handleSubcategorySelect: (slug: string) => void;
 };
 
 export function ProductCatalogSubcategories({
   items,
   ariaLabel,
+  handleSubcategorySelect,
 }: Readonly<ProductCatalogSubcategoriesProps>) {
   if (items.length === 0) return null;
 
@@ -30,8 +31,8 @@ export function ProductCatalogSubcategories({
       {items.map((subcategory) => (
         <Button
           key={subcategory.slug}
-          component={Link}
-          href={subcategory.href}
+          type="button"
+          onClick={() => handleSubcategorySelect(subcategory.slug)}
           variant={subcategory.isActive ? 'contained' : 'outlined'}
           className={styles.subcategoryButton}
         >

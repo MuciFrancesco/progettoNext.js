@@ -85,6 +85,20 @@ function productCategoryFromSlug(slug: string): ProductCategory | undefined {
   );
 }
 
+function productCategoriesMatchingSearch(query: string): ProductCategory[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return [];
+
+  return (Object.keys(CATEGORY_META) as ProductCategory[]).filter((category) => {
+    const meta = CATEGORY_META[category];
+    return (
+      category.toLowerCase().includes(normalizedQuery) ||
+      meta.slug.toLowerCase().includes(normalizedQuery) ||
+      meta.label.toLowerCase().includes(normalizedQuery)
+    );
+  });
+}
+
 @Injectable()
 export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
@@ -122,10 +136,15 @@ export class ProductService {
     }
 
     if (q) {
+      const matchingCategories = productCategoriesMatchingSearch(q);
       where.OR = [
         { title: { contains: q, mode: 'insensitive' } },
         { name: { contains: q, mode: 'insensitive' } },
         { description: { contains: q, mode: 'insensitive' } },
+        { brand: { contains: q, mode: 'insensitive' } },
+        { subcategory: { label: { contains: q, mode: 'insensitive' } } },
+        { subcategory: { slug: { contains: q, mode: 'insensitive' } } },
+        ...(matchingCategories.length > 0 ? [{ category: { in: matchingCategories } }] : []),
       ];
     }
 
@@ -140,8 +159,12 @@ export class ProductService {
       category: true,
       priceInCents: true,
       originalPriceInCents: true,
+      isInSale: true,
+      salePriceInCents: true,
+      saleDiscountPercent: true,
       stockQuantity: true,
       isAvailableForPurchase: true,
+      isRebuyable: true,
       createdAt: true,
       updatedAt: true,
       subcategory: {

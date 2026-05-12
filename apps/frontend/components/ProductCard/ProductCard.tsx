@@ -13,6 +13,8 @@ export type ProductCardViewModel = {
   readonly imageSrc: string;
   readonly categoryLabel: string;
   readonly priceLabel: string;
+  readonly originalPriceLabel?: string;
+  readonly saleBadge?: string;
   readonly stockLabel: string;
 };
 
@@ -77,7 +79,19 @@ export function ProductCard({ card, labels, cartActionSlot }: Readonly<ProductCa
           {product.description}
         </Typography>
         <Box className={styles.priceRow}>
-          <Typography className={styles.price}>{card.priceLabel}</Typography>
+          <Box className={styles.priceStack}>
+            <Typography className={styles.price}>{card.priceLabel}</Typography>
+            {card.originalPriceLabel ? (
+              <Typography variant="caption" className={styles.originalPrice}>
+                {card.originalPriceLabel}
+              </Typography>
+            ) : null}
+            {card.saleBadge ? (
+              <Typography variant="caption" className={styles.saleBadge}>
+                {card.saleBadge}
+              </Typography>
+            ) : null}
+          </Box>
           <Typography variant="caption" className={styles.mutedText}>
             {card.stockLabel}
           </Typography>

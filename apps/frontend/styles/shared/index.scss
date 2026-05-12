@@ -2,5 +2,5 @@
 // @use '@/styles/shared' as ds;
 // Uso: ds.$color-primary | @include ds.flex-row($gap: 8px)
 
-@forward '@/styles/shared/_variables.scss';
-@forward '@/styles/shared/_mixins.scss';
+@forward '@/styles/shared/variables';
+@forward '@/styles/shared/mixins';

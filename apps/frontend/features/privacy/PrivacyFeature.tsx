@@ -8,7 +8,11 @@ import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink/Policy
 import { PolicyItemList } from '@/components/PrivacyPolicy/PolicyItemList/PolicyItemList';
 import { getTranslator, getCurrentLocale } from '@/lib/i18n/locale';
 import styles from './PrivacyFeature.module.scss';
-import { lastUpdated, SectionConfig, sections } from './helpers/helper';
+import {
+  buildPrivacySections,
+  formatPrivacyLastUpdated,
+  SectionConfig,
+} from './helpers/helper';
 
 function renderContent(section: SectionConfig): ReactNode {
   switch (section.kind) {
@@ -45,14 +49,15 @@ function renderContent(section: SectionConfig): ReactNode {
 }
 
 export async function PrivacyFeature() {
-  const [t] = await Promise.all([getTranslator(), getCurrentLocale()]);
+  const [t, locale] = await Promise.all([getTranslator(), getCurrentLocale()]);
+  const sections = buildPrivacySections(t);
 
   return (
     <Container maxWidth="md" className={styles.page}>
       <PolicyBackLink label={t('contactBackLink')} />
       <PolicyHeader
         title={t('privacyPageTitle')}
-        subtitle={`${t('lastUpdatedLabel')}: ${lastUpdated}`}
+        subtitle={`${t('lastUpdatedLabel')}: ${formatPrivacyLastUpdated(locale)}`}
       />
       <Box className={styles.sections}>
         {sections.map((section) => (

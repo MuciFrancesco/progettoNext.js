@@ -29,9 +29,13 @@ const baseProduct = {
   imagePath: '/mouse.png',
   imagePaths: ['/mouse.png'],
   category: 'TECHNOLOGY' as const,
+  subcategory: null,
+  brand: null,
   priceInCents: 2500,
+  originalPriceInCents: null,
   stockQuantity: 5,
   isAvailableForPurchase: true,
+  isRebuyable: false,
   createdAt: '2026-05-01T10:00:00.000Z',
   updatedAt: '2026-05-01T10:00:00.000Z',
 };

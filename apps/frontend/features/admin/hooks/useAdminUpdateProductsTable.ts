@@ -18,6 +18,7 @@ import type {
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
+import { calculateSaleFromPercent, calculateSaleFromPrice } from '@/lib/shop/pricing';
 
 export type SortField = 'title' | 'name' | 'category' | 'stockQuantity' | 'isAvailableForPurchase';
 export type SortDirection = 'asc' | 'desc';
@@ -34,12 +35,17 @@ export type EditableProduct = {
   imagePath: string;
   imagePaths: string[];
   brand: string;
+  priceInCents: string;
   originalPriceInCents: string;
+  isInSale: boolean;
+  salePriceInCents: string;
+  saleDiscountPercent: string;
   images: NonNullable<BackendProduct['images']>;
   features: NonNullable<BackendProduct['features']>;
   specifications: NonNullable<BackendProduct['specifications']>;
   stockQuantity: string;
   isAvailableForPurchase: boolean;
+  isRebuyable: boolean;
   category: ProductCategory;
 };
 
@@ -56,7 +62,11 @@ function toEditableProduct(product: BackendProduct): EditableProduct {
     imagePath: product.imagePath,
     imagePaths: paths,
     brand: product.brand ?? '',
+    priceInCents: String(product.priceInCents),
     originalPriceInCents: product.originalPriceInCents ? String(product.originalPriceInCents) : '',
+    isInSale: Boolean(product.isInSale),
+    salePriceInCents: product.salePriceInCents ? String(product.salePriceInCents) : '',
+    saleDiscountPercent: product.saleDiscountPercent ? String(product.saleDiscountPercent) : '',
     images:
       product.images?.length
         ? [...product.images]
@@ -69,9 +79,41 @@ function toEditableProduct(product: BackendProduct): EditableProduct {
     features: product.features ? [...product.features] : [],
     specifications: product.specifications ? [...product.specifications] : [],
     stockQuantity: String(product.stockQuantity),
-    isAvailableForPurchase: product.isAvailableForPurchase,
+    isAvailableForPurchase: Boolean(product.isAvailableForPurchase),
+    isRebuyable: Boolean(product.isRebuyable),
     category: product.category,
   };
+}
+
+function productFeaturesChanged(
+  current: EditableProduct['features'],
+  original: EditableProduct['features']
+): boolean {
+  if (current.length !== original.length) return true;
+  return current.some((feature, index) => {
+    const previous = original[index];
+    return (
+      feature.text !== previous?.text ||
+      feature.sortOrder !== previous?.sortOrder ||
+      feature.id !== previous?.id
+    );
+  });
+}
+
+function productSpecificationsChanged(
+  current: EditableProduct['specifications'],
+  original: EditableProduct['specifications']
+): boolean {
+  if (current.length !== original.length) return true;
+  return current.some((specification, index) => {
+    const previous = original[index];
+    return (
+      specification.label !== previous?.label ||
+      specification.value !== previous?.value ||
+      specification.sortOrder !== previous?.sortOrder ||
+      specification.id !== previous?.id
+    );
+  });
 }
 
 export function useAdminUpdateProductsTable(
@@ -259,7 +301,39 @@ export function useAdminUpdateProductsTable(
   }
 
   function updateEditDraft(patch: Partial<EditableProduct>) {
-    setEditDraft((prev) => (prev ? { ...prev, ...patch } : null));
+    setEditDraft((prev) => {
+      if (!prev) return null;
+      const next = { ...prev, ...patch };
+      if (patch.salePriceInCents !== undefined) {
+        if (patch.salePriceInCents.trim() === '') {
+          next.saleDiscountPercent = '';
+        } else {
+          const result = calculateSaleFromPrice(
+            Number(next.priceInCents),
+            Number(patch.salePriceInCents)
+          );
+          next.saleDiscountPercent = result.saleDiscountPercent
+            ? String(result.saleDiscountPercent)
+            : '';
+        }
+      }
+      if (patch.saleDiscountPercent !== undefined) {
+        if (patch.saleDiscountPercent.trim() === '') {
+          next.salePriceInCents = '';
+        } else {
+          const result = calculateSaleFromPercent(
+            Number(next.priceInCents),
+            Number(patch.saleDiscountPercent)
+          );
+          next.salePriceInCents = result.salePriceInCents ? String(result.salePriceInCents) : '';
+        }
+      }
+      if (patch.isInSale === false) {
+        next.salePriceInCents = '';
+        next.saleDiscountPercent = '';
+      }
+      return next;
+    });
   }
 
   function toggleSelection(id: string) {
@@ -448,8 +522,25 @@ export function useAdminUpdateProductsTable(
 
     startTransition(async () => {
       const stockQuantity = Number(draft.stockQuantity);
+      const priceInCents = Number(draft.priceInCents);
+      const salePriceInCents = draft.salePriceInCents ? Number(draft.salePriceInCents) : null;
+      const saleDiscountPercent = draft.saleDiscountPercent
+        ? Number(draft.saleDiscountPercent)
+        : null;
       if (!Number.isFinite(stockQuantity) || stockQuantity < 0) {
         setToast({ message: t('productUpdateInvalidQty'), severity: 'error' });
+        return;
+      }
+      if (
+        draft.isInSale &&
+        (!salePriceInCents ||
+          !saleDiscountPercent ||
+          salePriceInCents <= 0 ||
+          salePriceInCents >= priceInCents ||
+          saleDiscountPercent <= 0 ||
+          saleDiscountPercent >= 100)
+      ) {
+        setToast({ message: t('productSaleRequiredError'), severity: 'error' });
         return;
       }
 
@@ -462,9 +553,13 @@ export function useAdminUpdateProductsTable(
           imagePath: draft.imagePaths[0] ?? draft.imagePath,
           imagePaths: draft.imagePaths,
           brand: draft.brand,
+          priceInCents: Number.isFinite(priceInCents) ? priceInCents : undefined,
           originalPriceInCents: draft.originalPriceInCents
             ? Number(draft.originalPriceInCents)
             : undefined,
+          isInSale: draft.isInSale,
+          salePriceInCents,
+          saleDiscountPercent,
           images: draft.images,
           features: draft.features.filter((feature) => feature.text.trim()),
           specifications: draft.specifications.filter(
@@ -472,6 +567,7 @@ export function useAdminUpdateProductsTable(
           ),
           stockQuantity,
           isAvailableForPurchase: draft.isAvailableForPurchase,
+          isRebuyable: draft.isRebuyable,
           category: draft.category,
         });
         const replaceProduct = (p: BackendProduct) => (p.id === id ? updated : p);
@@ -552,11 +648,16 @@ export function useAdminUpdateProductsTable(
         editDraft.imagePaths.length !== editOriginal.imagePaths.length ||
         editDraft.imagePaths.some((p, i) => p !== editOriginal.imagePaths[i]) ||
         editDraft.brand !== editOriginal.brand ||
+        editDraft.priceInCents !== editOriginal.priceInCents ||
         editDraft.originalPriceInCents !== editOriginal.originalPriceInCents ||
-        editDraft.features.length !== editOriginal.features.length ||
-        editDraft.specifications.length !== editOriginal.specifications.length ||
+        editDraft.isInSale !== editOriginal.isInSale ||
+        editDraft.salePriceInCents !== editOriginal.salePriceInCents ||
+        editDraft.saleDiscountPercent !== editOriginal.saleDiscountPercent ||
+        productFeaturesChanged(editDraft.features, editOriginal.features) ||
+        productSpecificationsChanged(editDraft.specifications, editOriginal.specifications) ||
         editDraft.stockQuantity !== editOriginal.stockQuantity ||
         editDraft.isAvailableForPurchase !== editOriginal.isAvailableForPurchase ||
+        editDraft.isRebuyable !== editOriginal.isRebuyable ||
         editDraft.category !== editOriginal.category),
     openEditModal,
     closeEditModal,

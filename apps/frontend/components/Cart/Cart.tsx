@@ -28,9 +28,10 @@ type CartProps = {
   readonly labels: CartLabels;
   readonly stockAlerts: ReadonlyArray<{ readonly productId: string; readonly message: string }>;
   readonly children?: ReactNode;
+  readonly summary?: ReactNode;
 };
 
-export function Cart({ hasItems, labels, stockAlerts, children }: Readonly<CartProps>) {
+export function Cart({ hasItems, labels, stockAlerts, children, summary }: Readonly<CartProps>) {
   return (
     <Box component="section" data-testid="cart-page" className={styles.page}>
       <Box className={styles.header}>
@@ -61,6 +62,7 @@ export function Cart({ hasItems, labels, stockAlerts, children }: Readonly<CartP
       ) : (
         <Box className={styles.contentGrid}>
           <Box className={styles.itemsList}>{children}</Box>
+          {summary ? <Box className={styles.summaryColumn}>{summary}</Box> : null}
         </Box>
       )}
     </Box>

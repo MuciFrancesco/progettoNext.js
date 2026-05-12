@@ -63,7 +63,27 @@
   gap: 0.75rem;
 }
 
+.priceStack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .price {
   color: var(--primary);
+  font-weight: 800 !important;
+}
+
+.originalPrice {
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+}
+
+.saleBadge {
+  border-radius: 6px;
+  padding: 2px 6px;
+  background: #d32f2f;
+  color: #fff;
   font-weight: 800 !important;
 }

@@ -1,0 +1,9 @@
+@use '@/styles/shared' as ds;
+
+.section {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: min(760px, calc(100vh - 12rem));
+  padding: ds.$spacing-10 ds.$spacing-4 ds.$spacing-12;
+}

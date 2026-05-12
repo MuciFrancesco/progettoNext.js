@@ -107,6 +107,13 @@ export function useCatalogPage(options: Readonly<UseCatalogPageOptions>) {
     [items, updateQuantity]
   );
 
+  const handleQuantityChange = useCallback(
+    (productId: string, quantity: number, maxStock: number) => {
+      updateQuantity(productId, Math.min(Math.max(Math.round(quantity), 0), maxStock));
+    },
+    [updateQuantity]
+  );
+
   return {
     /** Prodotti filtrati / query / categoria dall'hook base */
     catalog,
@@ -130,6 +137,8 @@ export function useCatalogPage(options: Readonly<UseCatalogPageOptions>) {
     handleDecrease,
     /** Incrementa un prodotto nel carrello (con max stock) */
     handleIncrease,
+    /** Imposta direttamente una quantita nel carrello (con max stock) */
+    handleQuantityChange,
     /** Rimuove un prodotto dal carrello */
     onCartRemove: removeItem,
   };

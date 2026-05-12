@@ -122,6 +122,9 @@ export type Dictionary = {
   readonly productFieldDescription: string;
   readonly productFieldPhotoUrl: string;
   readonly productFieldMaxOrderQty: string;
+  readonly productFieldBrand: string;
+  readonly productFieldOriginalPrice: string;
+  readonly productFieldRegularPrice: string;
   readonly productSaveButton: string;
   readonly productImageUploadLabel: string;
   readonly productImageChangeLabel: string;
@@ -134,6 +137,27 @@ export type Dictionary = {
   readonly productUpdateError: string;
   readonly productFieldRemainingQty: string;
   readonly productFieldAvailableForPurchase: string;
+  readonly productFieldRebuyable: string;
+  readonly productSaleAdminTitle: string;
+  readonly productSaleAdminHelp: string;
+  readonly productSaleRequiredError: string;
+  readonly productFieldInSale: string;
+  readonly productFieldSalePrice: string;
+  readonly productFieldSalePercent: string;
+  readonly productSaleBadge: string;
+  readonly productFeaturesAdminTitle: string;
+  readonly productFeaturesAdminHelp: string;
+  readonly productFeatureItemLabel: string;
+  readonly productFeatureAddButton: string;
+  readonly productFeaturesPreviewTitle: string;
+  readonly productFeatureEmptyPreview: string;
+  readonly productSpecsAdminTitle: string;
+  readonly productSpecsAdminHelp: string;
+  readonly productSpecNameLabel: string;
+  readonly productSpecValueLabel: string;
+  readonly productSpecAddButton: string;
+  readonly productSpecsPreviewTitle: string;
+  readonly productSpecEmptyPreview: string;
   readonly productSaveChangesButton: string;
   readonly notFoundTitle: string;
   readonly notFoundSubtitle: string;
@@ -182,6 +206,8 @@ export type Dictionary = {
   readonly productTableCategory: string;
   readonly productTableStock: string;
   readonly productTableAvailable: string;
+  readonly productTableEffectivePrice: string;
+  readonly productTableDiscount: string;
   readonly productTableActions: string;
   readonly productBulkEditButton: string;
   readonly productBulkEditTitle: string;
@@ -267,6 +293,10 @@ export type Dictionary = {
   readonly catalogSearch: string;
   readonly catalogEmpty: string;
   readonly catalogStock: string;
+  readonly searchResultsTitle: string;
+  readonly searchResultsSubtitle: string;
+  readonly searchResultsEmpty: string;
+  readonly searchSuggestionsTitle: string;
   readonly cartTitle: string;
   readonly cartSubtitle: string;
   readonly cartEmpty: string;
@@ -304,6 +334,8 @@ export type Dictionary = {
   readonly productReviewTitleField: string;
   readonly productReviewBodyField: string;
   readonly productReviewSubmit: string;
+  readonly productReviewAuthRequired: string;
+  readonly productReviewEmpty: string;
   readonly productVerifiedPurchase: string;
   readonly checkoutTitle: string;
   readonly checkoutSubtitle: string;
@@ -490,4 +522,12 @@ export type Dictionary = {
   readonly productDuplicateGoToEdit: string;
   readonly productDuplicateCreateAnyway: string;
   readonly productDuplicateCancel: string;
+  // Recently viewed
+  readonly recentlyViewedTitle: string;
+  readonly rebuyableProductsTitle: string;
+  // Favorites / wishlist
+  readonly wishlistTitle: string;
+  readonly wishlistSaveLabel: string;
+  readonly wishlistRemoveLabel: string;
+  readonly wishlistMoveToCart: string;
 };

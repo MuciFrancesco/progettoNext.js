@@ -6,6 +6,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   Min,
   ValidateNested,
@@ -60,6 +61,23 @@ export class UpdateProductDto {
   @IsOptional()
   originalPriceInCents?: number;
 
+  @IsBoolean()
+  @IsOptional()
+  isInSale?: boolean;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  salePriceInCents?: number | null;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  @IsOptional()
+  saleDiscountPercent?: number | null;
+
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -69,6 +87,10 @@ export class UpdateProductDto {
   @IsBoolean()
   @IsOptional()
   isAvailableForPurchase?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isRebuyable?: boolean;
 
   @IsEnum(ProductCategory)
   @IsOptional()

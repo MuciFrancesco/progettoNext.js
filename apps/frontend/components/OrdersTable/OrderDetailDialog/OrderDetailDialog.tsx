@@ -14,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import type { BackendOrder } from '@/types/api/order';
+import type { Dictionary } from '@/lib/i18n/dictionary';
 import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import { categoryTranslationKey, formatCurrency, formatUserName, toDisplayLocale } from '@/utils/format';
@@ -58,7 +59,7 @@ export function OrderDetailDialog({
                       <TableCell>{item.productTitleSnapshot || item.product.name}</TableCell>
                       <TableCell>
                         <Chip
-                          label={t(categoryTranslationKey(item.product.category))}
+                          label={t(categoryTranslationKey(item.product.category) as keyof Dictionary)}
                           size="small"
                           variant="outlined"
                         />

@@ -3,7 +3,12 @@
 .summary {
   height: fit-content;
   padding: 24px;
+  border-color: color-mix(in oklch, var(--border) 74%, transparent) !important;
   border-radius: 8px !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.9)),
+    var(--card) !important;
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.09);
 }
 
 .summaryTitle {
@@ -14,6 +19,9 @@
 .summaryRow {
   @include ds.flex-between;
   margin-bottom: ds.$spacing-4;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .mutedText {
@@ -27,4 +35,6 @@
 .checkoutButton {
   width: 100%;
   border-radius: 6px !important;
+  min-height: 44px;
+  font-weight: 800 !important;
 }

@@ -1,15 +1,18 @@
 .content {
   min-width: 0;
+  padding: 2px 0;
 }
 
 .brand {
   color: var(--mui-palette-primary-main);
   font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .title {
   margin-top: 6px;
-  line-height: 1.08;
+  line-height: 1.06;
 }
 
 .ratingRow {
@@ -19,7 +22,48 @@
   align-items: center;
 }
 
+.infoPanel {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--mui-palette-background-paper);
+}
+
+.sectionTitle {
+  font-weight: 800;
+}
+
 .featureList {
   padding-left: 18px;
   margin: 0;
+}
+
+.featureList li + li {
+  margin-top: 6px;
+}
+
+.specTable {
+  overflow: hidden;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+}
+
+.specTable td:first-of-type {
+  width: 42%;
+  color: var(--mui-palette-text-secondary);
+  font-weight: 700;
+}
+
+.specTable td {
+  border-color: var(--mui-palette-divider);
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .infoPanel {
+    padding: 12px;
+  }
 }

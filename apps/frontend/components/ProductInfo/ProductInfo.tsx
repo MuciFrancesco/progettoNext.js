@@ -57,11 +57,13 @@ export function ProductInfo({
         <Chip size="small" label={categoryLabel} />
       </Box>
 
-      <Typography>{description}</Typography>
+      <Box className={styles.infoPanel}>
+        <Typography>{description}</Typography>
+      </Box>
 
       {features.length ? (
-        <Stack spacing={1}>
-          <Typography component="h2" variant="h6">
+        <Stack spacing={1} className={styles.infoPanel}>
+          <Typography component="h2" variant="subtitle1" className={styles.sectionTitle}>
             {labels.featuresTitle}
           </Typography>
           <Box component="ul" className={styles.featureList}>
@@ -75,11 +77,11 @@ export function ProductInfo({
       ) : null}
 
       {specifications.length ? (
-        <Stack spacing={1}>
-          <Typography component="h2" variant="h6">
+        <Stack spacing={1} className={styles.infoPanel}>
+          <Typography component="h2" variant="subtitle1" className={styles.sectionTitle}>
             {labels.specsTitle}
           </Typography>
-          <Table size="small">
+          <Table size="small" className={styles.specTable}>
             <TableBody>
               {specifications.map((specification) => (
                 <TableRow key={specification.id ?? specification.label}>

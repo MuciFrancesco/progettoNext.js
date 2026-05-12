@@ -1,12 +1,17 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { Locale } from '@/lib/i18n/translation';
 import { PublicShopHeaderShell } from '@/components/ShopHeader/PublicShopHeaderShell/PublicShopHeaderShell';
+import type { HeaderSearchSuggestion } from '@/components/ShopHeader/PublicShopHeaderShell/PublicShopHeaderShell';
 import { PublicShopHeaderActions } from '@/components/ShopHeader/PublicShopHeaderActions/PublicShopHeaderActions';
 import { CartBadgeLink } from '@/components/CartBadgeLink/CartBadgeLink';
+import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
+import { createTranslator } from '@/lib/i18n/translator';
+import { resolveProductImageSrc } from '@/lib/shop/format';
+import type { BackendProduct } from '@/types/api/product';
 import { useCart } from '@/store/CartContext';
 
 type HeaderCategoryOption = {
@@ -44,11 +49,46 @@ export function PublicShopHeaderClientFeature({
   const searchParams = useSearchParams();
   const selectedCategory = pathname.startsWith('/categoria/') ? (pathname.split('/')[2] ?? '') : '';
   const [draftQuery, setDraftQuery] = useState(searchParams.get('q') ?? '');
+  const [suggestions, setSuggestions] = useState<HeaderSearchSuggestion[]>([]);
   const { totalQuantity } = useCart();
+  const t = useMemo(() => createTranslator(locale), [locale]);
 
   useEffect(() => {
     setDraftQuery(searchParams.get('q') ?? '');
   }, [searchParams]);
+
+  useEffect(() => {
+    const normalizedQuery = draftQuery.trim();
+    if (normalizedQuery.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch(`/api/products/search?q=${encodeURIComponent(normalizedQuery)}&limit=6`, {
+      signal: controller.signal,
+    })
+      .then((response) => (response.ok ? response.json() : { data: [] }))
+      .then((payload: { data?: BackendProduct[] }) => {
+        const nextSuggestions = (payload.data ?? []).map((product) => ({
+          id: product.id,
+          title: product.title,
+          brand: product.brand,
+          categoryLabel: t(categoryTranslationKey(product.category)),
+          subcategoryLabel: product.subcategory?.label ?? null,
+          imageSrc: resolveProductImageSrc(product.imagePath),
+          href: `/product/${product.id}`,
+        }));
+        setSuggestions(nextSuggestions);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        setSuggestions([]);
+      });
+
+    return () => controller.abort();
+  }, [draftQuery, t]);
 
   const navigateToCatalog = (nextQuery: string) => {
     const params = new URLSearchParams();
@@ -58,13 +98,7 @@ export function PublicShopHeaderClientFeature({
       params.set('q', normalizedQuery);
     }
 
-    const href = params.toString() ? `/?${params.toString()}` : '/';
-
-    if (pathname === '/') {
-      router.push(href, { scroll: false });
-      return;
-    }
-
+    const href = params.toString() ? `/search?${params.toString()}` : '/search';
     router.push(href);
   };
 
@@ -81,6 +115,8 @@ export function PublicShopHeaderClientFeature({
       onSearchValueChange={setDraftQuery}
       onSearchSubmit={() => navigateToCatalog(draftQuery)}
       onCategorySelect={(slug) => router.push(`/categoria/${slug}`)}
+      searchSuggestions={suggestions}
+      showSearchSuggestions={draftQuery.trim().length >= 3}
       cartSlot={<CartBadgeLink label={cartLabel} totalQuantity={totalQuantity} />}
       actionsSlot={
         <PublicShopHeaderActions

@@ -7,7 +7,7 @@ import { PolicyHeader } from '@/components/PrivacyPolicy/PolicyHeader/PolicyHead
 import { PolicyBackLink } from '@/components/PrivacyPolicy/PolicyBackLink/PolicyBackLink';
 import { PolicyItemList } from '@/components/PrivacyPolicy/PolicyItemList/PolicyItemList';
 import styles from './TermsFeature.module.scss';
-import { lastUpdated, SectionConfig, sections } from './helpers/helper';
+import { buildTermsSections, formatTermsLastUpdated, SectionConfig } from './helpers/helper';
 import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 
 function renderContent(section: SectionConfig): ReactNode {
@@ -33,14 +33,15 @@ function renderContent(section: SectionConfig): ReactNode {
 }
 
 export async function TermsFeature() {
-  const [t] = await Promise.all([getTranslator(), getCurrentLocale()]);
+  const [t, locale] = await Promise.all([getTranslator(), getCurrentLocale()]);
+  const sections = buildTermsSections(t);
 
   return (
     <Container maxWidth="md" className={styles.page}>
       <PolicyBackLink label={t('contactBackLink')} />
       <PolicyHeader
         title={t('termsPageTitle')}
-        subtitle={`${t('lastUpdatedLabel')}: ${lastUpdated}`}
+        subtitle={`${t('lastUpdatedLabel')}: ${formatTermsLastUpdated(locale)}`}
       />
       <Box className={styles.sections}>
         {sections.map((section) => (

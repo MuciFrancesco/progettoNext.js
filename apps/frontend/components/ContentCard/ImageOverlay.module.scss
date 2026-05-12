@@ -27,7 +27,7 @@
   align-items: center;
   justify-content: center;
   color: #fff;
-  padding: $spacing-4;
+  padding: ds.$spacing-4;
   border-radius: 4px;
   transition: all 0.3s ease;
   max-width: 90%;
@@ -44,26 +44,26 @@
 
 // ─── Position Variants ────────────────────────────────────────────────
 .top-left {
-  top: $spacing-4;
-  left: $spacing-4;
+  top: ds.$spacing-4;
+  left: ds.$spacing-4;
   transform: translateX(0);
 }
 
 .top-right {
-  top: $spacing-4;
-  right: $spacing-4;
+  top: ds.$spacing-4;
+  right: ds.$spacing-4;
   transform: translateX(0);
 }
 
 .bottom-left {
-  bottom: $spacing-4;
-  left: $spacing-4;
+  bottom: ds.$spacing-4;
+  left: ds.$spacing-4;
   transform: translateX(0);
 }
 
 .bottom-right {
-  bottom: $spacing-4;
-  right: $spacing-4;
+  bottom: ds.$spacing-4;
+  right: ds.$spacing-4;
   transform: translateX(0);
 }
 

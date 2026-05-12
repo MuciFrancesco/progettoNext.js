@@ -116,6 +116,11 @@
   font-weight: 500 !important;
 }
 
+.fieldHelp {
+  display: block;
+  margin-bottom: ds.$spacing-3 !important;
+}
+
 .imageList {
   @include ds.image-thumb-list;
 }
@@ -159,9 +164,64 @@
   padding-bottom: ds.$spacing-4 !important;
 }
 
+.inlineFields {
+  display: grid;
+  gap: ds.$spacing-2;
+  margin-bottom: ds.$spacing-2;
+}
+
+.saleGrid {
+  display: grid;
+  gap: ds.$spacing-3;
+}
+
+.previewPanel {
+  margin-top: ds.$spacing-3;
+  border: 1px solid var(--border);
+  border-radius: ds.$radius-2;
+  padding: ds.$spacing-3;
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+}
+
+.previewTitle {
+  margin-bottom: ds.$spacing-2 !important;
+  font-weight: 600 !important;
+}
+
+.previewGrid {
+  display: grid;
+  gap: ds.$spacing-2;
+}
+
+.previewItem {
+  display: grid;
+  gap: ds.$spacing-1;
+  border: 1px solid var(--border);
+  border-radius: ds.$radius-2;
+  padding: ds.$spacing-2 ds.$spacing-3;
+  background: var(--card);
+  font-size: ds.$font-size-sm;
+}
+
 @media (min-width: 600px) {
   .tabletCell {
     display: table-cell !important;
+  }
+
+  .previewGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 700px) {
+  .inlineFields {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center;
+  }
+
+  .saleGrid {
+    grid-template-columns: minmax(180px, auto) 1fr 1fr;
+    align-items: center;
   }
 }
 

@@ -1,19 +1,78 @@
 @use '@/styles/shared' as ds;
 
-.page {
-  @include ds.centered-state-page;
+.panel {
+  @include ds.card-outlined;
+  display: grid;
+  justify-items: center;
+  width: min(100%, 42rem);
+  padding: ds.$spacing-10 ds.$spacing-6;
+  text-align: center;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: ds.$spacing-5;
+  border: 1px solid color-mix(in oklch, var(--primary) 26%, transparent);
+  border-radius: 999px;
+  color: var(--primary);
+  background:
+    linear-gradient(135deg, color-mix(in oklch, var(--primary) 13%, transparent), transparent),
+    var(--secondary);
+}
+
+.copy {
+  display: grid;
+  gap: ds.$spacing-3;
+  max-width: 34rem;
 }
 
 .title {
-  @include ds.page-title(1.875rem);
+  @include ds.page-title(2rem, 700);
+  font-size: 3.5rem !important;
+  line-height: 1.12;
 }
 
 .subtitle {
-  max-width: 36rem;
   font-size: ds.$font-size-sm;
+  line-height: 1.7;
   @include ds.muted-text;
 }
 
-.link {
-  @include ds.subtle-outlined-link;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: ds.$spacing-3;
+  margin-top: ds.$spacing-8;
+}
+
+.actionLink {
+  text-decoration: none;
+}
+
+.secondaryAction {
+  margin-top: ds.$spacing-4;
+}
+
+@media (max-width: 599px) {
+  .panel {
+    padding: ds.$spacing-8 ds.$spacing-4;
+  }
+
+  .title {
+    font-size: 2.75rem !important;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actionLink,
+  .actionLink > * {
+    width: 100%;
+  }
 }

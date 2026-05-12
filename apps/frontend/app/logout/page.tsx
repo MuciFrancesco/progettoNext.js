@@ -1,18 +1,21 @@
 import { Suspense } from 'react';
 
-import { getTranslator } from '@/lib/i18n/locale';
+import { getCurrentLocale, getTranslator } from '@/lib/i18n/locale';
 import { GlobalPageLoading } from '@/components/GlobalPageLoading/GlobalPageLoading';
 import LogOutFeature from '@/features/LogOut/LogOutFeature';
+import { PublicPageFrame } from '@/features/layout/PublicPageFrame/PublicPageFrame';
 
 export default async function LogoutPage() {
-  const t = await getTranslator();
+  const [locale, t] = await Promise.all([getCurrentLocale(), getTranslator()]);
   return (
-    <Suspense
-      fallback={
-        <GlobalPageLoading title={t('loadingInProgress')} subtitle={t('loadingAwaitingServer')} />
-      }
-    >
-      <LogOutFeature />
-    </Suspense>
+    <PublicPageFrame>
+      <Suspense
+        fallback={
+          <GlobalPageLoading title={t('loadingInProgress')} subtitle={t('loadingAwaitingServer')} />
+        }
+      >
+        <LogOutFeature locale={locale} />
+      </Suspense>
+    </PublicPageFrame>
   );
 }

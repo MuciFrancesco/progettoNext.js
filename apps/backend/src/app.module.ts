@@ -11,6 +11,7 @@ import { BookmarkModule } from './bookmark/bookmark.module';
 import { AdminModule } from './admin/admin.module';
 import { ProductModule } from './product/product.module';
 import { CheckoutModule } from './checkout/checkout.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CheckoutModule } from './checkout/checkout.module';
     AdminModule,
     ProductModule,
     CheckoutModule,
+    WishlistModule,
   ],
   providers: [
     {

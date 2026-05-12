@@ -20,6 +20,7 @@ export interface BackendOrderProduct {
   readonly priceInCents?: number;
   readonly stockQuantity: number;
   readonly isAvailableForPurchase: boolean;
+  readonly isRebuyable: boolean;
 }
 
 export interface BackendOrderUser {

@@ -1,0 +1,25 @@
+.btn {
+  flex-shrink: 0;
+  transition: transform 160ms ease, opacity 160ms ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.icon {
+  color: var(--muted-foreground);
+  transition: color 160ms ease;
+
+  .btn:hover & {
+    color: var(--destructive);
+  }
+}
+
+.activeIcon {
+  color: var(--destructive);
+}

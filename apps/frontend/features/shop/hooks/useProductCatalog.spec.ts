@@ -30,9 +30,12 @@ function createProduct(
     imagePaths: [`/${id}.png`],
     category,
     subcategory: null,
+    brand: null,
     priceInCents: 1999,
+    originalPriceInCents: null,
     stockQuantity: 8,
     isAvailableForPurchase: true,
+    isRebuyable: false,
     createdAt: '2026-05-01T10:00:00.000Z',
     updatedAt: '2026-05-01T10:00:00.000Z',
   };

@@ -841,6 +841,16 @@ async function cleanupDemoData(client) {
   }
 }
 
+async function ensureProductSchema(client) {
+  await client.query(
+    `ALTER TABLE products
+     ADD COLUMN IF NOT EXISTS "is_rebuyable" BOOLEAN NOT NULL DEFAULT false,
+     ADD COLUMN IF NOT EXISTS "is_in_sale" BOOLEAN NOT NULL DEFAULT false,
+     ADD COLUMN IF NOT EXISTS "sale_price_in_cents" INTEGER,
+     ADD COLUMN IF NOT EXISTS "sale_discount_percent" INTEGER`
+  );
+}
+
 async function insertSubcategories(client) {
   const rowsBySlug = new Map();
 
@@ -884,8 +894,8 @@ async function insertProduct(client, product, index, subcategoryIds) {
   const subcategoryId = subcategoryIds.get(product.subcategory);
 
   await client.query(
-    `INSERT INTO products (id, title, name, description, brand, category, subcategory_id, "priceInCents", original_price_in_cents, "imagePath", "imagePaths", "stock_quantity", "isAvailableForPurchase", "createdAt", "updatedAt")
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::text[],$12,true,NOW(),NOW())`,
+    `INSERT INTO products (id, title, name, description, brand, category, subcategory_id, "priceInCents", original_price_in_cents, "imagePath", "imagePaths", "stock_quantity", "isAvailableForPurchase", "is_rebuyable", "createdAt", "updatedAt")
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::text[],$12,true,$13,NOW(),NOW())`,
     [
       id,
       product.title,
@@ -899,6 +909,7 @@ async function insertProduct(client, product, index, subcategoryIds) {
       paths[0],
       paths,
       product.stock,
+      true,
     ]
   );
 
@@ -939,6 +950,7 @@ async function insertProduct(client, product, index, subcategoryIds) {
     price: product.price,
     title: product.title,
     imagePath: paths[0],
+    isRebuyable: true,
   };
 }
 
@@ -1021,6 +1033,9 @@ async function main() {
   console.log('Connesso al DB.');
   const seedProducts = buildProductCatalog();
   const seedUsers = buildSeedUsers();
+
+  console.log('\nVerifico compatibilita schema prodotti...');
+  await ensureProductSchema(client);
 
   console.log('\nPulisco vecchi dati demo ThinkShop...');
   await cleanupDemoData(client);

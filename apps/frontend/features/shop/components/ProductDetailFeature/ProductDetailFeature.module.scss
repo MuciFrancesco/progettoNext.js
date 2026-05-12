@@ -1,19 +1,44 @@
 .page {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1240px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 56px;
+  padding: 28px 0 64px;
 }
 
 .detailGrid {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr) minmax(260px, 0.55fr);
-  gap: 24px;
+  grid-template-areas: "gallery info buy";
+  grid-template-columns: minmax(280px, 0.84fr) minmax(360px, 1fr) minmax(280px, 0.62fr);
+  gap: 20px;
   align-items: start;
 }
 
+.galleryColumn {
+  grid-area: gallery;
+  min-width: 0;
+}
+
+.infoColumn {
+  grid-area: info;
+  min-width: 0;
+}
+
+.buyColumn {
+  grid-area: buy;
+  min-width: 0;
+}
+
 @media (max-width: 960px) {
-  .detailGrid {
-    grid-template-columns: 1fr;
+  .page {
+    width: min(100% - 24px, 720px);
+    padding: 20px 0 48px;
   }
 
+  .detailGrid {
+    grid-template-areas:
+      "gallery"
+      "buy"
+      "info";
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }

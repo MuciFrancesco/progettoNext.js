@@ -10,17 +10,15 @@
   border-radius: 12px;
 }
 
-.quantityBox {
-  min-height: 40px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--card);
-}
+.quantityField {
+  min-width: 0;
 
-.quantityValue {
-  font-weight: 800;
+  input {
+    height: 1.45rem;
+    padding-inline: 0.55rem;
+    text-align: center;
+    font-weight: 800;
+  }
 }
 
 .addButton {

@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { formatCurrency } from '@/lib/shop/format';
+import { getEffectivePriceInCents } from '@/lib/shop/pricing';
 import type { CartItem } from '@/store/CartContext';
 import type { Locale } from '@/lib/i18n/translation';
 import styles from './Checkout.module.scss';
@@ -38,7 +39,7 @@ export function CheckoutOrderSummary({
               </Typography>
             </Typography>
             <Typography component="strong" variant="body2" className={styles.strongText}>
-              {formatCurrency(item.product.priceInCents * item.quantity, locale)}
+              {formatCurrency(getEffectivePriceInCents(item.product) * item.quantity, locale)}
             </Typography>
           </Box>
         ))}

@@ -13,6 +13,8 @@ import type { Locale } from '@/lib/i18n/translation';
 import { createTranslator } from '@/lib/i18n/translator';
 import type { BackendProduct, ProductCategory } from '@/types/api/product';
 import { categoryTranslationKey } from '@/features/admin/helpers/categoryLabel';
+import { formatCurrency } from '@/lib/shop/format';
+import { getEffectivePriceInCents } from '@/lib/shop/pricing';
 import styles from './UpdateProduct.module.scss';
 
 interface UpdateProductTableBodyProps {
@@ -45,6 +47,9 @@ export default function UpdateProductTableBody({
         const isDisabled =
           isPending ||
           (selectionCategory !== null && !isChecked && product.category !== selectionCategory);
+        const effectivePrice = getEffectivePriceInCents(product);
+        const discountLabel =
+          product.isInSale && product.saleDiscountPercent ? `${product.saleDiscountPercent}%` : '--';
 
         return (
           <TableRow key={product.id} hover selected={isChecked}>
@@ -79,6 +84,8 @@ export default function UpdateProductTableBody({
                 </Tooltip>
               )}
             </TableCell>
+            <TableCell align="right">{formatCurrency(effectivePrice, locale)}</TableCell>
+            <TableCell align="center">{discountLabel}</TableCell>
             <TableCell align="right">
               <Box className={styles.rowActions}>
                 <Tooltip title={t('productUpdateButton')}>
@@ -112,7 +119,7 @@ export default function UpdateProductTableBody({
       })}
       {products.length === 0 && (
         <TableRow>
-          <TableCell colSpan={7} align="center" className={styles.emptyCell}>
+          <TableCell colSpan={9} align="center" className={styles.emptyCell}>
             —
           </TableCell>
         </TableRow>

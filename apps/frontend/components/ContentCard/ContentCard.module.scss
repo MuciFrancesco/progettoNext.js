@@ -5,29 +5,35 @@
 // Responsive to 2 columns on tablet, 1 column on mobile
 
 .contentCard {
-  @include ds.card-outlined;
   display: flex;
   flex-direction: column;
   min-height: auto;
   padding: 0;
   overflow: hidden;
-  transition: all 0.3s ease;
+  border: 1px solid color-mix(in oklch, var(--border) 76%, transparent);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.9)),
+    var(--card);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
   cursor: default;
-
-  // Responsive behavior: container handles grid, this handles card itself
-  flex: 1;
-  min-width: 280px; // Minimum usable width on mobile
+  min-width: 0;
+  height: 100%;
 
   &:hover {
-    border-color: var(--primary);
+    border-color: color-mix(in oklch, var(--primary) 42%, var(--border));
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.11);
   }
 
   &[role='button'] {
     cursor: pointer;
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
     }
 
     &:focus-visible {
@@ -39,7 +45,6 @@
 
 // ─── Variants ────────────────────────────────────────────────────────
 .outlined {
-  border: 1px solid var(--border);
   background-color: var(--card);
 }
 
@@ -49,9 +54,9 @@
     var(--card) 0%,
     color-mix(in oklch, var(--card) 95%, var(--primary) 5%) 100%
   );
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.1);
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
   }
 }
